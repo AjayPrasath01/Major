@@ -1,0 +1,230 @@
+.loginPage{
+    /* position: absolute; */
+    /* overflow: hidden; */
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+
+.right_top{
+    top: 20%;
+    right: 10%;
+    width: 100px;
+    height: 100px;
+}
+
+.right_bottom{
+    top: 10%;
+    left: 15%;
+    width: 150px;
+    height: 150px;
+}
+
+.center1{
+    bottom: 40%;
+    right: 60%;
+    width: 150px;
+    height: 150px;
+}
+
+.center2{
+    bottom: 70%;
+    right: 40%;
+    width: 180px;
+    height: 180px;
+}
+
+.center3{
+    bottom: 20%;
+    right: 25%;
+    width: 240px;
+    height: 240px;
+}
+
+.design{
+    background-color: rgb(68,208,231);
+    border-radius: 50%;
+    position: absolute;
+    transform: rotateZ(35deg);
+}
+
+.loginPage > .card{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.126);
+    padding-left: 5em;
+    padding-right: 5em;
+    padding-bottom: 3em;
+    padding-top: 3em;
+    border-radius: 30px;
+    margin-bottom: auto;
+
+    background: rgba( 255, 255, 255, 0 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 9px );
+    -webkit-backdrop-filter: blur( 9px );
+}
+
+.loginPage > .card > .title{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+    margin-top: auto;
+}
+
+.password-eye{
+    display: inline;
+    border: none !important;
+    margin: 0;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.password-holder{
+    display: flex;
+    flex-direction: row;
+    width: 17vw;
+    margin: 0;
+    border: none !important;
+    margin-bottom: 1em;
+    border-radius: 10px !important;
+    background-color: rgb(255, 255, 255);
+}
+
+.password-holder > input {
+    margin-bottom: 0 !important;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.input-field-login{
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    font-size: 14px;
+    padding-left: 1em;
+    display: block;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.165);
+    transition: 0.5s;
+}
+
+.create-account-input{
+    display: inline;
+}
+
+.section-container-create-account{
+    display: flex;
+    gap: 20px;
+}
+
+
+.my-button{
+    padding: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.165);
+    transition: 0.5s;
+}
+
+button:hover{
+    background-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0);
+}
+
+button:active{
+    background-color: rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0);
+}
+
+button:disabled{
+    background-color: rgba(0, 0, 0, 0.488);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0);
+}
+
+.warning{
+    display: none;
+    text-align: center;
+    color: rgb(180, 4, 4);
+}
+
+.input-field-login{
+    height: 2.5em;
+    width: 17vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.create-account-text{
+    font-size: small;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.role-holder{
+    display: inline-block;
+}
+
+.role-button{
+    display: inline;
+    width: 7.5vw;
+    margin-left: 0.5vw;
+    margin-right: 0.5vw;
+    margin-bottom: 0;
+    align-self: center;
+}
+
+.role-button:disabled{
+    color: white;
+}
+
+.create-account-text > .link {
+    text-decoration: none !important;
+    color: rgb(0, 148, 171);
+    border-bottom: none;
+    font-weight: 900;
+    text-align: center;
+}
+
+.warning{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+@media screen and (max-width: 800px) {
+
+    .loginPage > .card{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.126);
+        padding-left: 3em;
+        padding-right: 3em;
+        padding-bottom: 9em;
+        padding-top: 3em;
+        border-radius: 30px;
+        margin-bottom: auto;
+    
+    }
+
+    .logo{
+        margin-left: 0.3em;
+        margin-top: 0.3em;
+        font-size: 24px;
+    }
+}

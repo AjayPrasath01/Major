@@ -1,0 +1,330 @@
+.machine_tabs{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1.5;
+    align-items: baseline;
+    margin-top: 1em;
+    align-content: flex-start;
+}
+
+.control-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.title-status-holder{
+    display: flex;
+}
+
+.control-container > * > * >.title{
+    font-size: medium;
+    display: inline;
+    align-self: center;
+}
+
+.live-date-check{
+    margin-bottom: 2%;
+    padding-bottom: 0;
+    margin-left: 0;
+    margin-top: auto;
+}
+
+.live-changer-button{
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none !important;
+    transform: scale(1.5);
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.live-date-text{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.change-live{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(238, 237, 237);
+    border-radius: 15px;
+    height: 100%;
+    padding: 1.75em;
+    padding-top: auto;
+    padding-bottom: auto;
+}
+
+.chart-switcher{
+    box-shadow: none;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+}
+
+.chart-switcher-holder{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.console-panel{
+    overflow: auto;
+    color: white;
+    background-color: rgb(0, 0, 0) !important;
+    height: 50%;
+    border-radius: 5px;
+    padding: 10px;
+    padding-bottom: 15vw;
+}
+
+.console-panel-holder{
+    padding: 1.5em;
+    display: block;
+    height: 70vh;
+    margin: 0.5em;
+    border-radius: 15px;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 20vw;
+    padding-bottom: 100px;
+}
+
+.console-panel::-webkit-scrollbar{
+    background-color: rgb(22, 22, 22);
+    border-radius: 15px;
+}
+
+.console-panel::-webkit-scrollbar-thumb{
+    width: 3px;
+    background-color: rgb(63, 63, 63);
+    border-radius: 30px;
+}
+
+.console-panel::-webkit-scrollbar-track{
+    border-radius: 15px;
+    background-color: rgb(0, 0, 0);
+    padding: 20px;
+}
+
+.control-container > * >.title{
+    font-size: medium;
+    display: inline;
+    align-self: center;
+}
+
+.log-container{
+    white-space: pre-wrap;
+    margin: 0;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.socket-status-dot{
+    display: inline;
+    margin-left: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 100px;
+    background-color: green;
+    box-shadow: 0px 0px 2px rgba(0, 128, 0, 0.637);
+    animation: blink 1s infinite;
+}
+
+.socket-status-text{
+    font-size: small;
+    margin: 0;
+    margin-left: 5px;
+    color: rgba(0, 0, 0, 0.382);
+    animation: blink 1s infinite;
+}
+
+.socket-status-holder{
+    display: flex;
+    align-items: center;
+}
+
+.down-arrow-download{
+    font-style: normal;
+    font-weight: bolder;
+    font-size: x-large;
+    display: block;
+}
+
+
+.download-control-container{
+    flex: 1;
+    display: inline;
+    margin-bottom: 1em;
+    background-color: white;
+}
+
+.download-control-holder{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+}
+
+
+.chart-control-container{
+    display: inline;
+    flex: 2;
+    background-color: white;
+}
+
+.control-holders{
+    margin: 0.5em;
+    padding: 1.5em;
+    border-radius: 15px;
+}
+
+.download-button-holder{
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+.download_csv{
+    padding: 0.75em;
+    font-size: small;
+    background-color: rgb(118,180,255);
+    color: white;
+    font-weight: 900;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+}
+
+.view-log-button{
+    float: right;
+   box-shadow: none;
+   margin-right: 0;
+}
+
+.INFO{
+    color: green;
+}
+
+.WARNING{
+    color: orange;
+}
+
+.ERROR{
+    color: rgb(255, 0, 0);
+}
+
+.sensor_tab{
+    background-color: rgb(223, 223, 223);
+    padding: 0.75em;
+    border-radius: 30px;
+}
+
+.Switcher{
+    padding: 1em;
+    margin: 3px;
+    width: max-content;
+    box-shadow: none;
+    align-self: center;
+}
+
+.data-point-count{
+    margin-left: 0;
+}
+
+.Switcher:disabled{
+    background-color: rgb(118,180,255);
+    color: white;
+}
+
+.chart_container{
+    margin-top: 3em;
+    margin-bottom: 3em;
+}
+
+.data_sheet{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dateTimepicker{
+    max-width: 15vw;
+    margin-top: 30px;
+    margin: 0.75em;
+}
+
+.dateTimepicker > * > * > input{
+    background-color: rgb(238, 237, 237);
+    border: none !important;
+    border-radius: 15px !important;
+    outline: none;
+}
+
+.date-timepicker-holder{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.jiyBSS{
+    border-radius: 5px !important;
+}
+
+.sensorList{
+    display: inline;
+    margin-right: 30px;
+}
+
+.iLcccE{
+    color: white !important;
+}
+
+.ecaVbo{
+    border-radius: 20px !important;
+}
+
+.chart{
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.192);
+    border-radius: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-right: 30px;
+    padding-left: 30px;
+    margin-bottom: 20vh;
+    /* width: 95%; */
+}
+
+.chart-data-viewer{
+    /* height: 30% !important; */
+}
+
+.fnuvss{
+    padding-left: auto !important;
+    padding-right: auto;
+}
+
+.view-button{
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+.chart-full-holder-multi{
+    display: flex;
+    flex-direction: row;
+}
+
+.no-data-title{
+    text-align: center;
+    font-size: x-large;
+    letter-spacing: 3px;
+}
+
+@keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }

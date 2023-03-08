@@ -1,0 +1,274 @@
+.subtitle{
+    font-weight: 900;
+}
+
+.container{
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.206);
+    padding: 50px;
+    margin: 20px;
+    border-radius: 30px;
+}
+
+.cp{
+    width: 30vw;
+}
+
+.cp > p{
+    display: none;
+    border-radius: 30px;
+}
+
+.cp > div > input, label{
+    padding: 0.3rem;
+    margin: 0.5rem;
+}
+
+.cp > div{
+    display: flex;
+    justify-content: space-between;
+}
+
+.change_password{
+    padding: 1em;
+    margin-top: 1em;
+    margin-right: auto !important;
+    margin-left: 1em;
+}
+
+.tablerow{
+    transition: 0.5s;
+}
+
+.tablerow:hover{
+    scale: 1.02;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.175);
+    z-index: 0;
+}
+
+.connection-check-box{
+    border-color: transparent;
+    border: none;
+}
+
+.subtitle {
+    margin-left: 2%;
+}
+
+.subtitle > div, button, p, label {
+    margin-left: 5%;
+}
+
+.input-change-password{
+    border: none !important;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+.input-add-device{
+    font-size: medium !important;
+    padding: 0.75em !important;
+
+}
+
+.no_data{
+    text-align: center;
+}
+
+.inner-data{
+    display: inline;
+    font-size: 20px;
+}
+
+.new_list{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.table_button{
+    padding: 20px;
+    display: inline;
+    margin-bottom: 0;
+}
+
+.table{
+    box-sizing: border-box;
+    column-gap: 5em;
+    border-radius: 10px 10px 0 0;
+    border-collapse: collapse;
+    margin: 3% auto;
+    font-size: 0.9em;
+    min-width: 75%;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    /* transform: translateY(50vh); */
+}
+
+thead{
+    background-color: rgba(0, 0, 0, 0.255);
+    color: white;
+    font-weight: bolder;
+}
+
+.table th, td{
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.table tbody tr:nth-of-type(even){
+    background-color: rgba(0, 0, 0, 0.206);
+}
+
+.table tbody tr:last-of-type{
+    border-bottom: 3px solid rgba(0, 0, 0, 0.206);
+}
+
+#table_status{
+    display: none;
+}
+
+.table_status2{
+    display: none;
+}
+
+.machinename > *{
+    margin: 1em;
+    padding: 0.2em;
+    font-size: 18px;
+}
+
+.generate_button{
+    padding: 1em;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5vw;
+    background-color: rgb(48,152,167);
+}
+
+.ssid_c, .pass_c{
+    width: 30vw;
+    display: flex;
+}
+
+.cg > .subtitle{
+    margin-left: 0;
+}
+
+.cg > * > label{
+    margin-left: 0 !important;
+}
+
+.add-device-individual-holder{
+    display: inline !important;
+}
+
+.add-device-sensor-area{
+    display: inline;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+
+
+.remove-sensor-button{
+    display: inline;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    padding: 0.5em;
+    width: fit-content;
+    height: fit-content;
+    margin-top: auto;
+    margin-bottom: auto;
+    transition: 0.3s;
+}
+
+.add-device-sensor-button{
+    margin-left: 0;
+}
+
+.last-container{
+    margin-bottom: 25vh;
+}
+
+.password-wifi{
+    margin-left: 1em;
+}
+
+.remove-sensor-button:hover{
+    background-color: rgba(255, 255, 255, 0);
+    transform: scale(1.5);
+}
+
+
+.sensor-name-holder{
+    display: inline;
+
+}
+
+.add-sensor-holder{
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.sensor-individual-holder{
+    padding: 0.35em;
+    border: 2px solid rgb(196, 196, 196);
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.5em;
+}
+
+.action-column{
+    width: 25vw;
+}
+
+.middle-column{
+    display: flex;
+    align-items: center;
+}
+
+.sensor-input{
+    outline: none !important;
+    border: none;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.sensors-column{
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.75em;
+    width: 40vw;
+    flex-wrap: wrap;
+}
+
+.wifitype{
+    margin-bottom: 2em;
+    margin-top: 2em;
+}
+
+#gen_error{
+    display: none;
+}
+
+.input-add-device-wifi{
+    display: flex;
+    flex-direction: row;
+}
+
+.wifi-labels{
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+}
