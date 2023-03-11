@@ -36,7 +36,6 @@ public class DataSender {
 
     enum Mode{
         prod,dev
-
     }
 
     @Autowired

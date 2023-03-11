@@ -134,57 +134,46 @@ function Dashboard(props) {
 					};
 				});
 				dataCountCall();
-				handleDataForSock.current["machineName"] = res.data[0].machineName;
-				handleDataForSock.current["sensorName"] =
-					res.data[0].sensorType.split(",")[0];
-				let date = new Date();
-				date.setHours(date.getHours() - 3);
-				date = date.toLocaleString("en-US", {
-					hour12: false,
-					year: "numeric",
-					month: "2-digit",
-					day: "2-digit",
-					hour: "2-digit",
-					minute: "2-digit",
-					second: "2-digit",
-				});
-				handleDataForSock.current["startDate"] = date;
 			}
 		});
 	}, []);
 
-	function dateChanged(date, setter) {
-		date = date.toLocaleString("en-US", {
-			hour12: false,
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-		});
-		setter(date);
-		// console.log({
-		// 	machineName: selectedMachine.machineName,
-		// 	sensorName: selectedMachine.sensorType,
-		// 	startDate: date,
-		// });
-		// setDateTime(date);
-		// if (sock.current != null) {
-		// 	sock.current.send(
-		// 		JSON.stringify({
-		// 			machineName: selectedMachine.machineName,
-		// 			sensorName: selectedMachine.sensorType,
-		// 			startDate: date,
-		// 		})
-		// 	);
-		// 	console.log("DatePicker : ");
-		// 	console.log({
-		// 		machineName: selectedMachine.machineName,
-		// 		sensorName: selectedMachine.sensorType,
-		// 		startDate: date,
-		// 	});
-		// }
+	function commandKeyDown(event) {
+		if (event.key === "Enter" && event.target.value !== "") {
+			const command = event.target.value;
+			let resultLog = [...logs, { log: "> " + event.target.value }];
+			event.target.value = "";
+			if (command === "delete") {
+				props.axios_instance
+					.delete("/api/log/data", {
+						params: { machineName: selectedMachine.machineName, organization },
+					})
+					.then((res) => {
+						console.log(res);
+						resultLog = [
+							{ log: "> " + command },
+							{ log: "<span class='INFO'>" + res.data.message + "</span>" },
+						];
+						setLogs(resultLog);
+					})
+					.catch((err) => {
+						if (err.message) {
+							resultLog = [
+								...resultLog,
+								{ log: "<span class='ERROR'>" + err.message + "</span>" },
+							];
+						} else {
+							resultLog = [
+								...resultLog,
+								{ log: "<span class='ERROR'>Something went wrong</span>" },
+							];
+						}
+						setLogs(resultLog);
+					});
+			} else if (command === "clear") {
+				setLogs([]);
+			}
+		}
 	}
 
 	function machineTabClicked(event) {
@@ -496,32 +485,42 @@ function Dashboard(props) {
 								<span className="console-panel-holder">
 									<h1>Logs</h1>
 									<h2>{selectedMachine.machineName}</h2>
-									<div className="console-panel">
-										<p className="log-container">
-											Logs of {selectedMachine.machineName}
-										</p>
-										<br></br>
-										{logs.map((data) => {
-											let log = data.log;
-											log = log.replace(
-												"[INFO]",
-												"[<span class='INFO'>INFO</span>]"
-											);
-											log = log.replace(
-												"[WARNING]",
-												"[<span class='WARNING'>WARNING</span>]"
-											);
-											log = log.replace(
-												"[ERROR]",
-												"[<span class='ERROR'>ERROR</span>]"
-											);
-											return (
-												<p
-													className="log-container"
-													dangerouslySetInnerHTML={{ __html: log }}
-												></p>
-											);
-										})}
+									<div className="console-command-holder">
+										<div className="console-panel">
+											<p className="log-container">
+												Logs of {selectedMachine.machineName}
+											</p>
+											<br></br>
+											{logs.map((data) => {
+												let log = data.log;
+												log = log.replace(
+													"[INFO]",
+													"[<span class='INFO'>INFO</span>]"
+												);
+												log = log.replace(
+													"[WARNING]",
+													"[<span class='WARNING'>WARNING</span>]"
+												);
+												log = log.replace(
+													"[ERROR]",
+													"[<span class='ERROR'>ERROR</span>]"
+												);
+												return (
+													<p
+														className="log-container"
+														dangerouslySetInnerHTML={{ __html: log }}
+													></p>
+												);
+											})}
+										</div>
+										<span className="command-input">
+											<p className="command-arrow">&gt;</p>
+											<input
+												className="command-input-field"
+												placeholder="Enter Command"
+												onKeyDown={commandKeyDown}
+											/>
+										</span>
 									</div>
 								</span>
 							) : data.length > 0 ? (

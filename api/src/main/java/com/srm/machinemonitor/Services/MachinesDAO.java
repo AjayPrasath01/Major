@@ -10,6 +10,11 @@ import java.math.BigInteger;
 import java.util.List;
 public interface MachinesDAO extends JpaRepository<Machines, BigInteger> {
 
+    boolean existsByOrganizationIdAndMachineNameAndSensors(BigInteger organizationId, String machineName, String sensor);
+
+    @Query(value="SELECT u.secert FROM machines u where u.machineName = ?1 AND u.organizationId = ?2 LIMIT 1", nativeQuery = true)
+    String getSeceretTokenByMachineNameAndOrganizationId(String machinneName, BigInteger organizationId);
+
     boolean existsBymachineNameAndOrganizationId(String machineName, BigInteger organizationId);
 
     Boolean existsByOrganizationIdAndMachineNameAndSecert(BigInteger organizationId, String machineName, String secert);

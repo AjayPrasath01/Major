@@ -1,9 +1,13 @@
 package com.srm.machinemonitor.Controllers;
 
+import com.srm.machinemonitor.Constants;
+import com.srm.machinemonitor.Models.Other.BaseData;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Tables.Data;
+import com.srm.machinemonitor.Models.Tables.DevData;
 import com.srm.machinemonitor.Models.Tables.Machines;
 import com.srm.machinemonitor.Services.DataDAO;
+import com.srm.machinemonitor.Services.DevDataDAO;
 import com.srm.machinemonitor.Services.OrganizationDAO;
 import com.srm.machinemonitor.Services.MachinesDAO;
 import lombok.AllArgsConstructor;
@@ -30,6 +34,9 @@ public class DataReceiver {
 
     @Autowired
     DataDAO dataDAO;
+
+    @Autowired
+    DevDataDAO devDataDAO;
 
     @Autowired
     MachinesDAO machinesDAO;
@@ -69,13 +76,21 @@ public class DataReceiver {
             return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
         }
 
-        Data data = new Data();
-        data.setDate(date);
-        data.setData_type(dataType);
-        data.setMachineId(machine.getId());
-        data.setValue(dataValue);
-
-        dataDAO.save(data);
+        if (machine.getMode().equals(Constants.DEV)){
+            DevData data = new DevData();
+            data.setDate(date);
+            data.setData_type(dataType);
+            data.setMachineId(machine.getId());
+            data.setValue(dataValue);
+            devDataDAO.save(data);
+        }else{
+            Data data = new Data();
+            data.setDate(date);
+            data.setData_type(dataType);
+            data.setMachineId(machine.getId());
+            data.setValue(dataValue);
+            dataDAO.save(data);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

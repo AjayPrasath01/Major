@@ -225,6 +225,30 @@ thead{
     display: flex;
     flex-direction: row;
     margin-bottom: 0.5em;
+    position: relative;
+}
+
+.mode-shower{
+    position: absolute;
+    border: none;
+    top: 0;
+    right: 0;
+    margin-top: -10px;
+    margin-right: -10px;
+    font-size: x-small;
+    padding: 5px;
+    border-radius: 500px;
+    text-align: center;
+    color: white;
+    transition: 0.1s;
+}
+
+.dev{
+    background-color: #d80000;
+}
+
+.prod{
+    background-color: green;
 }
 
 .action-column{

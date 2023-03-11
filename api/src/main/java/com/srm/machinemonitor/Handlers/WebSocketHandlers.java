@@ -1,10 +1,13 @@
 package com.srm.machinemonitor.Handlers;
 
 import com.srm.machinemonitor.Constants;
+import com.srm.machinemonitor.Models.Other.BaseData;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Tables.Data;
 import com.srm.machinemonitor.Models.Tables.Log;
 import com.srm.machinemonitor.Models.Tables.Machines;
+import com.srm.machinemonitor.Modes;
+import com.srm.machinemonitor.Services.DevDataDAO;
 import com.srm.machinemonitor.Services.LogDAO;
 import lombok.AllArgsConstructor;
 import org.json.JSONException;
@@ -48,6 +51,9 @@ public class WebSocketHandlers extends TextWebSocketHandler {
 
     @Autowired(required = true)
     MachinesDAO machinesDAO;
+
+    @Autowired
+    DevDataDAO devDataDAO;
 
 
     final static List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
@@ -125,13 +131,14 @@ public class WebSocketHandlers extends TextWebSocketHandler {
                 }
             }else if(checkForKey(Constants.DATASUBSCRIBED, payload)){
                 if (payload.getBoolean(Constants.DATASUBSCRIBED)){
-                    if (checkForKey(new String[]{Constants.MACHINENAME, Constants.SENSOR, Constants.STARTDATE, Constants.ENDDATE, Constants.ISALIVE}, payload)){
+                    if (checkForKey(new String[]{Constants.MACHINENAME, Constants.SENSOR, Constants.STARTDATE, Constants.ENDDATE, Constants.ISALIVE, Constants.MODE}, payload)){
                         clientDetails.put(Constants.MACHINENAME, payload.get(Constants.MACHINENAME));
                         clientDetails.put(Constants.SENSOR, payload.get(Constants.SENSOR));
                         clientDetails.put(Constants.STARTDATE, payload.get(Constants.STARTDATE));
                         clientDetails.put(Constants.ENDDATE, payload.get(Constants.ENDDATE));
                         clientDetails.put(Constants.ISALIVE, payload.get(Constants.ISALIVE));
                         clientDetails.put(Constants.ISHANDLED, false);
+                        clientDetails.put(Constants.MODE, payload.get(Constants.MODE));
                         clientDetails.put(Constants.DATASUBSCRIBED, payload.getBoolean(Constants.DATASUBSCRIBED));
 //                    Machines machine = machinesDAO.getIdByMachineNameAndSensorsAndOrganizationId((String) payload.get(Constants.MACHINENAME), (String) payload.get(Constants.SENSOR), (int) clientDetails.get(Constants.ORGANIZATION_ID));
                         if (payload.getBoolean(Constants.ISALIVE)){
@@ -187,7 +194,12 @@ public class WebSocketHandlers extends TextWebSocketHandler {
                     }else{
                         endDate = parseLocalDateTime((String) clientDetails.get(Constants.ENDDATE));
                     }
-                    List<Data> datas = dataDAO.getDataBetweenTimeWithMachineId(machines.getId(), startDate, endDate);
+                    List datas = null;
+                    if (Objects.equals((String) clientDetails.get(Constants.MODE), String.valueOf(Modes.DEV).toLowerCase())){
+                        datas = devDataDAO.getDataBetweenTimeWithMachineId(machines.getId(), startDate, endDate);
+                    }else{
+                        datas = dataDAO.getDataBetweenTimeWithMachineId(machines.getId(), startDate, endDate);
+                    }
                     if ((boolean)clientDetails.get(Constants.ISALIVE)){
                         if (datas.size() > 0){
                             updateLastDataValue(clientDetails, datas);
@@ -214,12 +226,17 @@ public class WebSocketHandlers extends TextWebSocketHandler {
     @Scheduled(fixedRate = 1000)
     public void DataSheduledSender() throws IOException {
         for (ConcurrentHashMap clientDetails : clientDataSubscribe.values()){
-            if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && (boolean)clientDetails.get(Constants.ISHANDLED)){
-                List<Data> newData = dataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
-                if (newData.size() > 0){
-                    updateLastDataValue(clientDetails, newData);
+            if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && clientDetails.containsKey(Constants.MODE) && (boolean)clientDetails.get(Constants.ISHANDLED)){
+                List datas = null;
+                if (Objects.equals((String) clientDetails.get(Constants.MODE), String.valueOf(Modes.DEV).toLowerCase())){
+                    datas = devDataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
+                }else{
+                    datas = dataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
+                }
+                if (datas.size() > 0){
+                    updateLastDataValue(clientDetails, datas);
                     final Map response = new HashMap();
-                    response.put("data", newData);
+                    response.put("data", datas);
                     sendToChart(response, clientDetails);
                 }
             }
@@ -258,7 +275,6 @@ public class WebSocketHandlers extends TextWebSocketHandler {
                     .appendOptional(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
                     .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
                     .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
-                    .appendOffsetId()
                     .toFormatter();
             return LocalDateTime.parse(dateTime, formatter);
         }catch(DateTimeParseException e){
@@ -312,8 +328,8 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(new JSONObject(response).toString()));
     }
 
-    private void updateLastDataValue(ConcurrentHashMap clientDetails, List<Data> datas){
-        clientDetails.put(Constants.LASTDATATIME, datas.get(datas.size() - 1).getDate());
+    private void updateLastDataValue(ConcurrentHashMap clientDetails, List datas){
+        clientDetails.put(Constants.LASTDATATIME, ((BaseData)datas.get(datas.size() - 1)).getDate());
     }
 
     private void updateLastDataValue(ConcurrentHashMap clientDetails, LocalDateTime date){

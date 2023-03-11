@@ -2,9 +2,12 @@ package com.srm.machinemonitor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
+import com.srm.machinemonitor.Models.Tables.Machines;
 import com.srm.machinemonitor.Services.MachinesDAO;
 import com.srm.machinemonitor.Services.OrganizationDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,14 +17,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Utils {
 
+    @CachePut
+    @Cacheable(cacheNames = "monitor_cache", key = "#principal + '_' + #organizationName")
     public static Map verifyOrgnaization(HttpServletResponse response, Principal principal, String organizationName, OrganizationDAO organizationDAO) throws IOException {
+        String cacheKey = principal + "_" + organizationName;
+        System.out.println("Cache key: " + cacheKey);
+        System.out.println("Cache miss by " + organizationName);
         final Map res = new HashMap();
         Boolean isValid = checkPrincipal(response, principal);
         if (!isValid){
@@ -35,6 +40,24 @@ public class Utils {
         res.put("organizationId", organization_id);
         return res;
     }
+
+    public static int findDeletionOrUpdation(List<Machines> available, String[] sensors){
+        Arrays.sort(sensors);
+        int foundCount = 0;
+        for (Machines sensor : available){
+            int found = Arrays.binarySearch(sensors, sensor.getSensors());
+            if (found >= 0){
+                ++foundCount;
+            }
+        }
+        if (foundCount < sensors.length){
+            return 1;
+        }else if(foundCount < available.size()){
+            return -1;
+        }
+        return 0;
+    }
+
 
     public static Map verifyAdminAndOrganizationIDOR(HttpServletResponse response, Principal principal, String organizationName, OrganizationDAO organizationDAO) throws IOException {
         final Map res = new HashMap();

@@ -14,6 +14,10 @@ public interface LogDAO extends JpaRepository<Log, BigInteger> {
     @Query(value = "SELECT * FROM Log WHERE machineName = ?1 AND organizationId = ?2 LIMIT 1500", nativeQuery = true)
     List<Log> findAllLogByMachineNameAndOrganizationId(String machineName, BigInteger organizationId);
 
+    @Modifying
+    @Query(value = "DELETE FROM Log WHERE machineName = ?1 AND organizationId = ?2", nativeQuery = true)
+    void deleteAllLogByMachineNameAndOrganizationId(String machineName, BigInteger organizationId);
+
     // GROUP_CONCAT(log SEPARATOR '\n')
     @Query(value = "SELECT * FROM Log WHERE machineName = ?1 AND organizationId = ?2 AND time > ?3 LIMIT 1500", nativeQuery = true)
     List<Log> findAllLogByMachineNameAndOrganizationIdANDTimeGte(String machineName, BigInteger organizationId, LocalDateTime lastTime);

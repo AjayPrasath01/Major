@@ -9,13 +9,17 @@ import com.srm.machinemonitor.Services.OrganizationDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 
 @Component
+@CacheConfig(cacheNames = {"monitor"})
 public class StartupRunner implements CommandLineRunner {
 
     @Value("${defaultUsersname}")
@@ -59,7 +63,7 @@ public class StartupRunner implements CommandLineRunner {
             organizationDAO.save(organizations);
         }
         if (users == null){
-            users = new Users(BigInteger.ONE, DefaultUsername, passwordEncoder.encode(DefaultUserPassword),"admin", true, BigInteger.ONE);
+            users = new Users(BigInteger.ONE, DefaultUsername, passwordEncoder.encode(DefaultUserPassword),Constants.ADMIN, true, BigInteger.ONE);
             users.setEmail(DefaultAdminEmail);
             usersDAO.save(users);
         }
@@ -69,5 +73,11 @@ public class StartupRunner implements CommandLineRunner {
         }
         System.out.println("Default user details : UserName : " + users.getUsername() + " Password : " + users.getPassword() + " Organization : " + organizations.getName());
         System.out.println("Default user details : UserName : " + users.getUsername() + " Password : " + users.getPassword());
+    }
+
+    @Cacheable(sync = true)
+    public String testCache(){
+        System.out.println("Test cache miss");
+        return "test";
     }
 }

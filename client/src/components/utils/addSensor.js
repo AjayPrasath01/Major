@@ -11,6 +11,8 @@ export default (props, newMachineData, setDeviceList) => {
 			fetchMachineNames(props, setDeviceList);
 		})
 		.catch((error) => {
+			console.log(error);
+			const message = error.response?.data?.message;
 			if (error.response.status === 409) {
 				element.innerText = "Duplicate sensor not allowed";
 				element.style.display = "block";
@@ -24,7 +26,11 @@ export default (props, newMachineData, setDeviceList) => {
 				element.style.display = "block";
 				element.style.color = "red";
 			} else {
-				element.innerText = "Something went wrong";
+				if (message) {
+					element.innerText = message;
+				} else {
+					element.innerText = "Something went wrong";
+				}
 				element.style.display = "block";
 				element.style.color = "red";
 			}

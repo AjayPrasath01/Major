@@ -1,5 +1,6 @@
 package com.srm.machinemonitor.Controllers;
 
+import com.srm.machinemonitor.Constants;
 import com.srm.machinemonitor.CustomExceptions.UnauthorizedException;
 import com.srm.machinemonitor.CustomExceptions.UserNotFoundException;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
@@ -8,9 +9,11 @@ import com.srm.machinemonitor.Models.Tables.Log;
 import com.srm.machinemonitor.Models.Tables.Machines;
 import com.srm.machinemonitor.Models.Tables.Organizations;
 import com.srm.machinemonitor.Models.Tables.Users;
+import com.srm.machinemonitor.Modes;
 import com.srm.machinemonitor.Services.*;
 import com.srm.machinemonitor.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -58,6 +61,9 @@ public class AuxillaryController {
 
     @Autowired
     OrganizationDAO organizationDAO;
+
+    @Autowired
+    CacheManager cacheManager;
 
 
     @RequestMapping("")
@@ -123,28 +129,37 @@ public class AuxillaryController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @PutMapping("/switch/mode")
+    public ResponseEntity<Map<String, String>> switchMode(@RequestBody @Valid SwitchModeRequest switchModeRequest, HttpServletResponse response, Principal principal) throws IOException {
+        Map verify = Utils.verifyAdminAndOrganizationIDOR(response, principal, switchModeRequest.getOrganization(), organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        final Map res = new HashMap();
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        Machines machines = machinesDAO.findByMachineNameAndSensorsAndOrganizationId(switchModeRequest.getMachineName(), switchModeRequest.getSensor(), organizationId);
+        if (machines == null){
+            res.put("message", "Machine with sensor not found");
+            return new ResponseEntity(res, HttpStatus.NOT_FOUND);
+        }
+        System.out.println(String.valueOf(Modes.DEV).toLowerCase());
+        machines.setMode(switchModeRequest.getMode());
+        machinesDAO.save(machines);
+        res.put("message", "Mode changed successfully");
+        return new ResponseEntity<>(res, HttpStatus.OK);
+
+    }
+
     //Adding and unblocking user within organization
     @PostMapping("/unblockUsers")
-    public ResponseEntity<Map<String, String>> addUsers(@RequestBody @Valid UnBlockUserRequest unBlockUserRequest, Principal principal){
+    public ResponseEntity<Map<String, String>> addUsers(@RequestBody @Valid UnBlockUserRequest unBlockUserRequest, Principal principal, HttpServletResponse response) throws IOException {
         res = new HashMap<>();
 
-        BigInteger organization_id = organizationDAO.getIdByName(unBlockUserRequest.getOrganization());
-        if (principal == null){
-            res.put("message", "Unauthorized Cookies");
-            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+        Map verify = Utils.verifyAdminAndOrganizationIDOR(response, principal, unBlockUserRequest.getOrganization(), organizationDAO);
+        if (verify == null){
+            return null;
         }
-        if (organization_id == null){
-            res.put("message", "Organization not found");
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-        }
-        if(!((CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getRole().equals("admin")){
-            res.put("message", "Unauthorized only admin allowed");
-            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
-        }
-        if (!organization_id.equals(((CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getOrganizationId())){
-            res.put("message", "Unauthorized");
-            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
-        }
+
         Users users = usersDAO.findByUsernameAndOrganizationName(unBlockUserRequest.getUsername(), unBlockUserRequest.getOrganization());
         users.setIsActive(true);
         usersDAO.save(users);
@@ -216,7 +231,7 @@ public class AuxillaryController {
             return null;
         }
 
-        BigInteger organizationId = (BigInteger) data.get("organizationId");
+        BigInteger organizationId = (BigInteger) data.get(Constants.ORGANIZATION_ID);
 
         Machines machine = machinesDAO.getIdByMachineNameAndSensorsAndOrganizationId(machineName, sensor, organizationId);
         if (machine == null){
@@ -224,7 +239,7 @@ public class AuxillaryController {
             res.put("message", "Machine with the selected sensor not found");
             return new ResponseEntity(res, HttpStatus.NOT_FOUND);
         }
-        Integer dataPoints = dataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+        BigInteger dataPoints = dataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
 
         return new ResponseEntity(dataPoints, HttpStatus.OK);
     }
@@ -244,10 +259,10 @@ public class AuxillaryController {
         if (verified == null){
             return null;
         }
-        BigInteger organization_id = (BigInteger) verified.get("organizationId");
+        BigInteger organization_id = (BigInteger) verified.get(Constants.ORGANIZATION_ID);
         Users user = usersDAO.findByUsernameAndOrganizationName(userRequest.getUsername(), userRequest.getOrganization());
         if (user.getRole().equals("admin")){
-            Integer activeAdmins  = usersDAO.countByOrganizationIdAndRoleAndIsActive(organization_id, "admin", true);
+            Integer activeAdmins  = usersDAO.countByOrganizationIdAndRoleAndIsActive(organization_id, Constants.ADMIN, true);
             if (activeAdmins > 1){
                 user.setIsActive(false);
                 usersDAO.save(user);
@@ -320,6 +335,20 @@ public class AuxillaryController {
         return new ResponseEntity(logDAO.findAllLogByMachineNameAndOrganizationId(machineName, organizationId), HttpStatus.OK);
     }
 
+    @DeleteMapping("/log/data")
+    @Transactional
+    public ResponseEntity<Map<String, String>> deleteLogData(@RequestParam(value = "machineName", required = true)String machineName, @RequestParam(value = "organization", required = true) String organization, Principal principal, HttpServletResponse response) throws IOException {
+        Map data = Utils.verifyAdminAndOrganizationIDOR(response, principal, organization, organizationDAO);
+        if (data == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) data.get("organizationId");
+        logDAO.deleteAllLogByMachineNameAndOrganizationId(machineName, organizationId);
+        final Map<String, String> result = new HashMap<>();
+        result.put("message", "Removed all logs");
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
 
     //If a device is added
     @PostMapping("/addDevice")
@@ -345,6 +374,7 @@ public class AuxillaryController {
             machines.setMachineName(addDeviceRequest.getMachineName().toLowerCase());
             machines.setSecert(secert);
             machines.setSensors(sensors[i].toLowerCase());
+            machines.setMode(Constants.DEV);
             machines.setOrganizationId(organization_id);
             machinesDAO.save(machines);
         }
@@ -394,8 +424,8 @@ public class AuxillaryController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @PutMapping("/update/sensors")
     @Transactional
+    @PutMapping("/update/sensors")
     public ResponseEntity editSensor(@RequestBody @Valid ModifyDeviceRequest modifyDeviceRequest, Principal principal, HttpServletResponse response) throws IOException {
         res = new HashMap<>();
         Map data = Utils.verifyAdminAndOrganizationIDOR(response, principal, modifyDeviceRequest.getOrganization(), organizationDAO);
@@ -414,25 +444,42 @@ public class AuxillaryController {
             res.put("message", "Duplicate sensors names are not allowed");
             return new ResponseEntity<>(res, HttpStatus.CONFLICT);
         }
-        Machines stored = null;
-        for (int i=0; i<allSensor.size(); i++){
-            stored = allSensor.get(i);
-            machinesDAO.deleteById(stored.getId());
-        }
-        if (sensors.length == 0 ){
-            res.put("message", "Updated susccessfully");
-            stored.setSensors("");
-            machinesDAO.save(stored);
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        }
-        for (int i=0; i<sensors.length; i++){
-            if (Objects.equals(sensors[i], "")){
-                continue;
+        int delOrUp = Utils.findDeletionOrUpdation(allSensor, sensors);
+        if (delOrUp < 0){
+            // Deletion operation
+            List<Machines> sensorToBeDeleted = allSensor;
+            for (String sensor : sensors){
+                sensorToBeDeleted = sensorToBeDeleted.stream().filter(s -> !(s.getSensors().equals(sensor))).toList();
             }
-            stored.setSensors(sensors[i]);
-            machinesDAO.save(stored);
+            machinesDAO.deleteAll(sensorToBeDeleted);
+            // Data to be deleted
+            res.put("message", "Removed susccessfully");
+        }else if (delOrUp > 0){
+            // Update operation
+            String[] filteredSensor = sensors;
+            String secerstToken = machinesDAO.getSeceretTokenByMachineNameAndOrganizationId(modifyDeviceRequest.getMachineName(), organizationId);
+            for (Machines sensor : allSensor){
+                filteredSensor = Arrays.stream(filteredSensor)
+                        .filter(s -> !Objects.equals(s, sensor.getSensors()))
+                        .toArray(String[]::new);
+            }
+            // To create new sensor
+            for (int i=0; i<filteredSensor.length; i++){
+                if (Objects.equals(sensors[i], "")){
+                    continue;
+                }
+                Machines newMachines = new Machines();
+                newMachines.setMachineName(modifyDeviceRequest.getMachineName());
+                newMachines.setSecert(secerstToken);
+                newMachines.setSensors(filteredSensor[i]);
+                newMachines.setOrganizationId(organizationId);
+                machinesDAO.save(newMachines);
+            }
+            res.put("message", "Updated susccessfully");
+        }else{
+            res.put("message", "Deleting all sensor is not possible");
+            return new ResponseEntity<>(res, HttpStatus.NOT_ACCEPTABLE);
         }
-        res.put("message", "Updated susccessfully");
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

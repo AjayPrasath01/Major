@@ -15,7 +15,7 @@ import java.util.List;
 public interface DataDAO extends JpaRepository<Data, BigInteger> {
 
     @Query(value="SELECT COUNT(*) FROM data WHERE data.machineId = ?1 AND data.data_type <> ?2", nativeQuery = true)
-    Integer countByMachineIDAndDatatype(BigInteger machineId, String dataType);
+    BigInteger countByMachineIDAndDatatype(BigInteger machineId, String dataType);
 
     @Query(value="SELECT * FROM data WHERE data.date >= ?2 AND data.date <= ?3 AND data.machineId = ?1 ORDER BY data.date ASC", nativeQuery = true)
     List<Data> getDataBetweenTimeWithMachineId(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate);

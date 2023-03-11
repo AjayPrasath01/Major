@@ -22,4 +22,8 @@ public class Constants {
     public static String ISALIVE = "isAlive";
     public static String ISHANDLED = "isHandled";
     public static String LASTDATATIME = "lastDataTime";
+    public static String DEV = "dev";
+    public static String PROD = "prod";
+    public static String ADMIN = "admin";
+    public static String MODE = "mode";
 }

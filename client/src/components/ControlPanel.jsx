@@ -9,6 +9,7 @@ import fetchMachineNames from "./utils/fetchMachineNames";
 import addSensor from "./utils/addSensor";
 import getAllUsers from "./utils/getAllUsers";
 import offsetBody from "./utils/offsetBody";
+import SensorIndividualContainer from "./SensorIndividualContainer";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -271,13 +272,22 @@ function ControlPanel(props) {
 		if (addDeviceDetails.machineName != "" && addDeviceDetails.sensors != "") {
 			const element = document.getElementById("gen_error");
 			props.axios_instance
-				.post("/api/addDevice", { ...addDeviceDetails, organization, sensors: addDeviceDetails.sensors.replaceAll(".", "") })
+				.post("/api/addDevice", {
+					...addDeviceDetails,
+					organization,
+					sensors: addDeviceDetails.sensors.replaceAll(".", ""),
+				})
 				.then((res) => {
 					if (res.status == 200) {
 						fileDownload(res.data, "ArduinoSD.ino");
 						element.style.display = "none";
 					}
 					fetchMachineNames(props, setDeviceList);
+					setAddDeviceDetails({
+						machineName: "",
+						wifi: true,
+						sensors: "",
+					});
 				})
 				.catch((err) => {
 					console.log(err);
@@ -290,9 +300,9 @@ function ControlPanel(props) {
 					} else {
 						element.style.display = "block";
 						element.style.color = "red";
-						if (err.message){
+						if (err.message) {
 							element.innerText = err.message;
-						}else{
+						} else {
 							element.innerText = "Something when wrong";
 						}
 					}
@@ -434,19 +444,15 @@ function ControlPanel(props) {
 															<span className="sensors-column">
 																{data.sensorType.split(",").map((sensor) => {
 																	return (
-																		<span className="sensor-individual-holder">
-																			<p className="sensor-name-holder">
-																				{sensor}
-																			</p>
-																			<button
-																				className="remove-sensor-button"
-																				onClick={removeSensorClicked}
-																				sensor={sensor}
-																				data={JSON.stringify(data)}
-																			>
-																				⛔️
-																			</button>
-																		</span>
+																		<SensorIndividualContainer
+																			sensor={sensor}
+																			removeSensorClicked={removeSensorClicked}
+																			data={data}
+																			mode={data.mode}
+																			setDeviceList={setDeviceList}
+																			axios_instance={props.axios_instance}
+																			organization={organization}
+																		/>
 																	);
 																})}
 															</span>
@@ -496,6 +502,7 @@ function ControlPanel(props) {
 									type="text"
 									className="input-change-password input-add-device"
 									placeholder="Enter Machine name"
+									value={addDeviceDetails.machineName}
 									onChange={(event) =>
 										setAddDeviceDetails((previous) => {
 											console.log(event.target.value);
