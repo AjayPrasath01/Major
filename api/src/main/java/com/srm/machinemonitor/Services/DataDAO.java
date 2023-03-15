@@ -2,6 +2,7 @@ package com.srm.machinemonitor.Services;
 
 import com.srm.machinemonitor.Models.Other.BaseData;
 import com.srm.machinemonitor.Models.Tables.Data;
+import com.srm.machinemonitor.Models.Tables.DevData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,9 @@ public interface DataDAO extends JpaRepository<Data, BigInteger> {
 
     @Query(value="SELECT * FROM data WHERE data.date >= ?2 AND data.date <= ?3 AND data.machineId = ?1 ORDER BY data.date ASC", nativeQuery = true)
     List<Data> getDataBetweenTimeWithMachineId(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
+    List<DevData> getDataBetweenTimeWithMachineIdWithLimitAndOffset(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate, int limit, long offset);
 
     List<Data> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date);
 

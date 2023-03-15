@@ -180,6 +180,7 @@
     margin: 0.5em;
     padding: 1.5em;
     border-radius: 15px;
+    position: relative;
 }
 
 .download-button-holder{
@@ -288,6 +289,11 @@
 
 .ecaVbo{
     border-radius: 20px !important;
+}
+
+.mode-picker{
+    margin: 25px !important;
+    border-radius: 5px !important;
 }
 
 .console-command-holder{

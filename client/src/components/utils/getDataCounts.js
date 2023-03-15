@@ -4,12 +4,16 @@ export default (props, selectedMachine, setDataCount, organization) => {
 		organization &&
 		selectedMachine.selectedSensor
 	) {
+		const sensorMode = selectedMachine.selectedSensor.split(":");
+		const sensor = sensorMode[0];
+		const mode = sensorMode[1];
 		props.axios_instance
 			.get("/api/count/data/points", {
 				params: {
 					machinename: selectedMachine.machineName,
 					organization,
-					sensor: selectedMachine.selectedSensor,
+					sensor,
+					mode,
 				},
 			})
 			.then((response) => {

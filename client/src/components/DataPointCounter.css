@@ -1,0 +1,20 @@
+.data-count-holder{
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    padding: 1em;
+    background-color: #DEBC8C;
+    border-bottom-right-radius: 15px;
+    border-top-left-radius: 15px;
+
+}
+
+.data-count-lable{
+    margin: 0;
+    font-size: x-small;
+}
+
+.data-count-text{
+    margin: 0;
+    text-align: center;
+}

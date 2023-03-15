@@ -12,7 +12,14 @@ import java.util.List;
 
 public interface DevDataDAO extends JpaRepository<DevData, BigInteger> {
 
+    @Query(value="SELECT COUNT(*) FROM DevData u WHERE u.machineId = ?1 AND u.data_type <> ?2", nativeQuery = true)
+    BigInteger countByMachineIDAndDatatype(BigInteger machineId, String dataType);
+
     List<BaseData> findAllByMachineId(BigInteger machineId);
+
+    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
+    List<DevData> getDataBetweenTimeWithMachineIdWithLimitAndOffset(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate, int limit, long offset);
+
 
     @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC", nativeQuery = true)
     List<DevData> getDataBetweenTimeWithMachineId(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate);

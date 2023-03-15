@@ -1,9 +1,11 @@
 package com.srm.machinemonitor.Controllers;
 
+import com.srm.machinemonitor.Constants;
 import com.srm.machinemonitor.Models.Other.BaseData;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Other.DataWithSensorAndMachineName;
 import com.srm.machinemonitor.Models.Tables.Machines;
+import com.srm.machinemonitor.Modes;
 import com.srm.machinemonitor.Services.DevDataDAO;
 import com.srm.machinemonitor.Utils;
 import org.json.JSONArray;
@@ -23,7 +25,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import com.srm.machinemonitor.Services.DataDAO;
 import com.srm.machinemonitor.Services.OrganizationDAO;
@@ -64,7 +71,7 @@ public class DataSender {
 //        return new ResponseEntity<>(dataDAO.getDataBetweenTime(machineName, startDateTime, endDateTime), HttpStatus.OK);
 //    }
 
-    @GetMapping({"/data", "/sensor/data"})
+    @GetMapping({"/sensor/data"})
     public ResponseEntity movedPoints(){
         final Map response = new HashMap<>();
         response.put("message", "Endpoint closed permanently");
@@ -84,6 +91,7 @@ public class DataSender {
             res.put("message", "Organization id not found");
             return new ResponseEntity(res, HttpStatus.NOT_FOUND);
         }
+        String mode = "";
         List<Machines> machinesRequired = machineDAO.findAllByOrganizationIdOrderByMachineNameAsc(organization_id);
         // To combine sensorType together under single machine name
         for (Machines m : machinesRequired){
@@ -91,14 +99,15 @@ public class DataSender {
             for (Map eachMachine: data){
                 if (eachMachine.get("machineName").equals(m.getMachineName())){
                     temp = eachMachine;
+                    mode = m.getMode();
                     break;
                 }
             }
             if (temp.containsKey("sensorType")){
-                temp.put("sensorType", temp.get("sensorType") + "," + m.getSensors());
+                temp.put("sensorType", temp.get("sensorType") + "," + m.getSensors() + ":" + mode);
             }else{
                 temp.put("machineName", m.getMachineName());
-                temp.put("sensorType", m.getSensors());
+                temp.put("sensorType", m.getSensors() + ":" + m.getMode());
                 data.add(temp);
             }
         }
@@ -164,5 +173,60 @@ public class DataSender {
 
         csvWriter.close();
 
+    }
+
+    @GetMapping("/data")
+    public ResponseEntity sendData(@RequestParam("organization") String organization,
+                                   @RequestParam("machineName") String machineName,
+                                   @RequestParam("sensor") String sensor,
+                                   @RequestParam("mode") String mode,
+                                   @RequestParam("startDate") String startDate,
+                                   @RequestParam("endDate") String endDate,
+                                   @RequestParam("limit") int limit,
+                                   @RequestParam("offset") long offset,
+                                   HttpServletResponse response,
+                                   Principal principal) throws IOException {
+        Map verify = Utils.verifyOrgnaization(response, principal, organization, organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        final Map res = new HashMap();
+        if (startDate.compareTo(endDate) >= 0){
+            res.put("message", "Start date must be smaller than end date");
+            return new ResponseEntity(res, HttpStatus.NO_CONTENT);
+        }
+        LocalDateTime startDateTime = parseLocalDateTime(startDate);
+        LocalDateTime endDateTime = parseLocalDateTime(endDate);
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        Machines machine = machineDAO.getIdByMachineNameAndSensorsAndOrganizationId(machineName, sensor, organizationId);
+        if (machine == null){
+            res.put("message", "Not found machine or sensor");
+            return new ResponseEntity(res, HttpStatus.NOT_FOUND);
+        }
+        List data = null;
+        if (mode.equals(Modes.DEV.toString())){
+            data = devDataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
+        }else if ((mode.equals(Modes.PROD.toString()))){
+            data = dataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
+        }
+        return new ResponseEntity(data, HttpStatus.OK);
+    }
+
+    private LocalDateTime parseLocalDateTime(String dateTime){
+        try{
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    .appendOptional(DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd "))
+                    .appendOptional(DateTimeFormatter.ofPattern("HH:mm:ss yyyy/MM/dd "))
+                    .appendOptional(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
+                    .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+                    .toFormatter();
+            return LocalDateTime.parse(dateTime, formatter);
+        }catch(DateTimeParseException e){
+            Instant instant = Instant.parse(dateTime);
+            return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
     }
 }

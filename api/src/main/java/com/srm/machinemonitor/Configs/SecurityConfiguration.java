@@ -55,11 +55,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeHttpRequests()
                 .antMatchers("/", "/data/", "/login", "/addUsers", "/api/register/new/user")
                 .permitAll()
-                .antMatchers("/fetch/**",
+                .antMatchers("/api/fetch/**",
                         "/login/changePassword",
                         "/ws",
-                        "/user",
-                        "/login/changePassword",
+                        "api/user",
+                        "api/login/changePassword",
                         "/allowUsers",
                         "/removeNewUsers",
                         "/getNewUsers",
@@ -68,8 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/addDevice",
                         "/checkNewMachineName",
                         "/removeMachine",
-                        "/sensors",
-                        "/fetch/**"
+                        "/sensors"
 
                 )
                 .authenticated()

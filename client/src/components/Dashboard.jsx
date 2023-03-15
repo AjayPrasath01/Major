@@ -14,12 +14,13 @@ import socketErrorHandler from "./utils/socketErrorHandler";
 import socketConnectionOpenHandler from "./utils/socketConnectionOpenHandler";
 import socketConnectionClosedHandler from "./utils/socketConnectionClosedHandler";
 import getDataCounts from "./utils/getDataCounts";
-import { ResizableBox } from "react-resizable";
+import { RadioButtonGroup } from "react-rainbow-components";
 import "react-resizable/css/styles.css";
 import socketMessageHandler from "./utils/socketMessageHandler";
 import socketSend from "./utils/socketSend";
 import offsetBody from "./utils/offsetBody";
 import NoData from "./NoData";
+import DataPointCounter from "./DataPointCounter";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
@@ -32,7 +33,6 @@ function Dashboard(props) {
 	const [logs, setLogs] = useState([]);
 	const csvLink = useRef();
 	const sock = useRef(null);
-	const handleDataForSock = useRef({});
 	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const navigate = useNavigate();
@@ -46,42 +46,10 @@ function Dashboard(props) {
 		return { startDate, endDate: new Date(), chartType: "bar", isLive: true };
 	});
 
-	// const requestDataInSocketOnChnageValue = useCallback(() => {
-
-	// 	//SensorType is heat, freq
-	// }, [selectedMachine.machineName, selectedMachine.sensorType])
-
-	// const [dataCardDetails, setDataCardDetails] = useState({width: });
-
-	// const [startDateTime, setStartDateTime] = useState(() => {
-	// 	let date = new Date();
-	// 	// date.setHours(date.getHours() - 3);
-	// 	// date = date.toLocaleString("en-US", {
-	// 	// 	hour12: false,
-	// 	// 	year: "numeric",
-	// 	// 	month: "2-digit",
-	// 	// 	day: "2-digit",
-	// 	// 	hour: "2-digit",
-	// 	// 	minute: "2-digit",
-	// 	// 	second: "2-digit",
-	// 	// });
-	// 	return date;
-	// });
-
-	// const [endDateTime, setEndDateTime] = useState(() => {
-	// 	let date = new Date();
-	// 	// date.setHours(date.getHours() - 3);
-	// 	// date = date.toLocaleString("en-US", {
-	// 	// 	hour12: false,
-	// 	// 	year: "numeric",
-	// 	// 	month: "2-digit",
-	// 	// 	day: "2-digit",
-	// 	// 	hour: "2-digit",
-	// 	// 	minute: "2-digit",
-	// 	// 	second: "2-digit",
-	// 	// });
-	// 	return date;
-	// });
+	const modeOptions = [
+		{ value: "dev", label: "DEV" },
+		{ value: "prod", label: "PROD" },
+	];
 
 	const dataCountCall = () => {
 		getDataCounts(props, selectedMachine, setDataCount, organization);
@@ -89,16 +57,20 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		dataCountCall();
-		const socketRequest = {
-			isAlive: chartDetails.isLive,
-			dataSubscribed: true,
-			machineName: selectedMachine.machineName,
-			sensor: selectedMachine.selectedSensor,
-			startDate: chartDetails.startDate,
-			endDate: chartDetails.endDate,
-		};
-		if (sock.current?.readyState === 1) {
-			socketSend(sock, socketRequest);
+		const sensorMode = selectedMachine.selectedSensor?.split(":");
+		if (sensorMode) {
+			const socketRequest = {
+				isAlive: chartDetails.isLive,
+				dataSubscribed: true,
+				machineName: selectedMachine.machineName,
+				sensor: sensorMode[0],
+				startDate: chartDetails.startDate,
+				endDate: chartDetails.endDate,
+				mode: sensorMode[1],
+			};
+			if (sock.current?.readyState === 1) {
+				socketSend(sock, socketRequest);
+			}
 		}
 	}, [
 		selectedMachine,
@@ -286,6 +258,24 @@ function Dashboard(props) {
 		// csvLink.current.link.click();
 	}
 
+	function onModeChange() {
+		setSelectedMachine((previous) => {
+			const mode = previous.selectedSensor.split(":")[1];
+			if (mode == "dev") {
+				previous.selectedSensor = previous.selectedSensor.replace(
+					"dev",
+					"prod"
+				);
+			} else {
+				previous.selectedSensor = previous.selectedSensor.replace(
+					"prod",
+					"dev"
+				);
+			}
+			return { ...previous };
+		});
+	}
+
 	return (
 		<>
 			<NavBar
@@ -323,7 +313,8 @@ function Dashboard(props) {
 											onClick={downloadCSV}
 										>
 											<h4 className="download-content-holder">
-												Download data of {selectedMachine.selectedSensor} of{" "}
+												Download data of{" "}
+												{selectedMachine.selectedSensor.split(":")[0]} of{" "}
 												{selectedMachine.machineName}
 											</h4>
 											<i className="down-arrow-download">↓</i>
@@ -362,11 +353,14 @@ function Dashboard(props) {
 										return (
 											<button
 												className="Switcher my-button"
-												disabled={data == selectedMachine.selectedSensor}
+												disabled={
+													data?.split(":")[0] ==
+													selectedMachine.selectedSensor.split(":")[0]
+												}
 												data={data}
 												onClick={sensorTabClicked}
 											>
-												{data}
+												{data?.split(":")[0]}
 											</button>
 										);
 									})}
@@ -433,9 +427,13 @@ function Dashboard(props) {
 										</button>
 									</div>
 								</div>
-								<p className="data-point-count">
-									Overall Data points : {dataCount}
-								</p>
+								<DataPointCounter count={dataCount} />
+								<RadioButtonGroup
+									className="mode-picker"
+									value={selectedMachine.selectedSensor.split(":")[1]}
+									options={modeOptions}
+									onChange={onModeChange}
+								/>
 								<span className="chart-switcher-holder">
 									<button
 										className="my-button chart-switcher"

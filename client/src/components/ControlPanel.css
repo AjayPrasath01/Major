@@ -241,14 +241,15 @@ thead{
     text-align: center;
     color: white;
     transition: 0.1s;
+    font-style: oblique;
 }
 
 .dev{
-    background-color: #d80000;
+    background-color: #76B4FF;
 }
 
 .prod{
-    background-color: green;
+    background-color: rgb(0, 145, 0);
 }
 
 .action-column{

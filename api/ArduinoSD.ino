@@ -9,7 +9,7 @@
 
 String ORGANIZATION = "<ORGANIZATIONNAME>";
 String TOKEN = "<TOKEN>";
-const String SERVER_URL = "http://122.174.237.0:9990";
+const String SERVER_URL = "<DOMAIN_ADDRESS>";
 const String MACHINENAME = "<MACHINENAME>";
 bool TESTING = true;
 long dataSent = 0;
@@ -28,73 +28,14 @@ const int SERIAL_PORT = 9600;
 //=========================================== SERIAL PORT END ==========================================================
 //======================================================================================================================
 //=========================================== Required Functions =======================================================
-void print(Printable data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
-
-void print(String data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
-
-void print(int data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
-
-void print(long data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
-
-void print(double data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
-
-void print(bool data, bool newLine = false){
-  if (Serial.available()){
-    if (newLine){
-      Serial.println(data);
-    }else{
-      Serial.print(data);
-    }
-  }
-}
 
 void connectWiFi(){
   // Connect to Wi-Fi network
-  print("", true);
-  print("", true);
-  print("Connecting to ");
-  print(SSID, true);
-  print(".....");
+  Serial.println("");
+  Serial.println("");
+  Serial.print("Connecting to ");
+  Serial.print(SSID, true);
+  Serial.print(".....");
 
 
   WiFi.begin(SSID, PASSWORD);
@@ -103,15 +44,15 @@ void connectWiFi(){
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    print(".");
+    Serial.print(".");
   }
-  print("", true);
-  print("Wi-Fi connected successfully", true);
+  Serial.println("");
+  Serial.println("Wi-Fi connected successfully");
 
-  print("IP address: ");
-  print(WiFi.localIP(), true);
-  print("RSSI: ");
-  print(WiFi.RSSI(), true);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+  Serial.print("RSSI: ");
+  Serial.println(WiFi.RSSI());
 
 
 }
@@ -139,7 +80,7 @@ void log(String log, String logType){
 }
 
 String dataSenderUrlGenerator(String dataValue, String dataType, String sensorName){
-  String url = SERVER_URL + "/api/setter/data?dataValue=" + dataValue + "&dataType=" + ataType + "&machineName=" + MACHINENAME + "&sensorName=" + sensorName + "&organization=" + ORGANIZATION + "&token=" + TOKEN;
+  String url = SERVER_URL + "/api/setter/data?dataValue=" + dataValue + "&dataType=" + dataType + "&machineName=" + MACHINENAME + "&sensorName=" + sensorName + "&organization=" + ORGANIZATION + "&token=" + TOKEN;
 }
 
 void addDataSentInTestIng(){
@@ -150,7 +91,7 @@ if (TESTING){
 // Datatype like hertz, celcius,
 bool sendData(int dataValue, String dataType, String sensorName){
   addDataSentInTestIng();
-  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName)
+  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName);
   http.begin(wificlient, url);
   http.addHeader("host", SERVER_URL);
   int code = http.GET();
@@ -165,7 +106,7 @@ bool sendData(int dataValue, String dataType, String sensorName){
 
 bool sendData(float dataValue, String dataType, String sensorName){
   addDataSentInTestIng();
-  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName)
+  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName);
   http.begin(wificlient, url);
   http.addHeader("host", SERVER_URL);
   int code = http.GET();
@@ -180,7 +121,7 @@ bool sendData(float dataValue, String dataType, String sensorName){
 
 bool sendData(long dataValue, String dataType, String sensorName){
   addDataSentInTestIng();
-  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName)
+  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName);
   http.begin(wificlient, url);
   http.addHeader("host", SERVER_URL);
   int code = http.GET();
@@ -195,7 +136,7 @@ bool sendData(long dataValue, String dataType, String sensorName){
 
 bool sendData(double dataValue, String dataType, String sensorName){
    addDataSentInTestIng();
-  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName)
+  String url = dataSenderUrlGenerator(String(dataValue), dataType, sensorName);
   http.begin(wificlient, url);
   http.addHeader("host", SERVER_URL);
   int code = http.GET();

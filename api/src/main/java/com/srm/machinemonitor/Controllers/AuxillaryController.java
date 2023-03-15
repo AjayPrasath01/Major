@@ -13,6 +13,7 @@ import com.srm.machinemonitor.Modes;
 import com.srm.machinemonitor.Services.*;
 import com.srm.machinemonitor.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -44,6 +45,9 @@ public class AuxillaryController {
 
     Map<String, String> res;
 
+    @Value("${clientDomainName}")
+    String clientDomain;
+
     @Autowired
     LogDAO logDAO;
 
@@ -58,6 +62,9 @@ public class AuxillaryController {
 
     @Autowired
     DataDAO dataDAO;
+
+    @Autowired
+    DevDataDAO devDataDAO;
 
     @Autowired
     OrganizationDAO organizationDAO;
@@ -225,7 +232,7 @@ public class AuxillaryController {
     }
 
     @GetMapping("/count/data/points")
-    public ResponseEntity countDataPoints(@RequestParam("machinename") String machineName, @RequestParam("organization") String organizationName, @RequestParam("sensor") String sensor, HttpServletResponse response, Principal principal) throws IOException {
+    public ResponseEntity countDataPoints(@RequestParam("machinename") String machineName, @RequestParam("organization") String organizationName, @RequestParam("sensor") String sensor, @RequestParam("mode") String mode, HttpServletResponse response, Principal principal) throws IOException {
         Map data = Utils.verifyOrgnaization(response, principal, organizationName, organizationDAO);
         if (data == null){
             return null;
@@ -239,7 +246,15 @@ public class AuxillaryController {
             res.put("message", "Machine with the selected sensor not found");
             return new ResponseEntity(res, HttpStatus.NOT_FOUND);
         }
-        BigInteger dataPoints = dataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+        mode = mode.toLowerCase();
+        BigInteger dataPoints = null;
+        if (mode.equals(Modes.DEV.toString())){
+            dataPoints = devDataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+        }else if(mode.equals(Modes.PROD.toString())){
+            dataPoints = dataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+        }else {
+            return new ResponseEntity("Bad mode", HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity(dataPoints, HttpStatus.OK);
     }
@@ -394,6 +409,7 @@ public class AuxillaryController {
         fileContent  = fileContent.replace("<TOKEN>", secert);
         fileContent  = fileContent.replace("<ORGANIZATIONNAME>", addDeviceRequest.getOrganization());
         fileContent  = fileContent.replace("<MACHINENAME>", addDeviceRequest.getMachineName());
+        fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", clientDomain);
         if (addDeviceRequest.getSsid() != null && addDeviceRequest.getPassword() != null){
             fileContent  = fileContent.replace("<SSIDPASSWORD>", addDeviceRequest.getPassword());
             fileContent  = fileContent.replace("<SSIDNAME>", addDeviceRequest.getSsid());

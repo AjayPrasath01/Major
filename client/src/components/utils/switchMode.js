@@ -1,8 +1,7 @@
 import fetchMachineNames from "./fetchMachineNames";
 
-export default (props, setDeviceList, data, sensor, organization) => {
-	const { machineName, mode } = data;
-	console.log({ data });
+export default (props, setDeviceList, mode, sensor, machineName, organization) => {
+	sensor = sensor.split(":")[0];
 	props.axios_instance
 		.put("api/switch/mode", {
 			machineName,

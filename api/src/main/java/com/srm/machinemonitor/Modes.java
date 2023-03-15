@@ -9,7 +9,7 @@ public enum Modes {
         this.currentMode = mode;
     }
 
-    public String getCurrentMode() {
+    public String toString() {
         return currentMode;
     }
 }

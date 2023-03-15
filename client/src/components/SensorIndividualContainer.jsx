@@ -2,18 +2,21 @@ import React from "react";
 import switchMode from "./utils/switchMode";
 
 function SensorIndividualContainer(props) {
-	const {
-		sensor,
-		removeSensorClicked,
-		data,
-		mode,
-		setDeviceList,
-		organization,
-	} = props;
-	console.log({ data });
+	let { sensor, removeSensorClicked, data, mode, setDeviceList, organization } =
+		props;
+	const sensorMode = sensor.split(":");
+	sensor = sensorMode[0];
+	mode = sensorMode[1];
 	function onModeClick() {
-		data.mode = data.mode === "dev" ? "prod" : "dev";
-		switchMode(props, setDeviceList, data, sensor, organization);
+		mode = mode === "dev" ? "prod" : "dev";
+		switchMode(
+			props,
+			setDeviceList,
+			mode,
+			sensor,
+			data.machineName,
+			organization
+		);
 	}
 	return (
 		<span className="sensor-individual-holder">
