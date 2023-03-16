@@ -409,7 +409,7 @@ public class AuxillaryController {
         fileContent  = fileContent.replace("<TOKEN>", secert);
         fileContent  = fileContent.replace("<ORGANIZATIONNAME>", addDeviceRequest.getOrganization());
         fileContent  = fileContent.replace("<MACHINENAME>", addDeviceRequest.getMachineName());
-        fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", clientDomain);
+        fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", "http:" + clientDomain.split(":")[1] + ":9009");
         if (addDeviceRequest.getSsid() != null && addDeviceRequest.getPassword() != null){
             fileContent  = fileContent.replace("<SSIDPASSWORD>", addDeviceRequest.getPassword());
             fileContent  = fileContent.replace("<SSIDNAME>", addDeviceRequest.getSsid());

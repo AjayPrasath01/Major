@@ -81,6 +81,7 @@ void log(String log, String logType){
 
 String dataSenderUrlGenerator(String dataValue, String dataType, String sensorName){
   String url = SERVER_URL + "/api/setter/data?dataValue=" + dataValue + "&dataType=" + dataType + "&machineName=" + MACHINENAME + "&sensorName=" + sensorName + "&organization=" + ORGANIZATION + "&token=" + TOKEN;
+  return url;
 }
 
 void addDataSentInTestIng(){

@@ -545,7 +545,7 @@ function Dashboard(props) {
 								</>
 							) : (
 								<NoData
-									title={`No data in ${selectedMachine.machineName} at ${selectedMachine.selectedSensor} sensor`}
+									title={`No data in ${selectedMachine.machineName} at ${selectedMachine.selectedSensor.split(":")[0]} sensor`}
 									animFile={noDataAnim}
 									marginTop={"3vh"}
 									marginBottom={"15vh"}
