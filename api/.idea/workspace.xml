@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7c29411-07fb-4055-97ca-e3ee37fa9d09" name="Changes" comment="Small changes v1" />
+    <list default="true" id="c7c29411-07fb-4055-97ca-e3ee37fa9d09" name="Changes" comment="Small changes v1">
+      <change beforePath="$PROJECT_DIR$/../client/build/asset-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/build/asset-manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../client/build/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/static/css/main.3487869c.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/static/css/main.3487869c.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.c196e141.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.c196e141.js.LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.c196e141.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/ControlPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/ControlPanel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/LoginPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/SensorIndividualContainer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/SensorIndividualContainer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/axios.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/utils/addSensor.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/utils/addSensor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/utils/socketErrorHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/utils/socketErrorHandler.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,7 +77,10 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.intentionPowerPack" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="advanced.settings" />
   </component>
   <component name="RunManager">
     <configuration name="MachinemonitorApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -110,52 +131,52 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>386</line>
+          <line>387</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>393</line>
+          <line>394</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>380</line>
+          <line>381</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>519</line>
+          <line>570</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>511</line>
+          <line>562</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>331</line>
+          <line>332</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>324</line>
+          <line>325</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Handlers/WebSocketHandlers.java</url>
-          <line>238</line>
+          <line>209</line>
           <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Handlers/WebSocketHandlers.java</url>
-          <line>236</line>
+          <line>207</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Handlers/WebSocketHandlers.java</url>
-          <line>281</line>
+          <line>252</line>
           <option name="timeStamp" value="40" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -180,7 +201,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/srm/machinemonitor/Controllers/AuxillaryController.java</url>
-          <line>141</line>
+          <line>142</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
       </breakpoints>

@@ -18,15 +18,23 @@ public interface DataDAO extends JpaRepository<Data, BigInteger> {
     @Query(value="SELECT COUNT(*) FROM data WHERE data.machineId = ?1 AND data.data_type <> ?2", nativeQuery = true)
     BigInteger countByMachineIDAndDatatype(BigInteger machineId, String dataType);
 
-    @Query(value="SELECT * FROM data WHERE data.date >= ?2 AND data.date <= ?3 AND data.machineId = ?1 ORDER BY data.date ASC", nativeQuery = true)
+    @Query(value="SELECT * FROM data u WHERE u.date >= ?2 AND u.date <= ?3 AND u.machineId = ?1 ORDER BY u.date ASC", nativeQuery = true)
     List<Data> getDataBetweenTimeWithMachineId(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
+    @Query(value="SELECT * FROM data u WHERE u.date >= ?2 AND u.date <= ?3 AND u.machineId = ?1 ORDER BY u.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
     List<DevData> getDataBetweenTimeWithMachineIdWithLimitAndOffset(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate, int limit, long offset);
 
     List<Data> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date);
 
     List<BaseData> findAllByMachineId(BigInteger machineId);
+
+    @Modifying
+    @Query(value="UPDATE data u SET u.value = ?2 where u.id = ?1", nativeQuery = true)
+    void changeDataByIdandValue(BigInteger id, String value);
+
+    @Modifying
+    @Query(value="DELETE FROM data u where u.id = ?1", nativeQuery = true)
+    void deleteDataById(BigInteger id);
 
     @Modifying
     void deleteAllByMachineId(BigInteger machineId);

@@ -84,7 +84,9 @@ function Dashboard(props) {
 		offsetBody();
 		loginStausChecker(props, navigate, { setOrganization, setUsername });
 
-		sock.current = new SockJS(props.server + "/ws", {
+		console.log("called");
+
+		sock.current = new SockJS("/ws", {
 			headers: { "X-XSRF-TOKEN": props.xsrf },
 		});
 
@@ -545,7 +547,9 @@ function Dashboard(props) {
 								</>
 							) : (
 								<NoData
-									title={`No data in ${selectedMachine.machineName} at ${selectedMachine.selectedSensor.split(":")[0]} sensor`}
+									title={`No data in ${selectedMachine.machineName} at ${
+										selectedMachine.selectedSensor.split(":")[0]
+									} sensor`}
 									animFile={noDataAnim}
 									marginTop={"3vh"}
 									marginBottom={"15vh"}

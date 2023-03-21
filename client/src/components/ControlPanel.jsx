@@ -10,6 +10,7 @@ import addSensor from "./utils/addSensor";
 import getAllUsers from "./utils/getAllUsers";
 import offsetBody from "./utils/offsetBody";
 import SensorIndividualContainer from "./SensorIndividualContainer";
+import extractSensorFromRaw from "./utils/extractSensorFromRaw";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -150,6 +151,13 @@ function ControlPanel(props) {
 			event.target.parentNode.querySelector("input").value = "";
 		}
 		if (event.target.nodeName === "BUTTON" || event.key === "Enter") {
+			old_data.sensorType = old_data.sensorType.split(",").map((element) => {
+				if (element !== event.target.getAttribute("rawsensor")) {
+					element = extractSensorFromRaw(element);
+					return element;
+				}
+			});
+			old_data.sensorType = old_data.sensorType.join(",");
 			old_data.sensorType += `,${new_data}`;
 			old_data.organization = organization;
 			console.log({ old_data });
@@ -168,16 +176,13 @@ function ControlPanel(props) {
 	function removeSensorClicked(event) {
 		const data = JSON.parse(event.target.getAttribute("data"));
 		const previousLength = data.sensorType;
-		data.sensorType = data.sensorType.replace(
-			"," + event.target.getAttribute("sensor"),
-			""
-		);
-		if (previousLength === data.sensorType.length) {
-			data.sensorType = data.sensorType.replace(
-				event.target.getAttribute("sensor"),
-				""
-			);
-		}
+		data.sensorType = data.sensorType.split(",").map((element) => {
+			if (element !== event.target.getAttribute("rawsensor")) {
+				element = extractSensorFromRaw(element);
+				return element;
+			}
+		});
+		data.sensorType = data.sensorType.join(",");
 		addSensor(
 			props,
 			{

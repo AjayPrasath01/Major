@@ -67,35 +67,6 @@ public class WebSocketHandlers extends TextWebSocketHandler {
 //    final static List<Map> clients = new CopyOnWriteArrayList<>();
 
     final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//    @Override
-//    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-//        /*
-//        Subscribing here
-//        JsonObject should have values like lastDataTime, machineName, sensorName
-//         */
-//        System.out.println("mes : " + message.getPayload());
-//        JSONObject mes = new JSONObject(message.getPayload());
-//        System.out.println("mes : " + mes);
-//        if (mes.has("machineName")){
-//            Map currentClient = clients.get(sessions.indexOf(session));
-//            System.out.println(clients);
-//            System.out.println(sessions);
-//            System.out.println(sessions.indexOf(session));
-//            currentClient.put("machineName", mes.get("machineName"));
-//            currentClient.put("sensorName", mes.get("sensorName"));
-//            LocalDateTime dateTime;
-//            if (!mes.has("startDate")){
-//                dateTime = LocalDateTime.parse("1999-01-01 00:00:00", formatter);
-//            }else{
-//                DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss");
-//                dateTime = (LocalDateTime.parse((CharSequence) mes.get("startDate"), formatter2));
-//                System.out.println(dateTime.getMonth());
-//            }
-//            currentClient.put("lastData", dateTime);
-//            currentClient.put("firstRequest", true);
-//            System.out.println(currentClient);
-//        }
-//    }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -181,7 +152,7 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         clientDataSubscribe.remove(session.getId());
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 500)
     public void HandleRequest() throws IOException {
         for (ConcurrentHashMap clientDetails : clientsMap.values()){
             try {
@@ -223,7 +194,7 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         }
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 500)
     public void DataSheduledSender() throws IOException {
         for (ConcurrentHashMap clientDetails : clientDataSubscribe.values()){
             if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && clientDetails.containsKey(Constants.MODE) && (boolean)clientDetails.get(Constants.ISHANDLED)){
@@ -243,8 +214,8 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         }
     }
 
-    @Scheduled(fixedRate = 1000)
-    public void LodSheduledSender() throws IOException {
+    @Scheduled(fixedRate = 500)
+    public void LogSheduledSender() throws IOException {
         for (ConcurrentHashMap clientDetails : clientLogSubscribe.values()){
             LocalDateTime lastValueTime = null;
             if (clientDetails.containsKey(Constants.LASTSENTVALUE)){

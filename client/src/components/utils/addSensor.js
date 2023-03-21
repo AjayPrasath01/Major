@@ -1,6 +1,7 @@
 import fetchMachineNames from "./fetchMachineNames";
 export default (props, newMachineData, setDeviceList) => {
 	let element = document.getElementById("table_status3");
+	console.log(newMachineData);
 	props.axios_instance
 		.put("/api/update/sensors", { ...newMachineData })
 		.then((res) => {

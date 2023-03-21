@@ -9,7 +9,6 @@ import {
 import LoginPage from "./components/LoginPage";
 import NavBar from "./components/NavBar";
 import { useEffect } from "react";
-import axios from "axios";
 import Cookies from "universal-cookie";
 import Dashboard from "./components/Dashboard";
 import ControlPanel from "./components/ControlPanel";

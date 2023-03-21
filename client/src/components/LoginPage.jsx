@@ -30,23 +30,28 @@ function LoginPage(props) {
 			element.innerText = "Please enter the Organization";
 			element.style.display = "block";
 		} else {
-			console.log("Lgon in details is being sent");
+			console.log("Login in details is being sent");
 			props.axios_instance
-				.post("/login", { username, password, organization })
-				.then((res) => {})
+				.post("/api/login", { username, password, organization })
+				.then((res) => {
+					console.log(res);
+					if (res.status == 200) {
+						navigate("/dashboard", { username, organization });
+					}
+				})
 				.catch((err) => {
-					if (!err.response){
+					if (!err.response) {
 						const element = document.getElementById("logerror");
 						element.innerText = "Can't reah the server";
 						element.style.display = "block";
-					}else
-					if (err.response.status === 401) {
+					} else if (err.response.status === 401) {
 						const element = document.getElementById("logerror");
 						element.innerText = err.response.data.message;
 						element.style.display = "block";
 					} else if (err.response.status === 404) {
-						console.log("Loged in");
-						navigate("/dashboard", { username, organization });
+						const element = document.getElementById("logerror");
+						element.innerText = "Server can't be reached";
+						element.style.display = "block";
 					}
 					console.log(err);
 				});
@@ -69,7 +74,11 @@ function LoginPage(props) {
 						onKeyDown={keyPressed}
 						onChange={(e) => setUsername(e.target.value)}
 					></input>
-					<PasswordInputField password={password} keyPressed={keyPressed} setPassword={setPassword}/>
+					<PasswordInputField
+						password={password}
+						keyPressed={keyPressed}
+						setPassword={setPassword}
+					/>
 				</div>
 				<input
 					className="input-field-login"

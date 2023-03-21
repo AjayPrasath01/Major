@@ -1,6 +1,7 @@
 package com.srm.machinemonitor.Configs;
 
 import com.srm.machinemonitor.Filters.AuthFilter;
+import com.srm.machinemonitor.Handlers.CustomSuccessAuthHandlers;
 import com.srm.machinemonitor.Services.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         AuthFilter authFilter = new AuthFilter();
         authFilter.setAuthenticationManager(authenticationManager());
+        authFilter.setAuthenticationSuccessHandler(new CustomSuccessAuthHandlers());
         http
                 .cors()
                 .and()

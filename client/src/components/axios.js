@@ -1,5 +1,5 @@
 import axios from "axios";
-export const SERVER = "http://10.5.155.48:9099";
+export const SERVER = undefined;
 
 export const instance = axios.create({
 	baseURL: SERVER,

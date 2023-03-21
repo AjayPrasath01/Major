@@ -4,7 +4,6 @@ import com.srm.machinemonitor.Constants;
 import com.srm.machinemonitor.CustomExceptions.UnauthorizedException;
 import com.srm.machinemonitor.CustomExceptions.UserNotFoundException;
 import com.srm.machinemonitor.Models.Other.CustomUserDetails;
-import com.srm.machinemonitor.Models.Requests.*;
 import com.srm.machinemonitor.Models.Tables.Log;
 import com.srm.machinemonitor.Models.Tables.Machines;
 import com.srm.machinemonitor.Models.Tables.Organizations;
@@ -25,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import com.srm.machinemonitor.Models.Requests.*;
+
 
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -498,6 +499,56 @@ public class AuxillaryController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @PutMapping("/change/data")
+    @Transactional
+    public ResponseEntity<Map> changeData(@RequestBody @Valid ChangeDataRequest changeDataRequest, HttpServletResponse response, Principal principal) throws IOException {
+        Map data = Utils.verifyAdminAndOrganizationIDOR(response, principal, changeDataRequest.getOrganization(), organizationDAO);
+        if (data == null){
+            return null;
+        }
+        final Map res = new HashMap();
+        if (changeDataRequest.getIds().length != changeDataRequest.getValues().length){
+            res.put("message", "ids doesn't map with values");
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
+        Long index = 0L;
+        for (BigInteger id : changeDataRequest.getIds()){
+            if (changeDataRequest.getMode() == Modes.DEV){
+                devDataDAO.changeDataByIdandValue(id, changeDataRequest.getValues()[Math.toIntExact(index)]);
+            }else{
+                dataDAO.changeDataByIdandValue(id, changeDataRequest.getValues()[Math.toIntExact(index)]);
+            }
+        }
+        res.put("message", "Updated the values");
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/remove/data")
+    @Transactional
+    public ResponseEntity<Map> deleteData(@RequestBody @Valid ChangeDataRequest changeDataRequest, HttpServletResponse response, Principal principal) throws IOException {
+        Map data = Utils.verifyAdminAndOrganizationIDOR(response, principal, changeDataRequest.getOrganization(), organizationDAO);
+        if (data == null){
+            return null;
+        }
+        final Map res = new HashMap();
+        if (changeDataRequest.getIds().length != changeDataRequest.getValues().length){
+            res.put("message", "ids doesn't map with values");
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
+        Long index = 0L;
+        for (BigInteger id : changeDataRequest.getIds()){
+            if (changeDataRequest.getMode() == Modes.DEV){
+                devDataDAO.deleteById(id);
+            }else{
+                dataDAO.deleteById(id);
+            }
+        }
+        res.put("message", "Removed the values given");
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
 
     @DeleteMapping("/remove/machine")
     @Transactional

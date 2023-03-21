@@ -22,7 +22,7 @@ import java.util.Map;
 public class AuthFilter extends AbstractAuthenticationProcessingFilter {
 
     public AuthFilter() {
-        super(new AntPathRequestMatcher("/login", "POST"));
+        super(new AntPathRequestMatcher("/api/login", "POST"));
     }
 
     @Override

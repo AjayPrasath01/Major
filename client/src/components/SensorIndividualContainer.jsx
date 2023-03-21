@@ -4,6 +4,7 @@ import switchMode from "./utils/switchMode";
 function SensorIndividualContainer(props) {
 	let { sensor, removeSensorClicked, data, mode, setDeviceList, organization } =
 		props;
+	const rawSensor = sensor;
 	const sensorMode = sensor.split(":");
 	sensor = sensorMode[0];
 	mode = sensorMode[1];
@@ -31,6 +32,7 @@ function SensorIndividualContainer(props) {
 				className="remove-sensor-button"
 				onClick={removeSensorClicked}
 				sensor={sensor}
+				rawSensor={rawSensor}
 				data={JSON.stringify(data)}
 			>
 				⛔️
