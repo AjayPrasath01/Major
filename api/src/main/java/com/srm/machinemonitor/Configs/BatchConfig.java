@@ -51,8 +51,6 @@ public class BatchConfig {
 
     @Bean
     public Step transferStep(ItemReader<DevData> sourceItemReader) {
-//        System.out.println("transfer step : ");
-//        System.out.println(ids);
         return stepBuilderFactory.get("transferStep")
                 .<DevData, Data>chunk(1)
                 .reader(sourceItemReader)

@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7c29411-07fb-4055-97ca-e3ee37fa9d09" name="Changes" comment="Small changes v1">
-      <change beforePath="$PROJECT_DIR$/../client/build/asset-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/static/css/main.9caad0a8.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/static/css/main.9caad0a8.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.2a477ee6.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.2a477ee6.js.LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/build/static/js/main.2a477ee6.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/ControlPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/ControlPanel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/CreateAccountPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/CreateAccountPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/LoginPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/NavBar.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/NavBar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/NavBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/NavBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/PositionSensorDisplay.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/PositionSensorDisplay.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="c7c29411-07fb-4055-97ca-e3ee37fa9d09" name="Changes" comment="Small changes v1" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
