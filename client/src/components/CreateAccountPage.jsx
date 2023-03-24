@@ -2,7 +2,7 @@ import React from "react";
 import "./LoginPage.css";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import PasswordInputField from "./PasswordInputField";
+import PasswordInputField from "./PasswordInputField.jsx";
 
 function CreateAccountPage(props) {
 	const [username, setUsername] = useState("");

@@ -5,6 +5,8 @@ import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Tables.Machines;
 import com.srm.machinemonitor.Services.MachinesDAO;
 import com.srm.machinemonitor.Services.OrganizationDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +22,8 @@ import java.security.Principal;
 import java.util.*;
 
 public class Utils {
+
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     @CachePut
     @Cacheable(cacheNames = "monitor_cache", key = "#principal + '_' + #organizationName")

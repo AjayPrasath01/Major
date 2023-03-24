@@ -26,4 +26,7 @@ public class Constants {
     public static String PROD = "prod";
     public static String ADMIN = "admin";
     public static String MODE = "mode";
+    public static String STATUS = "STATUS";
+    public static String COMPLETED = "COMPLETED";
+
 }

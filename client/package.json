@@ -18,17 +18,21 @@
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-lottie-player": "^1.5.4",
-    "react-rainbow-components": "^1.31.0",
+    "react-rainbow-components": "^1.32.0",
     "react-resizable": "^3.0.4",
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "sockjs-client": "^1.6.1",
     "styled-components": "^5.3.6",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "watch": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
+    "watch": "watch 'npm run build' ",
     "build": "react-scripts build && cp -r build/* ../api/src/main/resources/static",
+    "webpack:dev": "webpack --mode development --watch",
+    "webpack:production": "webpack --mode production",
     "build:start": "react-scripts build && cp -r build/* ../api/src/main/resources/static && mvn -f ../api spring-boot:run",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -52,7 +56,22 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "babel-loader": "^9.1.2",
     "copy-webpack-plugin": "^11.0.0",
-    "ncp": "^2.0.0"
+    "css-loader": "^6.7.3",
+    "html-loader": "^4.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "json-loader": "^0.5.7",
+    "ncp": "^2.0.0",
+    "react-dev-utils": "^12.0.1",
+    "style-loader": "^3.3.2",
+    "svg-url-loader": "^8.0.0",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.13.1",
+    "webpack-manifest-plugin": "^5.0.0"
   }
 }

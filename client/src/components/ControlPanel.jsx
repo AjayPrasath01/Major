@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "./NavBar";
+import NavBar from "./NavBar.jsx";
 import "./ControlPanel.css";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,8 +9,9 @@ import fetchMachineNames from "./utils/fetchMachineNames";
 import addSensor from "./utils/addSensor";
 import getAllUsers from "./utils/getAllUsers";
 import offsetBody from "./utils/offsetBody";
-import SensorIndividualContainer from "./SensorIndividualContainer";
+import SensorIndividualContainer from "./SensorIndividualContainer.jsx";
 import extractSensorFromRaw from "./utils/extractSensorFromRaw";
+import DataModifierSection from "./sections/DataModifierSection.jsx";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -29,7 +30,6 @@ function ControlPanel(props) {
 	});
 
 	useEffect(() => {
-		offsetBody();
 		if (organization && organization !== "") {
 			getAllUsers(props, setAllUsers, organization);
 			fetchMachineNames(props, setDeviceList);
@@ -322,7 +322,7 @@ function ControlPanel(props) {
 
 	return (
 		<div>
-			<NavBar visible="true" title={organization} username={username} />
+			{/* <NavBar visible="true" title={organization} username={username} /> */}
 			<div className="container">
 				<div className="cp">
 					<h1 className="subtitle">Change Password</h1>
@@ -421,7 +421,7 @@ function ControlPanel(props) {
 							<p id="table_status"></p>
 						</div>
 					</div>
-
+					<DataModifierSection />
 					<div className="container">
 						<div className="dl">
 							<h1 className="subtitle">Devices Available</h1>

@@ -1,10 +1,7 @@
 package com.srm.machinemonitor.Models.Tables;
 
 import com.srm.machinemonitor.Models.Other.BaseData;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -16,6 +13,13 @@ import java.util.Date;
 import java.util.TimeZone;
 
 @Entity
+@Getter
+@Setter
 public class Data extends BaseData {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "BIGINT")
+    private BigInteger id;
 
 }

@@ -1,59 +1,75 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./NavBar.css";
-import { useState } from "react";
-import ReactDOM from "react-dom";
 import { NavLink } from "react-router-dom";
+import offsetBody from "./utils/offsetBody";
 
 function NavBar(props) {
-	const [profileClickEvent, setProfileClickEvent] = useState(null);
-	function killSockets() {
-		console.log("kill sockets");
-		console.log(props.sockets.current);
-		if (props.sockets.current.length > 0) {
-			props.sockets.current.map((value) => {
-				value.current.close();
-				console.log("Kiling heart beat of id ");
+	const [username, setUsername] = useState("");
+	const [organization, setOrganization] = useState("");
+	const [isVisible, setIsVisible] = useState(false);
+
+	useEffect(() => {
+		props.axios_instance
+			.get("/api/user")
+			.then(({ data }) => {
+				console.log(data);
+				setUsername(data.username);
+				setOrganization(data.organization);
+			})
+			.catch((error) => {
+				// TODO
 			});
+	}, []);
+
+	useEffect(() => {
+		if (
+			window.location.hash === "#/dashboard" ||
+			window.location.hash === "#/controlpanel"
+		) {
+			console.log("Setting visible");
+			setIsVisible(true);
+		} else {
+			setIsVisible(false);
 		}
-	}
+		console.log(window.location.hash);
+	}, [window.location.hash]);
+
+	useEffect(() => {
+		offsetBody();
+	}, [isVisible]);
 	return (
-		<div className="navbar">
-			<span className="logo-container">
-				<p className="logo">{props.title}</p>
-			</span>
-			<span>
+		<>
+			<div
+				className="navbar"
+				style={isVisible ? undefined : { display: "none" }}
+			>
+				<span className="logo-container">
+					<p className="logo">{organization}</p>
+				</span>
 				<span>
-					{props.visible == "true" ? (
-						<>
-							<NavLink to="/dashboard" className="links">
-								Dashboard
-							</NavLink>
-							<NavLink
-								to={{
-									pathname: "/controlpanel",
-								}}
-								onClick={killSockets}
-								className="links"
-							>
-								Control Panel
-							</NavLink>
-						</>
-					) : (
-						<></>
-					)}
-					{/* <span className='theme_toggle'>Light Mode</span> */}
-					<span
-						className="user-icon"
-						id="userIcon"
-						onClick={setProfileClickEvent}
-					>
-						<h1 className="userTitle">
-							{props.username.slice(0, 2).toUpperCase()}
-						</h1>
+					<span>
+						<NavLink to="/dashboard" className="links">
+							Dashboard
+						</NavLink>
+						<NavLink
+							to={{
+								pathname: "/controlpanel",
+							}}
+							className="links"
+						>
+							Control Panel
+						</NavLink>
+
+						{/* <span className='theme_toggle'>Light Mode</span> */}
+						<span className="user-icon" id="userIcon">
+							<h1 className="userTitle">
+								{username.slice(0, 2).toUpperCase()}
+							</h1>
+						</span>
 					</span>
 				</span>
-			</span>
-		</div>
+			</div>
+		</>
 	);
 }
 

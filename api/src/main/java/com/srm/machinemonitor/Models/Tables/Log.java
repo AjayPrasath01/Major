@@ -17,14 +17,14 @@ public class Log {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "NUMERIC(38,0)")
+    @Column(columnDefinition = "BIGINT")
     BigInteger id;
 
     @Column
     @NonNull
     String machineName;
 
-    @Column(name="organizationId")
+    @Column(name="organizationId", columnDefinition = "BIGINT")
     BigInteger organizationId;
 
     @Column

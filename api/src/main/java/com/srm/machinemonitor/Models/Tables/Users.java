@@ -19,7 +19,7 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "NUMERIC(38,0)")
+    @Column(columnDefinition = "BIGINT")
     BigInteger id;
 
     @NonNull
@@ -44,7 +44,7 @@ public class Users {
     @Column(columnDefinition="boolean default true")
     Boolean isActive;
 
-    @Column(name="organizationId")
+    @Column(name="organizationId", columnDefinition = "BIGINT")
     BigInteger organizationId;
 
     @ManyToOne(targetEntity = Organizations.class, cascade = CascadeType.ALL)

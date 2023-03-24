@@ -11,6 +11,14 @@ import com.srm.machinemonitor.Models.Tables.Users;
 import com.srm.machinemonitor.Modes;
 import com.srm.machinemonitor.Services.*;
 import com.srm.machinemonitor.Utils;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -23,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import com.srm.machinemonitor.Models.Requests.*;
 
@@ -72,6 +81,12 @@ public class AuxillaryController {
 
     @Autowired
     CacheManager cacheManager;
+
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    private Job transferJob;
 
 
     @RequestMapping("")
@@ -539,12 +554,32 @@ public class AuxillaryController {
         Long index = 0L;
         for (BigInteger id : changeDataRequest.getIds()){
             if (changeDataRequest.getMode() == Modes.DEV){
-                devDataDAO.deleteById(id);
+                devDataDAO.deleteDataById(id);
             }else{
-                dataDAO.deleteById(id);
+                dataDAO.deleteDataById(id);
             }
         }
         res.put("message", "Removed the values given");
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PatchMapping("/migrate/data")
+    public ResponseEntity<Map> migarateData(@RequestBody @Valid MigarateDataRequest migarateDataRequest, HttpServletResponse response, Principal principal) throws IOException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Map data = Utils.verifyAdminAndOrganizationIDOR(response, principal, migarateDataRequest.getOrganization(), organizationDAO);
+        if (data == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) data.get(Constants.ORGANIZATION_ID);
+        System.out.println(StringUtils.arrayToCommaDelimitedString(migarateDataRequest.getIds()));
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .addString("ids", StringUtils.arrayToCommaDelimitedString(migarateDataRequest.getIds()))
+                .addLong("organizationId", organizationId.longValueExact())
+                .toJobParameters();
+
+        jobLauncher.run(transferJob, jobParameters);
+        final Map res = new HashMap();
+        res.put("message", "Your request is recieved");
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

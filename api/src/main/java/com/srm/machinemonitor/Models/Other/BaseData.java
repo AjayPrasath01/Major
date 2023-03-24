@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class BaseData {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "NUMERIC(38,0)")
+    @Column(columnDefinition = "BIGINT")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     @NonNull
@@ -35,6 +35,6 @@ public class BaseData {
     public String value;
 
     @NonNull
-    @Column
+    @Column(columnDefinition = "BIGINT")
     BigInteger machineId;
 }

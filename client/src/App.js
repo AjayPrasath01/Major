@@ -1,4 +1,6 @@
 import "./App.css";
+import React from "react";
+import NavBar from "./components/NavBar.jsx";
 import {
 	BrowserRouter,
 	matchPath,
@@ -6,14 +8,13 @@ import {
 	Routes,
 	HashRouter,
 } from "react-router-dom";
-import LoginPage from "./components/LoginPage";
-import NavBar from "./components/NavBar";
+import LoginPage from "./components/LoginPage.jsx";
 import { useEffect } from "react";
 import Cookies from "universal-cookie";
-import Dashboard from "./components/Dashboard";
-import ControlPanel from "./components/ControlPanel";
+import Dashboard from "./components/Dashboard.jsx";
+import ControlPanel from "./components/ControlPanel.jsx";
 import { instance, SERVER } from "./components/axios";
-import CreateAccountPage from "./components/CreateAccountPage";
+import CreateAccountPage from "./components/CreateAccountPage.jsx";
 
 function App() {
 	const cookie = new Cookies();
@@ -24,6 +25,10 @@ function App() {
 	return (
 		<div className="bc">
 			<HashRouter>
+			<NavBar
+				axios_instance={instance}
+				
+			/>
 				<Routes>
 					<Route
 						exact

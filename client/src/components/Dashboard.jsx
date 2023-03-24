@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import NavBar from "./NavBar";
 import "./Dashboard.css";
 import { CSVLink } from "react-csv";
-import BarChart from "./BarChart";
-import LineChart from "./LineChart";
+import BarChart from "./BarChart.jsx";
+import LineChart from "./LineChart.jsx";
 import * as SockJS from "sockjs-client";
-import PositionSensorDisplay from "./PositionSensorDisplay";
-import { CheckboxToggle, DateTimePicker } from "react-rainbow-components";
+import { CheckboxToggle, DateTimePicker, RadioButtonGroup } from "react-rainbow-components";
 import { useNavigate } from "react-router-dom";
 import loginStausChecker from "./utils/loginStausChecker";
 import noDataAnim from "../assets/noDataAnim.json";
@@ -14,13 +12,11 @@ import socketErrorHandler from "./utils/socketErrorHandler";
 import socketConnectionOpenHandler from "./utils/socketConnectionOpenHandler";
 import socketConnectionClosedHandler from "./utils/socketConnectionClosedHandler";
 import getDataCounts from "./utils/getDataCounts";
-import { RadioButtonGroup } from "react-rainbow-components";
 import "react-resizable/css/styles.css";
 import socketMessageHandler from "./utils/socketMessageHandler";
 import socketSend from "./utils/socketSend";
-import offsetBody from "./utils/offsetBody";
-import NoData from "./NoData";
-import DataPointCounter from "./DataPointCounter";
+import NoData from "./NoData.jsx";
+import DataPointCounter from "./DataPointCounter.jsx";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
@@ -36,7 +32,6 @@ function Dashboard(props) {
 	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const navigate = useNavigate();
-	const sockets = useRef([]);
 	const [socketDetails, setSocketDetails] = useState({
 		isSocketConnected: false,
 	});
@@ -81,21 +76,7 @@ function Dashboard(props) {
 	]);
 
 	useEffect(() => {
-		offsetBody();
 		loginStausChecker(props, navigate, { setOrganization, setUsername });
-
-		console.log("called");
-
-		sock.current = new SockJS("/ws", {
-			headers: { "X-XSRF-TOKEN": props.xsrf },
-		});
-
-		socketErrorHandler(sock);
-		socketMessageHandler(sock, setLogs, setData, setDataCount);
-		socketConnectionOpenHandler(sock, setSocketDetails);
-		socketConnectionClosedHandler(sock, setSocketDetails);
-
-		sockets.current.push(sock);
 
 		props.axios_instance.get(`api/fetch/machineNames`).then((res) => {
 			console.log("machinenames", res);
@@ -111,6 +92,22 @@ function Dashboard(props) {
 			}
 		});
 	}, []);
+
+	useEffect(() => {
+		if (organization) {
+			sock.current = new SockJS("/ws", {
+				headers: { "X-XSRF-TOKEN": props.xsrf },
+			});
+
+			socketErrorHandler(sock);
+			socketMessageHandler(sock, setLogs, setData, setDataCount);
+			socketConnectionOpenHandler(sock, setSocketDetails);
+			socketConnectionClosedHandler(sock, setSocketDetails);
+			return () => {
+				sock.current?.close();
+			};
+		}
+	}, [organization]);
 
 	function commandKeyDown(event) {
 		if (event.key === "Enter" && event.target.value !== "") {
@@ -170,49 +167,6 @@ function Dashboard(props) {
 			}
 		});
 
-		// props.axios_instance
-		// 	.get("/sensors", {
-		// 		params: { machineName: event.target.getAttribute("data") },
-		// 	})
-		// 	.then((res) => {
-		// 		setSensors(res.data);
-		// 		if (res.data[0] == undefined) {
-		// 			setX([]);
-		// 			setY([]);
-		// 		} else if (selectedSensor != res.data[0] && res.data[0] != undefined) {
-		// 			setSelectedSensor(res.data[0]);
-		// 			console.log("Sensor : " + res.data[0]);
-		// 			setX([]);
-		// 			setY([]);
-		// 			console.log(
-		// 				"Sending : " +
-		// 					JSON.stringify({
-		// 						machineName: event.target.getAttribute("data"),
-		// 						sensorName: res.data[0],
-		// 					})
-		// 			);
-		// 			sock.current.send(
-		// 				JSON.stringify({
-		// 					machineName: event.target.getAttribute("data"),
-		// 					sensorName: res.data[0],
-		// 					startDate: dateTime,
-		// 				})
-		// 			);
-		// 		} else if (
-		// 			selectedMachine != event.target.getAttribute("data") &&
-		// 			res.data[0] != undefined
-		// 		) {
-		// 			setX([]);
-		// 			setY([]);
-		// 			sock.current.send(
-		// 				JSON.stringify({
-		// 					machineName: event.target.getAttribute("data"),
-		// 					sensorName: res.data[0],
-		// 					startDate: dateTime,
-		// 				})
-		// 			);
-		// 		}
-		// 	});
 	}
 
 	function viewLogClicked() {
@@ -234,17 +188,6 @@ function Dashboard(props) {
 			};
 		});
 		dataCountCall();
-		// if (selectedMachine.selectedSensor != event.target.getAttribute("data")) {
-		// 	setX([]);
-		// 	setY([]);
-		// 	sock.current.send(
-		// 		JSON.stringify({
-		// 			machineName: selectedMachine.machineName,
-		// 			sensorName: event.target.getAttribute("data"),
-		// 			startDate: startDateTime,
-		// 		})
-		// 	);
-		// }
 	}
 
 	function downloadCSV() {
@@ -280,12 +223,6 @@ function Dashboard(props) {
 
 	return (
 		<>
-			<NavBar
-				visible="true"
-				title={organization}
-				username={username}
-				sockets={sockets}
-			/>
 			<div className="dashboard">
 				{machineDetails.length > 0 ? (
 					<>

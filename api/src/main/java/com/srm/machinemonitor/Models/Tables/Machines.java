@@ -16,6 +16,7 @@ public class Machines {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BIGINT")
     private BigInteger id;
 
     @Column
@@ -30,7 +31,7 @@ public class Machines {
     @NonNull
     private String sensors;
 
-    @Column(name="organizationId")
+    @Column(name="organizationId", columnDefinition = "BIGINT")
     @NonNull
     private BigInteger organizationId;
 

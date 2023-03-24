@@ -19,6 +19,7 @@ public class Organizations {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(columnDefinition = "BIGINT")
     BigInteger id;
 
     @Column(unique=true)
@@ -27,6 +28,9 @@ public class Organizations {
 
     @Column(columnDefinition = "boolean default true")
     Boolean isActive;
+
+    @Column
+    String message;
 
     @ToString.Exclude
     @OneToMany(targetEntity = Users.class, cascade = CascadeType.ALL)

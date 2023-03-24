@@ -209,6 +209,7 @@ public class DataSender {
         }else if ((mode.equals(Modes.PROD.toString()))){
             data = dataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
         }
+        System.out.println(data);
         return new ResponseEntity(data, HttpStatus.OK);
     }
 

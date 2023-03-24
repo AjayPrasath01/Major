@@ -17,7 +17,7 @@ public class SuperAdmins {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "NUMERIC(38,0)")
+    @Column(columnDefinition = "BIGINT")
     BigInteger id;
 
     @NonNull
