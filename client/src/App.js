@@ -15,6 +15,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import ControlPanel from "./components/ControlPanel.jsx";
 import { instance, SERVER } from "./components/axios";
 import CreateAccountPage from "./components/CreateAccountPage.jsx";
+import ThanksYouPage from "./components/ThanksYouPage.jsx";
 
 function App() {
 	const cookie = new Cookies();
@@ -25,10 +26,7 @@ function App() {
 	return (
 		<div className="bc">
 			<HashRouter>
-			<NavBar
-				axios_instance={instance}
-				
-			/>
+				<NavBar axios_instance={instance} />
 				<Routes>
 					<Route
 						exact
@@ -93,6 +91,8 @@ function App() {
 							/>
 						}
 					/>
+
+					<Route exact path="/thankyou" element={<ThanksYouPage />} />
 				</Routes>
 			</HashRouter>
 		</div>

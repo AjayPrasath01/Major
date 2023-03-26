@@ -214,7 +214,7 @@ public class AuxillaryController {
         users.setUsername(regiesterNewUserRequest.getUsername());
         users.setPassword(passwordEncoder.encode(regiesterNewUserRequest.getPassword()));
         users.setEmail(regiesterNewUserRequest.getEmail());
-        users.setIsActive(true);
+        users.setIsActive(false);
         users.setRole(role);
         usersDAO.save(users);
         final Map<String, String> res = new HashMap<>();

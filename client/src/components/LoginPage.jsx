@@ -11,8 +11,11 @@ function LoginPage(props) {
 	const [organization, setOrganization] = useState("");
 
 	function keyPressed(event) {
+		const element = document.getElementById("logerror");
+		element.style.display = "none";
 		if (event.key === "Enter") {
-			login();
+			const loginButton = document.getElementById("login-button");
+			loginButton.click();
 		}
 	}
 
@@ -88,7 +91,7 @@ function LoginPage(props) {
 					type="text"
 					onChange={(e) => setOrganization(e.target.value)}
 				></input>
-				<button className="my-button" onClick={() => login()}>
+				<button id="login-button" className="my-button" onClick={() => login()}>
 					Login
 				</button>
 				<p id="logerror" className="warning"></p>

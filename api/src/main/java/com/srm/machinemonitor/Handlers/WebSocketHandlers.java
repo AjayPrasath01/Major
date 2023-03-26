@@ -154,7 +154,6 @@ public class WebSocketHandlers extends TextWebSocketHandler {
 
     @Scheduled(fixedRate = 500)
     public void HandleRequest() throws IOException {
-        System.out.println(clientsMap.size());
         for (ConcurrentHashMap clientDetails : clientsMap.values()){
             try {
                 if (clientDetails.containsKey(Constants.ISHANDLED) && !(boolean)clientDetails.get(Constants.ISHANDLED)){

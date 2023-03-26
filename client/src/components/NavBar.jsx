@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./NavBar.css";
 import { NavLink } from "react-router-dom";
 import offsetBody from "./utils/offsetBody";
+import { useLocation } from "react-router-dom";
 
 function NavBar(props) {
 	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
-
+	const location = useLocation();
 	useEffect(() => {
 		props.axios_instance
 			.get("/api/user")
@@ -17,14 +18,15 @@ function NavBar(props) {
 				setOrganization(data.organization);
 			})
 			.catch((error) => {
-				// TODO
+				// Do nothing
 			});
 	}, []);
 
 	useEffect(() => {
+		console.log(location.pathname);
 		if (
-			window.location.hash === "#/dashboard" ||
-			window.location.hash === "#/controlpanel"
+			location.pathname === "/dashboard" ||
+			location.pathname === "/controlpanel"
 		) {
 			console.log("Setting visible");
 			setIsVisible(true);
@@ -32,7 +34,7 @@ function NavBar(props) {
 			setIsVisible(false);
 		}
 		console.log(window.location.hash);
-	}, [window.location.hash]);
+	}, [location.pathname]);
 
 	useEffect(() => {
 		offsetBody();
@@ -63,7 +65,7 @@ function NavBar(props) {
 						{/* <span className='theme_toggle'>Light Mode</span> */}
 						<span className="user-icon" id="userIcon">
 							<h1 className="userTitle">
-								{username.slice(0, 2).toUpperCase()}
+								{username?.slice(0, 2).toUpperCase()}
 							</h1>
 						</span>
 					</span>

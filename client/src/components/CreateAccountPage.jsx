@@ -46,7 +46,7 @@ function CreateAccountPage(props) {
 					.then((res) => {
 						console.log(res);
 						if (res.status === 200) {
-							navigation("/");
+							navigation("/thankyou");
 						}
 					})
 					.catch((error) => {
@@ -89,9 +89,9 @@ function CreateAccountPage(props) {
 					></input>
 				</div>
 				<div className="section-container-create-account">
-					<PasswordInputField password={password} setPassword={setPassword}/>
+					<PasswordInputField password={password} setPassword={setPassword} />
 					<input
-						className="input-field-login create-account-input"
+						className="input-field-login create-account-input retype-password"
 						value={repassword}
 						placeholder="Retype Password"
 						type="password"
