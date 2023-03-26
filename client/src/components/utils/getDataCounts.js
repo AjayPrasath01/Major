@@ -1,4 +1,9 @@
-export default (props, selectedMachine, setDataCount, organization) => {
+export default (
+	axios_instance,
+	selectedMachine,
+	setDataCount,
+	organization
+) => {
 	if (
 		selectedMachine.machineName &&
 		organization &&
@@ -7,7 +12,7 @@ export default (props, selectedMachine, setDataCount, organization) => {
 		const sensorMode = selectedMachine.selectedSensor.split(":");
 		const sensor = sensorMode[0];
 		const mode = sensorMode[1];
-		props.axios_instance
+		axios_instance
 			.get("/api/count/data/points", {
 				params: {
 					machinename: selectedMachine.machineName,

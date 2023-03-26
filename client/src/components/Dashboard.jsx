@@ -4,7 +4,11 @@ import { CSVLink } from "react-csv";
 import BarChart from "./BarChart.jsx";
 import LineChart from "./LineChart.jsx";
 import * as SockJS from "sockjs-client";
-import { CheckboxToggle, DateTimePicker, RadioButtonGroup } from "react-rainbow-components";
+import {
+	CheckboxToggle,
+	DateTimePicker,
+	RadioButtonGroup,
+} from "react-rainbow-components";
 import { useNavigate } from "react-router-dom";
 import loginStausChecker from "./utils/loginStausChecker";
 import noDataAnim from "../assets/noDataAnim.json";
@@ -29,7 +33,6 @@ function Dashboard(props) {
 	const [logs, setLogs] = useState([]);
 	const csvLink = useRef();
 	const sock = useRef(null);
-	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const navigate = useNavigate();
 	const [socketDetails, setSocketDetails] = useState({
@@ -47,7 +50,7 @@ function Dashboard(props) {
 	];
 
 	const dataCountCall = () => {
-		getDataCounts(props, selectedMachine, setDataCount, organization);
+		getDataCounts(props.axios_instance, selectedMachine, setDataCount, organization);
 	};
 
 	useEffect(() => {
@@ -76,10 +79,11 @@ function Dashboard(props) {
 	]);
 
 	useEffect(() => {
-		loginStausChecker(props, navigate, { setOrganization, setUsername });
+		loginStausChecker(props.axios_instance, navigate, {
+			setOrganization,
+		});
 
 		props.axios_instance.get(`api/fetch/machineNames`).then((res) => {
-			console.log("machinenames", res);
 			if (res.data.length > 0) {
 				setMachineDetails(res.data);
 				setSelectedMachine((previousValue) => {
@@ -166,7 +170,6 @@ function Dashboard(props) {
 				dataCountCall();
 			}
 		});
-
 	}
 
 	function viewLogClicked() {

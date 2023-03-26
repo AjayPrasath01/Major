@@ -1,10 +1,14 @@
-export default (props, navigate, options) => {
-	props.axios_instance
+export default (axios_instance, navigate, options) => {
+	axios_instance
 		.get("api/login/status")
 		.then((res) => {
 			if (options) {
-				options.setOrganization(res.data.organization);
-				options.setUsername(res.data.username);
+				if (options.setOrganization) {
+					options.setOrganization(res.data.organization);
+				}
+				if (options.setUsername) {
+					options.setUsername(res.data.username);
+				}
 				if (options.setRole) {
 					options.setRole(res.data.role);
 				}

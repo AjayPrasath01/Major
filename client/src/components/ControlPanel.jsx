@@ -1,5 +1,4 @@
 import React from "react";
-import NavBar from "./NavBar.jsx";
 import "./ControlPanel.css";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +7,6 @@ import loginStausChecker from "./utils/loginStausChecker";
 import fetchMachineNames from "./utils/fetchMachineNames";
 import addSensor from "./utils/addSensor";
 import getAllUsers from "./utils/getAllUsers";
-import offsetBody from "./utils/offsetBody";
 import SensorIndividualContainer from "./SensorIndividualContainer.jsx";
 import extractSensorFromRaw from "./utils/extractSensorFromRaw";
 import DataModifierSection from "./sections/DataModifierSection.jsx";
@@ -32,18 +30,18 @@ function ControlPanel(props) {
 	useEffect(() => {
 		if (organization && organization !== "") {
 			getAllUsers(props, setAllUsers, organization);
-			fetchMachineNames(props, setDeviceList);
+			fetchMachineNames(props.axios_instance, setDeviceList);
 		}
 	}, [organization]);
 
 	useEffect(() => {
-		loginStausChecker(props, navigate, {
+		loginStausChecker(props.axios_instance, navigate, {
 			setOrganization,
 			setUsername,
 			location,
 			setRole,
 		});
-	});
+	}, []);
 
 	function change_password() {
 		const element = document.getElementById("cp_message");
@@ -162,7 +160,7 @@ function ControlPanel(props) {
 			old_data.organization = organization;
 			console.log({ old_data });
 			addSensor(
-				props,
+				props.axios_instance,
 				{
 					sensors: old_data.sensorType,
 					machineName: old_data.machineName,
@@ -184,7 +182,7 @@ function ControlPanel(props) {
 		});
 		data.sensorType = data.sensorType.join(",");
 		addSensor(
-			props,
+			props.axios_instance,
 			{
 				sensors: data.sensorType,
 				machineName: data.machineName,
@@ -205,7 +203,7 @@ function ControlPanel(props) {
 				element.style.color = "orange";
 				element.innerText = "Device removed Successfully !!!";
 
-				fetchMachineNames(props, setDeviceList);
+				fetchMachineNames(props.axios_instance, setDeviceList);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -240,29 +238,37 @@ function ControlPanel(props) {
 		if (event.key === "Enter") {
 			new_data = event.target.value;
 			event.target.value = "";
-			console.log("entered");
 		} else if (event.target.nodeName === "BUTTON") {
 			new_data = event.target.parentNode.querySelector("input").value;
 			event.target.parentNode.querySelector("input").value = "";
 		}
 		if (new_data) {
+			new_data = new_data.toLowerCase();
 			const waring_element = document.getElementById("gen_error");
+			console.log({ sensors: new_data });
 			if (
 				!addDeviceDetails.sensors.split(",").some((sensor) => {
 					sensor = sensor.replaceAll(".", "");
-					return sensor.toLowerCase() == new_data.toLowerCase();
+					return sensor.toLowerCase() == new_data;
 				})
 			) {
 				waring_element.style.display = "none";
 				setAddDeviceDetails((previous) => {
-					previous.sensors = previous.sensors.replaceAll(".", "");
-					if (previous.sensors == "") {
-						previous.sensors += new_data;
-					} else {
-						previous.sensors += "," + new_data;
+					if (
+						!addDeviceDetails.sensors.split(",").some((sensor) => {
+							sensor = sensor.replaceAll(".", "");
+							return sensor.toLowerCase() == new_data;
+						})
+					) {
+						previous.sensors = previous.sensors.replaceAll(".", "");
+						if (previous.sensors == "") {
+							previous.sensors += new_data;
+						} else {
+							previous.sensors += "," + new_data;
+						}
+						previous.sensors += ".";
 					}
-					previous.sensors += ".";
-					return { ...previous };
+					return previous;
 				});
 			} else {
 				waring_element.style.display = "block";
@@ -287,21 +293,27 @@ function ControlPanel(props) {
 						fileDownload(res.data, "ArduinoSD.ino");
 						element.style.display = "none";
 					}
-					fetchMachineNames(props, setDeviceList);
-					setAddDeviceDetails({
-						machineName: "",
-						wifi: true,
-						sensors: "",
+					fetchMachineNames(props.axios_instance, setDeviceList);
+					setAddDeviceDetails(() => {
+						return { machineName: "", wifi: true, sensors: "" };
 					});
 				})
 				.catch((err) => {
-					console.log(err);
+					const message = err.response?.data?.message;
 					if (err.response.status == 409) {
 						const element = document.getElementById("gen_error");
 						element.style.display = "block";
 						element.style.color = "red";
-						element.innerText = "Machine name is already in use";
-						console.log("Machine name is already in use");
+						if (message) {
+							element.innerText = message;
+						} else {
+							element.innerText = "Conflict error";
+						}
+					} else if (err.response.status == 400) {
+						const element = document.getElementById("gen_error");
+						element.style.display = "block";
+						element.style.color = "red";
+						element.innerText = "Bad request";
 					} else {
 						element.style.display = "block";
 						element.style.color = "red";
@@ -322,7 +334,6 @@ function ControlPanel(props) {
 
 	return (
 		<div>
-			{/* <NavBar visible="true" title={organization} username={username} /> */}
 			<div className="container">
 				<div className="cp">
 					<h1 className="subtitle">Change Password</h1>
@@ -421,7 +432,7 @@ function ControlPanel(props) {
 							<p id="table_status"></p>
 						</div>
 					</div>
-					<DataModifierSection />
+					<DataModifierSection machines={deviceList} />
 					<div className="container">
 						<div className="dl">
 							<h1 className="subtitle">Devices Available</h1>
@@ -574,26 +585,31 @@ function ControlPanel(props) {
 								<label>Sensors : </label>
 								<div className="sensor-input add-device-sensor-area">
 									<span>
+										{console.log({ addDeviceDetails })}
 										{addDeviceDetails.sensors.split(",").map((sensor) => {
-											if (sensor == "" || sensor == ".") {
+											if (sensor === "" || sensor === ".") {
 												return <></>;
 											} else {
 												return (
-													<span className="sensor-individual-holder add-device-individual-holder">
-														<p className="sensor-name-holder">
-															{sensor.replaceAll(".", "")}
-														</p>
-														<button
-															className="remove-sensor-button"
-															data={sensor}
-															onClick={addDeviceRemoveSensor}
-														>
-															⛔️
-														</button>
-													</span>
+													<>
+														<span className="sensor-individual-holder add-device-individual-holder">
+															<p className="sensor-name-holder">
+																{sensor?.replaceAll(".", "")}
+															</p>
+															{console.log({ sensor, console: "here" })}
+															<button
+																className="remove-sensor-button"
+																data={sensor}
+																onClick={addDeviceRemoveSensor}
+															>
+																⛔️
+															</button>
+														</span>
+													</>
 												);
 											}
 										})}
+										{console.log({ addDeviceDetails })}
 										<input
 											placeholder="Add sensor"
 											className="sensor-input"

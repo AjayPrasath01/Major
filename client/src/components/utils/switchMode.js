@@ -1,8 +1,8 @@
 import fetchMachineNames from "./fetchMachineNames";
 
-export default (props, setDeviceList, mode, sensor, machineName, organization) => {
+export default (axios_instance, setDeviceList, mode, sensor, machineName, organization) => {
 	sensor = sensor.split(":")[0];
-	props.axios_instance
+	axios_instance
 		.put("api/switch/mode", {
 			machineName,
 			sensor,
@@ -10,7 +10,7 @@ export default (props, setDeviceList, mode, sensor, machineName, organization) =
 			organization,
 		})
 		.then((res) => {
-			fetchMachineNames(props, setDeviceList);
+			fetchMachineNames(axios_instance, setDeviceList);
 		})
 		.catch(console.log);
 };

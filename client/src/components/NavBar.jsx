@@ -9,7 +9,7 @@ function NavBar(props) {
 	const [organization, setOrganization] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
 	const location = useLocation();
-	useEffect(() => {
+	const getUsersCall = () => {
 		props.axios_instance
 			.get("/api/user")
 			.then(({ data }) => {
@@ -20,6 +20,9 @@ function NavBar(props) {
 			.catch((error) => {
 				// Do nothing
 			});
+	};
+	useEffect(() => {
+		getUsersCall();
 	}, []);
 
 	useEffect(() => {
@@ -29,6 +32,9 @@ function NavBar(props) {
 			location.pathname === "/controlpanel"
 		) {
 			console.log("Setting visible");
+			if (!username || !organization) {
+				getUsersCall();
+			}
 			setIsVisible(true);
 		} else {
 			setIsVisible(false);

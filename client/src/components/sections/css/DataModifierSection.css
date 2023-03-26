@@ -8,6 +8,18 @@
 
 .modifier-function-holder{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
+.mode-picker-control-panel{
+    width: 20vw;
+}
+
+.dateTimepicker-control-panel{
+
+}
+
+.date-modifier-sections{
+    align-self: center;
+}

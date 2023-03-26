@@ -2,7 +2,7 @@ import React from "react";
 import switchMode from "./utils/switchMode";
 
 function SensorIndividualContainer(props) {
-	let { sensor, removeSensorClicked, data, mode, setDeviceList, organization } =
+	let { sensor, removeSensorClicked, data, mode, setDeviceList, organization, axios_instance } =
 		props;
 	const rawSensor = sensor;
 	const sensorMode = sensor.split(":");
@@ -11,7 +11,7 @@ function SensorIndividualContainer(props) {
 	function onModeClick() {
 		mode = mode === "dev" ? "prod" : "dev";
 		switchMode(
-			props,
+			axios_instance,
 			setDeviceList,
 			mode,
 			sensor,
@@ -32,7 +32,7 @@ function SensorIndividualContainer(props) {
 				className="remove-sensor-button"
 				onClick={removeSensorClicked}
 				sensor={sensor}
-				rawSensor={rawSensor}
+				rawsensor={rawSensor}
 				data={JSON.stringify(data)}
 			>
 				⛔️

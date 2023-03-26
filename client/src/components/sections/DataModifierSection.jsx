@@ -1,48 +1,82 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	CheckboxToggle,
 	DateTimePicker,
 	RadioButtonGroup,
-	InternalDropdown,
+	Picklist,
+	Option,
 } from "react-rainbow-components";
 import "./css/DataModifierSection.css";
 
-function DataModifierSection() {
+function DataModifierSection(props) {
+	const [startDate, setStartDate] = useState(new Date());
+	const [endDate, setEndDate] = useState(new Date());
+	const [mode, setMode] = useState("dev");
+
+	console.log({ machines: props.machines });
+
 	return (
 		<div className="container">
 			<h1 className="subtitle">Handle Data</h1>
 			<div className="modifier-function-holder">
-				<span>
+				<span className="date-modifier-sections">
 					<DateTimePicker
-						className="dateTimepicker"
+						className="dateTimepicker-control-panel"
 						formatStyle="large"
-						style={{
-							backgroundColor: "rgb(238, 237, 237)",
-							borderRadius: "15px",
-						}}
 						label="Start Datetime"
+						value={startDate}
 					/>
 
 					<DateTimePicker
-						className="dateTimepicker"
+						className="dateTimepicker-control-panel"
 						formatStyle="large"
-						style={{
-							backgroundColor: "rgb(238, 237, 237)",
-							borderRadius: "15px",
-						}}
 						label="End Datetime"
+						value={endDate}
 					/>
 				</span>
-				<span>
-					<InternalDropdown
-						label="Dropdown"
-						placeholder="Select an option"
-						options={[
-							{ value: "option1", label: "Option 1" },
-							{ value: "option2", label: "Option 2" },
-							{ value: "option3", label: "Option 3" },
-						]}
-					/>
+				<span className="date-modifier-sections">
+					<Picklist
+						className="mode-picker-control-panel"
+						label="Mode"
+						placeholder="Select an Mode"
+						value={mode}
+						onChange={(value) => setMode(value)}
+					>
+						<Option name="header" label="Modes" variant="header" />
+						<Option name="prod" label="Production" />
+						<Option name="dev" label="Development" />
+					</Picklist>
+
+					<Picklist
+						className="mode-picker-control-panel"
+						label="Machine"
+						placeholder="Select an Machine"
+						value={mode}
+						onChange={(value) => setMode(value)}
+						enableSearch
+					>
+						<Option name="header" label="Machines" variant="header" />
+						{props.machines.map((data) => {
+							return (
+								<Option name={data.machineName} label={data.machineName} />
+							);
+						})}
+					</Picklist>
+				</span>
+				<span className="date-modifier-sections">
+					<Picklist
+						className="mode-picker-control-panel"
+						label="Sensor"
+						placeholder="Select an Sensor"
+						value={mode}
+						onChange={(value) => setMode(value)}
+						enableSearch
+					>
+						<Option name="header" label="Sensors" variant="header" />
+						{/* {sensors.map((sensor) => {
+							return <Option name={sensor} label={sensor} />;
+						})} */}
+					</Picklist>
 				</span>
 			</div>
 		</div>

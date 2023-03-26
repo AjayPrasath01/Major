@@ -400,6 +400,10 @@ public class AuxillaryController {
         }
         String secert = UUID.randomUUID().toString();
         String sensors[] = addDeviceRequest.getSensors().split(",");
+        if (Utils.hasDuplicates(sensors)){
+            res.put("message", "Sensor Name should not repeating");
+            return new ResponseEntity(res, HttpStatus.CONFLICT);
+        }
         for (int i=0; i<sensors.length; i++){
             Machines machines = new Machines();
             machines.setMachineName(addDeviceRequest.getMachineName().toLowerCase());
