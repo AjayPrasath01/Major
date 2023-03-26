@@ -3,6 +3,10 @@
 node_modules/
 
 api/target/
-.idea
+.idea/
+api/.idea/
 .vscode
 /.vscode
+
+
+api/src/main/resources/static/
