@@ -11,13 +11,27 @@ import "./css/DataModifierSection.css";
 function DataModifierSection(props) {
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
-	const [mode, setMode] = useState("dev");
+	const [mode, setMode] = useState(null);
+	const [selectedMachine, setSelectedMachine] = useState({});
+
+	const onMachineSelect = (value) => {
+		props.machines.map((machine) => {
+			if (machine.machineName === value.name) {
+				setSelectedMachine({ ...machine, optionValue: value });
+			}
+			console.log({
+				value,
+				machine,
+				result: machine.machineName === value.name,
+			});
+		});
+	};
 
 	console.log({ machines: props.machines });
 
 	return (
 		<div className="container">
-			<h1 className="subtitle">Handle Data</h1>
+			<h1 id="handle-data" className="subtitle">Handle Data</h1>
 			<div className="modifier-function-holder">
 				<span className="date-modifier-sections">
 					<DateTimePicker
@@ -51,8 +65,8 @@ function DataModifierSection(props) {
 						className="mode-picker-control-panel"
 						label="Machine"
 						placeholder="Select an Machine"
-						value={mode}
-						onChange={(value) => setMode(value)}
+						value={selectedMachine.optionValue}
+						onChange={(value) => onMachineSelect(value)}
 						enableSearch
 					>
 						<Option name="header" label="Machines" variant="header" />
@@ -68,15 +82,29 @@ function DataModifierSection(props) {
 						className="mode-picker-control-panel"
 						label="Sensor"
 						placeholder="Select an Sensor"
-						value={mode}
+						value={selectedMachine.machineName}
 						onChange={(value) => setMode(value)}
 						enableSearch
 					>
 						<Option name="header" label="Sensors" variant="header" />
-						{/* {sensors.map((sensor) => {
-							return <Option name={sensor} label={sensor} />;
-						})} */}
+						{selectedMachine.sensorType
+							?.replaceAll(".", "")
+							.split(",")
+							.map((sensor) => {
+								sensor = sensor.split(":")[0];
+								return <Option name={sensor} label={sensor} />;
+							})}
 					</Picklist>
+				</span>
+				<span className="date-modifier-sections">
+					<button className="my-button dev data-handler-button">Fetch</button>
+					{mode?.name === "dev" ? (
+						<button className="my-button dev data-handler-button">
+							Migrate
+						</button>
+					) : (
+						<></>
+					)}
 				</span>
 			</div>
 		</div>

@@ -18,6 +18,10 @@
     border-radius: 30px;
 }
 
+.add-device-label{
+    font-size: medium !important;
+}
+
 .cp > div > input, label{
     padding: 0.3rem;
     margin: 0.5rem;
@@ -62,12 +66,13 @@
     border: none !important;
     padding: 0.5em;
     border-radius: 5px;
+    
 }
 
 .input-add-device{
     font-size: medium !important;
-    padding: 0.75em !important;
-
+    padding: 20px !important;
+    border-radius: 10px;
 }
 
 .no_data{
@@ -133,7 +138,6 @@ thead{
 }
 
 .machinename > *{
-    margin: 1em;
     padding: 0.2em;
     font-size: 18px;
 }

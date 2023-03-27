@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./NavBar.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import offsetBody from "./utils/offsetBody";
-import { useLocation } from "react-router-dom";
 
 function NavBar(props) {
 	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
+	const [isLogoutVisible, setLogoutVisible] = useState(false);
+	const navigate = useNavigate();
 	const location = useLocation();
 	const getUsersCall = () => {
 		props.axios_instance
@@ -21,8 +22,28 @@ function NavBar(props) {
 				// Do nothing
 			});
 	};
+
+	const handleClick = (event) => {
+		if (
+			"logout-button" !== event.srcElement.className &&
+			"user-icon" !== event.srcElement.className &&
+			"userTitle" !== event.srcElement.className
+		) {
+			console.log("Here", isLogoutVisible);
+			setLogoutVisible((previous) => {
+				if (previous) {
+					return false;
+				}
+			});
+		}
+	};
+
 	useEffect(() => {
+		document.addEventListener("click", handleClick);
 		getUsersCall();
+		return () => {
+			document.removeEventListener("click", handleClick);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -45,9 +66,16 @@ function NavBar(props) {
 	useEffect(() => {
 		offsetBody();
 	}, [isVisible]);
+
+	const onLogoutlicked = () => {
+		props.axios_instance.get("/api/logout").then((result) => {
+			navigate("/");
+		});
+	};
 	return (
 		<>
 			<div
+				id="nav-bar"
 				className="navbar"
 				style={isVisible ? undefined : { display: "none" }}
 			>
@@ -69,10 +97,24 @@ function NavBar(props) {
 						</NavLink>
 
 						{/* <span className='theme_toggle'>Light Mode</span> */}
-						<span className="user-icon" id="userIcon">
+						<span
+							className="user-icon"
+							id="userIcon"
+							onClick={() => setLogoutVisible(!isLogoutVisible)}
+						>
 							<h1 className="userTitle">
 								{username?.slice(0, 2).toUpperCase()}
 							</h1>
+							{isLogoutVisible ? (
+								<span className="dropdown-profile-icon">
+									<div class="triangle"></div>
+									<button className="logout-button" onClick={onLogoutlicked}>
+										Logout
+									</button>
+								</span>
+							) : (
+								<></>
+							)}
 						</span>
 					</span>
 				</span>

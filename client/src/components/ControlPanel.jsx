@@ -10,6 +10,7 @@ import getAllUsers from "./utils/getAllUsers";
 import SensorIndividualContainer from "./SensorIndividualContainer.jsx";
 import extractSensorFromRaw from "./utils/extractSensorFromRaw";
 import DataModifierSection from "./sections/DataModifierSection.jsx";
+import ControlPanelSectionSelector from "./ControlPanelSectionSelector.jsx";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -268,7 +269,7 @@ function ControlPanel(props) {
 						}
 						previous.sensors += ".";
 					}
-					return previous;
+					return { ...previous };
 				});
 			} else {
 				waring_element.style.display = "block";
@@ -333,11 +334,11 @@ function ControlPanel(props) {
 	}
 
 	return (
-		<div>
+		<div id="control-panel-body">
+			<ControlPanelSectionSelector />
 			<div className="container">
 				<div className="cp">
-					<h1 className="subtitle">Change Password</h1>
-
+					<h1 id="change-password" className="subtitle">Change Password</h1>
 					<div>
 						<label>Current Password</label>
 						<input
@@ -383,7 +384,7 @@ function ControlPanel(props) {
 				<>
 					<div className="container">
 						<div className="nu">
-							<h1 className="subtitle">All Users</h1>
+							<h1 id="all-users" className="subtitle">All Users</h1>
 							{allUsers.length == 0 ? (
 								<h3 className="no_data">No new Requests found</h3>
 							) : (
@@ -435,7 +436,7 @@ function ControlPanel(props) {
 					<DataModifierSection machines={deviceList} />
 					<div className="container">
 						<div className="dl">
-							<h1 className="subtitle">Devices Available</h1>
+							<h1 id="devices-available" className="subtitle">Devices Available</h1>
 							{deviceList.length == 0 ? (
 								<h3 className="no_data">No devices found</h3>
 							) : (
@@ -511,9 +512,9 @@ function ControlPanel(props) {
 
 					<div className="container last-container">
 						<div className="cg">
-							<h1 className="subtitle">Add Machine</h1>
+							<h1 id="add-machine" className="subtitle">Add Machine</h1>
 							<div className="machinename">
-								<label>Machine Name : </label>
+								<label className="add-device-label">Machine Name : </label>
 								<input
 									type="text"
 									className="input-change-password input-add-device"
@@ -527,68 +528,13 @@ function ControlPanel(props) {
 									}
 								></input>
 							</div>
-
 							<div className="wifitype">
-								<label>Need Wifi connection : </label>
-								<span>
-									<input
-										name="connectionType"
-										className="connection-check-box"
-										type="checkbox"
-										checked={true}
-										onChange={(event) =>
-											setAddDeviceDetails((previous) => {
-												return { ...previous, wifi: true };
-											})
-										}
-									></input>
-								</span>
-							</div>
-							<div>
-								{!addDeviceDetails.wifi ? (
-									<></>
-								) : (
-									<span className="input-add-device-wifi">
-										<div className="ssid_c">
-											<label className="wifi-labels">SSID -&gt; </label>
-											<input
-												type="text"
-												className="input-change-password input-add-device"
-												placeholder="Enter SSID"
-												onChange={(event) =>
-													setAddDeviceDetails((previous) => {
-														return { ...previous, ssid: event.target.value };
-													})
-												}
-											></input>
-										</div>
-										<div className="pass_c password-wifi">
-											<label className="wifi-labels">Password -&gt; </label>
-											<input
-												type="password"
-												className="input-change-password input-add-device"
-												placeholder="Enter Wifi Password"
-												onChange={(event) =>
-													setAddDeviceDetails((previous) => {
-														return {
-															...previous,
-															password: event.target.value,
-														};
-													})
-												}
-											></input>
-										</div>
-									</span>
-								)}
-							</div>
-							<div className="wifitype">
-								<label>Sensors : </label>
+								<label className="add-device-label">Sensors : </label>
 								<div className="sensor-input add-device-sensor-area">
 									<span>
-										{console.log({ addDeviceDetails })}
 										{addDeviceDetails.sensors.split(",").map((sensor) => {
 											if (sensor === "" || sensor === ".") {
-												return <></>;
+												// return <>Some thing</>;
 											} else {
 												return (
 													<>
@@ -596,7 +542,6 @@ function ControlPanel(props) {
 															<p className="sensor-name-holder">
 																{sensor?.replaceAll(".", "")}
 															</p>
-															{console.log({ sensor, console: "here" })}
 															<button
 																className="remove-sensor-button"
 																data={sensor}
@@ -609,7 +554,6 @@ function ControlPanel(props) {
 												);
 											}
 										})}
-										{console.log({ addDeviceDetails })}
 										<input
 											placeholder="Add sensor"
 											className="sensor-input"
@@ -623,6 +567,40 @@ function ControlPanel(props) {
 										</button>
 									</span>
 								</div>
+							</div>
+
+							<div>
+								<span className="input-add-device-wifi">
+									<div className="ssid_c">
+										<label className="wifi-labels">SSID -&gt; </label>
+										<input
+											type="text"
+											className="input-change-password input-add-device"
+											placeholder="Enter SSID"
+											onChange={(event) =>
+												setAddDeviceDetails((previous) => {
+													return { ...previous, ssid: event.target.value };
+												})
+											}
+										></input>
+									</div>
+									<div className="pass_c password-wifi">
+										<label className="wifi-labels">Password -&gt; </label>
+										<input
+											type="password"
+											className="input-change-password input-add-device"
+											placeholder="Enter Wifi Password"
+											onChange={(event) =>
+												setAddDeviceDetails((previous) => {
+													return {
+														...previous,
+														password: event.target.value,
+													};
+												})
+											}
+										></input>
+									</div>
+								</span>
 							</div>
 
 							<button

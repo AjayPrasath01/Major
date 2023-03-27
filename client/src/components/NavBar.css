@@ -68,6 +68,7 @@
 }
 
 .user-icon{
+  position: relative;
   margin-right: 10vw;
   margin-left: 1vw;
 }
@@ -87,4 +88,43 @@
   top: 150%;
   right: 0%;
   z-index: 100;
+}
+
+.logout-button{
+  background-color: rgba(255, 255, 255, 0);
+  outline: none;
+  border: none;
+  width: 100%;
+  float: left;
+  text-align: start;
+  color: #ffffff;
+  border-radius: 5px;
+  
+}
+
+.dropdown-profile-icon{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  left: -75%;
+  top: 220%;
+  padding: 0.5rem;
+  height: 1.5ch;
+  width: 100px;
+  background-color: #DEBC8C;
+  border-radius: 10px;
+}
+
+.dropdown-profile-icon .triangle::before{
+  content: "";
+  position: absolute;
+  top: -110%; /* adjust this value to change the triangle position */
+  left: calc(50% - 10px); /* adjust this value to change the triangle position */
+  border-top: 20px solid transparent;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #DEBC8C;
+  z-index: -5;
 }
