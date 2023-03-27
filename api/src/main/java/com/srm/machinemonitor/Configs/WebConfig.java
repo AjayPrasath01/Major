@@ -1,13 +1,16 @@
 package com.srm.machinemonitor.Configs;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -18,13 +21,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setUseLastModified(true)
                 .resourceChain(true)
-                .addResolver(new PathResourceResolver() {
-                    @Override
-                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
-                        Resource requestedResource = location.createRelative(resourcePath);
-                        return requestedResource.exists() && requestedResource.isReadable() ? requestedResource : new ClassPathResource("/static/index.html");
-                    }
-                });
+                .addResolver(new PathResourceResolver());
+    }
+
+    @Bean
+    public ResourceHttpRequestHandler resourceHttpRequestHandler() {
+        ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
+        requestHandler.setLocations(Collections.singletonList(new ClassPathResource("/static/")));
+        return requestHandler;
     }
 
 }
