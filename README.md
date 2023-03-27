@@ -54,3 +54,6 @@ Use the command below command
 * Now navigate to intellej Open /Major/api
 * Build the project with openjdk-18
 * Run the server by clciking the play button or use `mvn spring-boot:run' this works only when maven is installed
+
+# App will run at port 80 so the url will be http://localhost
+
