@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    margin-top: 3rem;
 }
 
 .mode-picker-control-panel{
@@ -24,10 +25,64 @@
     align-self: center;
 }
 
+.action-btn{
+    display: flex !important;
+    flex-direction: inherit !important;
+}
+
 .data-handler-button{
     padding: 20px;
     color: white;
     font-size: larger;
     font-weight: bolder;
     margin-bottom: 0;
+    margin: 0.5em;
+}
+
+.limit-holder{
+    display: flex;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-color: #76B4FF;
+    padding: 1rem;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 15%;
+}
+
+.with-side-element{
+    
+}
+
+.limit-input{
+    background-color: transparent;
+    border: none !important;
+    width: 45%;
+    font-size: 2em;
+    font-weight: bolder;
+    text-align: center;
+    color: white;
+}
+
+.limit-input:focus{
+    outline: none !important;
+    border: none !important;
+}
+
+.limit-input:active{
+    outline: none !important;
+    border: none !important;
+}
+
+.limit-text{
+    color: white;
+    font-weight: bolder;
+    font-size: 2em;
+}
+
+.inner{
+    font-size: 2em;
 }

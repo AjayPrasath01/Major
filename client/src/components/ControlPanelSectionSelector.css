@@ -11,6 +11,7 @@
 .section-selector:hover{
     background-color: rgb(118,180,255);
     color: white;
+    cursor: pointer;
 }
 
 .section-selector-holder{
@@ -20,6 +21,7 @@
     right: 0px;
     display: flex !important;
     flex-direction: column;
+    z-index: 10;
 }
 
 .section-selector:first-child{

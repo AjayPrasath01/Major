@@ -24,11 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResolver(new PathResourceResolver());
     }
 
-    @Bean
-    public ResourceHttpRequestHandler resourceHttpRequestHandler() {
-        ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
-        requestHandler.setLocations(Collections.singletonList(new ClassPathResource("/static/")));
-        return requestHandler;
-    }
+
 
 }

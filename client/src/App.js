@@ -12,12 +12,14 @@ import LoginPage from "./components/LoginPage.jsx";
 import { useEffect } from "react";
 import Cookies from "universal-cookie";
 import { instance, SERVER } from "./components/axios";
-import CreateAccountPage from "./components/CreateAccountPage.jsx";
-import ThanksYouPage from "./components/ThanksYouPage.jsx";
 import LoadingPage from "./components/LoadingPage.jsx";
 
 const LazyDashboard = lazy(() => import("./components/Dashboard.jsx"));
 const LazyControlPanel = lazy(() => import("./components/ControlPanel.jsx"));
+const LazyCreateAccountPage = lazy(() =>
+	import("./components/CreateAccountPage.jsx")
+);
+const LazyThankYouPage = lazy(() => import("./components/ThanksYouPage.jsx"));
 
 function App() {
 	const cookie = new Cookies();
@@ -73,7 +75,7 @@ function App() {
 							exact
 							path="/createAccount"
 							element={
-								<CreateAccountPage
+								<LazyCreateAccountPage
 									axios_instance={instance}
 									server={SERVER}
 									endpoint="/api/register/new/user"
@@ -83,13 +85,13 @@ function App() {
 							}
 						/>
 
-						<Route exact path="/loading" element={<LoadingPage />} />
+						{/* <Route exact path="/loading" element={<LoadingPage />} /> */}
 
 						<Route
 							exact
 							path="/join"
 							element={
-								<CreateAccountPage
+								<LazyCreateAccountPage
 									axios_instance={instance}
 									server={SERVER}
 									endpoint="/api/join/organization"
@@ -103,7 +105,7 @@ function App() {
 							exact
 							path="/join"
 							element={
-								<CreateAccountPage
+								<LazyCreateAccountPage
 									axios_instance={instance}
 									server={SERVER}
 									endpoint="/api/join/organization"
@@ -113,7 +115,7 @@ function App() {
 							}
 						/>
 
-						<Route exact path="/thankyou" element={<ThanksYouPage />} />
+						<Route exact path="/thankyou" element={<LazyThankYouPage />} />
 					</Routes>
 				</Suspense>
 			</HashRouter>

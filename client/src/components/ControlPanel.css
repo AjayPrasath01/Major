@@ -1,5 +1,14 @@
 .subtitle{
     font-weight: 900;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    border-top-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #DEBC8C;
+    margin: 0;
+    color: wheat;
 }
 
 .container{
@@ -7,10 +16,13 @@
     padding: 50px;
     margin: 20px;
     border-radius: 30px;
+    position: relative;
+    margin-top: 10rem;
 }
 
 .cp{
     width: 30vw;
+    margin-top: 3rem;
 }
 
 .cp > p{
@@ -52,10 +64,6 @@
 .connection-check-box{
     border-color: transparent;
     border: none;
-}
-
-.subtitle {
-    margin-left: 2%;
 }
 
 .subtitle > div, button, p, label {

@@ -210,7 +210,12 @@ public class DataSender {
             data = dataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
         }
         System.out.println(data);
-        return new ResponseEntity(data, HttpStatus.OK);
+        final Map clientRes = new HashMap();
+        clientRes.put("data", data);
+        clientRes.put("pages", Math.ceilDivExact(data.size(), limit));
+        System.out.println("clientRes");
+        System.out.println(clientRes);
+        return new ResponseEntity<>(clientRes, HttpStatus.OK);
     }
 
     private LocalDateTime parseLocalDateTime(String dateTime){

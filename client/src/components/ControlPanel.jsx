@@ -433,7 +433,7 @@ function ControlPanel(props) {
 							<p id="table_status"></p>
 						</div>
 					</div>
-					<DataModifierSection machines={deviceList} />
+					<DataModifierSection machines={deviceList} axios_instance={props.axios_instance} organization={organization}/>
 					<div className="container">
 						<div className="dl">
 							<h1 id="devices-available" className="subtitle">Devices Available</h1>

@@ -83,6 +83,11 @@
   padding: 0.5em;
 }
 
+.userTitle:hover{
+  background-color: rgb(204, 172, 127);
+  cursor: pointer;
+}
+
 .logout{
   position: absolute;
   top: 150%;

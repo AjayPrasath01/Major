@@ -7,7 +7,8 @@ module.exports = {
 	entry: "./src/index.js",
 	output: {
 		// ../api/src/main/resources/static
-		publicPath: path.resolve("/"),   
+		
+		publicPath: "/",   
 		path: path.resolve(__dirname, OUTPATH),
 		filename: "bundle.js",
 	},

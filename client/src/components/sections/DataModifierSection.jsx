@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	CheckboxToggle,
 	DateTimePicker,
@@ -8,16 +8,20 @@ import {
 } from "react-rainbow-components";
 import "./css/DataModifierSection.css";
 
+const LIMIT = { max: 500, min: 10 };
+
 function DataModifierSection(props) {
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
 	const [mode, setMode] = useState(null);
 	const [selectedMachine, setSelectedMachine] = useState({});
+	const [limit, setLimit] = useState(10);
+	const [offset, setOffset] = useState(0);
 
 	const onMachineSelect = (value) => {
 		props.machines.map((machine) => {
 			if (machine.machineName === value.name) {
-				setSelectedMachine({ ...machine, optionValue: value });
+				setSelectedMachine({ ...machine, machineNameOptionValue: value });
 			}
 			console.log({
 				value,
@@ -27,11 +31,72 @@ function DataModifierSection(props) {
 		});
 	};
 
-	console.log({ machines: props.machines });
+	const onSensorSelected = (value) => {
+		setSelectedMachine((previous) => {
+			return { ...previous, sensorNameOptionValue: value };
+		});
+	};
+
+	useEffect(() => {
+		setSelectedMachine((previous) => {
+			return { ...previous, sensorNameOptionValue: {} };
+		});
+	}, [selectedMachine?.machineNameOptionValue?.name]);
+
+	const fetchClicked = () => {
+		console.log({
+			params: {
+				machineName: selectedMachine.machineNameOptionValue.name,
+				mode: mode.name,
+				sensor: selectedMachine.sensorNameOptionValue.name,
+				organization: props.organization,
+				startDate,
+				endDate,
+				limit,
+				offset,
+			},
+		});
+		props.axios_instance
+			.get("/api/fetch/data", {
+				params: {
+					machineName: selectedMachine.machineNameOptionValue.name,
+					mode: mode.name,
+					sensor: selectedMachine.sensorNameOptionValue.name,
+					organization: props.organization,
+					startDate,
+					endDate,
+					limit,
+					offset,
+				},
+			})
+			.then((response) => {
+				console.log(response);
+			})
+			.catch((error) => {});
+	};
 
 	return (
-		<div className="container">
-			<h1 id="handle-data" className="subtitle">Handle Data</h1>
+		<div className="container" style={{ position: "relative" }}>
+			<span className="subtitle with-side-element">
+				<span id="handle-data" className="inner">
+					Handle Data
+				</span>
+			</span>
+			<div className="limit-holder">
+				<span className="limit-text">Limit</span>
+				<input
+					class="limit-input"
+					type={"number"}
+					min={LIMIT.min}
+					max={LIMIT.max}
+					value={limit}
+					onChange={(event) =>
+						setLimit(
+							event.target.value <= LIMIT.max ? event.target.value : LIMIT.max
+						)
+					}
+				></input>
+			</div>
 			<div className="modifier-function-holder">
 				<span className="date-modifier-sections">
 					<DateTimePicker
@@ -39,6 +104,7 @@ function DataModifierSection(props) {
 						formatStyle="large"
 						label="Start Datetime"
 						value={startDate}
+						onChange={setStartDate}
 					/>
 
 					<DateTimePicker
@@ -46,6 +112,7 @@ function DataModifierSection(props) {
 						formatStyle="large"
 						label="End Datetime"
 						value={endDate}
+						onChange={setEndDate}
 					/>
 				</span>
 				<span className="date-modifier-sections">
@@ -65,7 +132,7 @@ function DataModifierSection(props) {
 						className="mode-picker-control-panel"
 						label="Machine"
 						placeholder="Select an Machine"
-						value={selectedMachine.optionValue}
+						value={selectedMachine.machineNameOptionValue}
 						onChange={(value) => onMachineSelect(value)}
 						enableSearch
 					>
@@ -82,8 +149,8 @@ function DataModifierSection(props) {
 						className="mode-picker-control-panel"
 						label="Sensor"
 						placeholder="Select an Sensor"
-						value={selectedMachine.machineName}
-						onChange={(value) => setMode(value)}
+						value={selectedMachine.sensorNameOptionValue}
+						onChange={(value) => onSensorSelected(value)}
 						enableSearch
 					>
 						<Option name="header" label="Sensors" variant="header" />
@@ -96,8 +163,13 @@ function DataModifierSection(props) {
 							})}
 					</Picklist>
 				</span>
-				<span className="date-modifier-sections">
-					<button className="my-button dev data-handler-button">Fetch</button>
+				<span className="date-modifier-sections action-btn">
+					<button
+						className="my-button dev data-handler-button"
+						onClick={fetchClicked}
+					>
+						Fetch
+					</button>
 					{mode?.name === "dev" ? (
 						<button className="my-button dev data-handler-button">
 							Migrate
@@ -106,6 +178,7 @@ function DataModifierSection(props) {
 						<></>
 					)}
 				</span>
+				<div></div>
 			</div>
 		</div>
 	);
