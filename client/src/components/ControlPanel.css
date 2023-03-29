@@ -164,6 +164,10 @@ thead{
     display: flex;
 }
 
+.cg{
+    margin-top: 2em;
+}
+
 .cg > .subtitle{
     margin-left: 0;
 }

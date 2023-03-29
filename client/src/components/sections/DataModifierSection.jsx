@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
 	CheckboxToggle,
 	DateTimePicker,
-	RadioButtonGroup,
+	Pagination,
 	Picklist,
 	Option,
 } from "react-rainbow-components";
@@ -17,6 +17,9 @@ function DataModifierSection(props) {
 	const [selectedMachine, setSelectedMachine] = useState({});
 	const [limit, setLimit] = useState(10);
 	const [offset, setOffset] = useState(0);
+	const [noPages, setNoPages] = useState(500);
+	const [data, setData] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	const onMachineSelect = (value) => {
 		props.machines.map((machine) => {
@@ -43,25 +46,20 @@ function DataModifierSection(props) {
 		});
 	}, [selectedMachine?.machineNameOptionValue?.name]);
 
+	function onClick(event) {
+		const error_element = document.getElementById("modifier-error-holder");
+		error_element.innerText = "";
+	}
+
+	document.addEventListener("click", onClick);
+
 	const fetchClicked = () => {
-		console.log({
-			params: {
-				machineName: selectedMachine.machineNameOptionValue.name,
-				mode: mode.name,
-				sensor: selectedMachine.sensorNameOptionValue.name,
-				organization: props.organization,
-				startDate,
-				endDate,
-				limit,
-				offset,
-			},
-		});
 		props.axios_instance
 			.get("/api/fetch/data", {
 				params: {
-					machineName: selectedMachine.machineNameOptionValue.name,
-					mode: mode.name,
-					sensor: selectedMachine.sensorNameOptionValue.name,
+					machineName: selectedMachine.machineNameOptionValue?.name,
+					mode: mode?.name,
+					sensor: selectedMachine.sensorNameOptionValue?.name,
 					organization: props.organization,
 					startDate,
 					endDate,
@@ -71,8 +69,41 @@ function DataModifierSection(props) {
 			})
 			.then((response) => {
 				console.log(response);
+				if (noPages !== response.data.pages) {
+					setCurrentPage(1);
+					setNoPages(response.data.pages);
+				}
+				setData(response.data.data);
 			})
-			.catch((error) => {});
+			.catch((error) => {
+				console.log(error);
+				const error_element = document.getElementById("modifier-error-holder");
+				if (error.response.status === 400) {
+					error_element.innerText = "Select all the values correctly";
+				} else {
+					let message = error.message;
+					if (message) {
+						error_element.innerText = message;
+					}
+				}
+				error_element.style.display = "block";
+				error_element.style.color = "red";
+			});
+	};
+
+	const updatClicked = () => {};
+
+	const deleteClicked = () => {};
+
+	const paginationChange = (event) => {
+		console.log(event);
+		if (event.target.ariaLabel === "Goto Previous Page") {
+			setCurrentPage(currentPage - 1);
+		} else if ("Goto Next Page" === event.target.ariaLabel) {
+			setCurrentPage(currentPage + 1);
+		} else {
+			setCurrentPage(parseInt(event.target.innerText));
+		}
 	};
 
 	return (
@@ -164,22 +195,96 @@ function DataModifierSection(props) {
 					</Picklist>
 				</span>
 				<span className="date-modifier-sections action-btn">
-					<button
-						className="my-button dev data-handler-button"
-						onClick={fetchClicked}
-					>
-						Fetch
-					</button>
-					{mode?.name === "dev" ? (
-						<button className="my-button dev data-handler-button">
-							Migrate
+					<span>
+						<button
+							className="my-button dev data-handler-button"
+							onClick={fetchClicked}
+						>
+							Fetch
 						</button>
-					) : (
-						<></>
-					)}
+						{mode?.name === "dev" ? (
+							<button className="my-button dev data-handler-button dia">
+								Migrate
+							</button>
+						) : (
+							<></>
+						)}
+					</span>
+					<span>
+						<button
+							className="my-button dev data-handler-button dia"
+							onClick={updatClicked}
+						>
+							Update
+						</button>
+						<button
+							className="my-button dev data-handler-button"
+							onClick={deleteClicked}
+						>
+							Delete
+						</button>
+					</span>
 				</span>
-				<div></div>
 			</div>
+			<div className="table-handle-data-holder">
+				<table className="table-handle-data">
+					<thead className="table-header-handle-data">
+						<tr>
+							<td>Date Time</td>
+							<td>Data Type</td>
+							<td>Value</td>
+							<td>Select</td>
+						</tr>
+					</thead>
+					<tbody className="table-body-handle-data">
+						{data.map((row, index) => {
+							if (row.isChecked === undefined) {
+								row.isChecked = false;
+							}
+							return (
+								<tr>
+									<td>{row.date}</td>
+
+									<td>{row.data_type}</td>
+
+									<td>
+										<input
+											className="value-editor"
+											type={"number"}
+											value={data[index].value}
+											onChange={(event) => {
+												const newData = [...data];
+												newData[index].value = event.target.value;
+												newData[index].isChecked = true;
+												setData(newData);
+											}}
+										/>
+									</td>
+									<td>
+										<input
+											type={"checkbox"}
+											checked={row.isChecked}
+											onChange={(event) => {
+												const newData = [...data];
+												newData[index].isChecked = !row.isChecked;
+												setData(newData);
+											}}
+										/>
+									</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<Pagination
+					pages={40}
+					activePage={currentPage}
+					onChange={paginationChange}
+				/>
+			</div>
+			<span id="modifier-error-holder"></span>
 		</div>
 	);
 }
