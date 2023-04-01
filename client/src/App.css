@@ -5,3 +5,34 @@
 body * {
   font-family: "Source Sans Pro",sans-serif;
 }
+.slide-right-left-rightEdge {
+  animation: slide-in 1s forwards;
+}
+
+.slide-out{
+  animation: slide-out 1s forwards;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

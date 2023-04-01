@@ -277,14 +277,40 @@ public class AuxillaryController {
         mode = mode.toLowerCase();
         BigInteger dataPoints = null;
         if (mode.equals(Modes.DEV.toString())){
-            dataPoints = devDataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+            dataPoints = devDataDAO.countByMachineID(machine.getId());
         }else if(mode.equals(Modes.PROD.toString())){
-            dataPoints = dataDAO.countByMachineIDAndDatatype(machine.getId(), "status");
+            dataPoints = dataDAO.countByMachineID(machine.getId());
         }else {
             return new ResponseEntity("Bad mode", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(dataPoints, HttpStatus.OK);
+    }
+
+    @GetMapping("/message/{organization}")
+    public ResponseEntity getMessages(@PathVariable(name = "organization") String organization, Principal principal, HttpServletResponse response) throws IOException {
+        Map verify = Utils.verifyOrgnaization(response, principal, organization, organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        Organizations organizations = organizationDAO.findById(organizationId).orElse(null);
+        return new ResponseEntity<>(organizations.getMessage(), HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/message/{organization}")
+    @Transactional
+    public ResponseEntity clearMessage(@PathVariable(name = "organization") String organization, Principal principal, HttpServletResponse response) throws IOException {
+        Map verify = Utils.verifyAdminAndOrganizationIDOR(response, principal, organization, organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        organizationDAO.deleteAllMessage(organizationId);
+        final Map res = new HashMap();
+        res.put("message", "All messages are deleted");
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @DeleteMapping("/block/user")

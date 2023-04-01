@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
 	CheckboxToggle,
 	DateTimePicker,
@@ -7,6 +7,12 @@ import {
 	Option,
 } from "react-rainbow-components";
 import "./css/DataModifierSection.css";
+import dataChangeRequest from "./helpers/dataChangeRequest";
+import dataGetRequest from "./helpers/dataGetRequest";
+import HandleDataActionButtons from "./subComponents/HandleDataActionButtons.jsx";
+import dataDeleteRequest from "./helpers/dataDeleteRequest";
+import dataMigrateRequest from "./helpers/dataMigrateRequest";
+import errorMessageDisplay from "../utils/errorMessageDisplay";
 
 const LIMIT = { max: 500, min: 10 };
 
@@ -16,10 +22,12 @@ function DataModifierSection(props) {
 	const [mode, setMode] = useState(null);
 	const [selectedMachine, setSelectedMachine] = useState({});
 	const [limit, setLimit] = useState(10);
-	const [offset, setOffset] = useState(0);
-	const [noPages, setNoPages] = useState(500);
+	let offset = useRef(0).current;
+	const [noPages, setNoPages] = useState(0);
 	const [data, setData] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const selectedData = useRef([]);
+	const [selectedCount, setSelectedCount] = useState(0);
 
 	const onMachineSelect = (value) => {
 		props.machines.map((machine) => {
@@ -51,52 +59,95 @@ function DataModifierSection(props) {
 		error_element.innerText = "";
 	}
 
+	useEffect(() => {
+		selectedData.current = data.filter((value) => {
+			return value.isChecked;
+		});
+		setSelectedCount(selectedData.current.length);
+	}, [data]);
+
+	useEffect(() => {
+		setData([]);
+	}, [startDate, endDate, mode, selectedMachine]);
+
 	document.addEventListener("click", onClick);
 
 	const fetchClicked = () => {
-		props.axios_instance
-			.get("/api/fetch/data", {
-				params: {
-					machineName: selectedMachine.machineNameOptionValue?.name,
-					mode: mode?.name,
-					sensor: selectedMachine.sensorNameOptionValue?.name,
-					organization: props.organization,
-					startDate,
-					endDate,
-					limit,
-					offset,
-				},
-			})
-			.then((response) => {
-				console.log(response);
-				if (noPages !== response.data.pages) {
-					setCurrentPage(1);
-					setNoPages(response.data.pages);
-				}
-				setData(response.data.data);
-			})
-			.catch((error) => {
-				console.log(error);
-				const error_element = document.getElementById("modifier-error-holder");
-				if (error.response.status === 400) {
-					error_element.innerText = "Select all the values correctly";
-				} else {
-					let message = error.message;
-					if (message) {
-						error_element.innerText = message;
-					}
-				}
-				error_element.style.display = "block";
-				error_element.style.color = "red";
-			});
+		dataGetRequest(
+			props.axios_instance,
+			selectedMachine,
+			mode?.name,
+			props.organization,
+			startDate,
+			endDate,
+			limit,
+			offset,
+			setCurrentPage,
+			setNoPages,
+			setData,
+			noPages
+		);
 	};
 
-	const updatClicked = () => {};
+	useEffect(() => {
+		if (currentPage - 1 !== offset) {
+			offset = currentPage;
+			fetchClicked();
+		}
+	}, [currentPage]);
 
-	const deleteClicked = () => {};
+	const updatClicked = () => {
+		const ids = [];
+		const values = [];
+		if (selectedData.current.length === 0) {
+			errorMessageDisplay("modifier-error-holder", {
+				message: "Select some data to make the request",
+			});
+		} else {
+			const machineId = selectedData.current[0].machineId;
+			selectedData.current.map((value) => {
+				ids.push(value.id);
+				values.push(value.value);
+			});
+
+			dataChangeRequest(
+				props.axios_instance,
+				ids,
+				values,
+				props.organization,
+				mode?.name.toUpperCase(),
+				machineId,
+				setData
+			);
+		}
+	};
+
+	const deleteClicked = () => {
+		const ids = [];
+		const values = [];
+		if (selectedData.current.length === 0) {
+			errorMessageDisplay("modifier-error-holder", {
+				message: "Select some data to make the request",
+			});
+		} else {
+			const machineId = selectedData.current[0].machineId;
+			selectedData.current.map((value) => {
+				ids.push(value.id);
+				values.push(value.value);
+			});
+			dataDeleteRequest(
+				props.axios_instance,
+				ids,
+				values,
+				props.organization,
+				mode?.name.toUpperCase(),
+				machineId,
+				setData
+			);
+		}
+	};
 
 	const paginationChange = (event) => {
-		console.log(event);
 		if (event.target.ariaLabel === "Goto Previous Page") {
 			setCurrentPage(currentPage - 1);
 		} else if ("Goto Next Page" === event.target.ariaLabel) {
@@ -106,8 +157,32 @@ function DataModifierSection(props) {
 		}
 	};
 
+	const onMigrateClicked = () => {
+		const ids = [];
+		if (selectedData.current.length === 0) {
+			console.log("Prompt error");
+			errorMessageDisplay("modifier-error-holder", {
+				message: "Select some data to make the request",
+			});
+		} else {
+			const machineId = selectedData.current[0].machineId;
+			if (selectedData.current.length > 0) {
+				selectedData.current.map((value) => {
+					ids.push(value.id);
+				});
+				dataMigrateRequest(
+					props.axios_instance,
+					ids,
+					machineId,
+					props.organization,
+					setData
+				);
+			}
+		}
+	};
+
 	return (
-		<div className="container" style={{ position: "relative" }}>
+		<div className="container" style={{ marginBottom: "2em" }}>
 			<span className="subtitle with-side-element">
 				<span id="handle-data" className="inner">
 					Handle Data
@@ -123,7 +198,11 @@ function DataModifierSection(props) {
 					value={limit}
 					onChange={(event) =>
 						setLimit(
-							event.target.value <= LIMIT.max ? event.target.value : LIMIT.max
+							event.target.value <= LIMIT.max
+								? event.target.value <= LIMIT.min
+									? LIMIT.min
+									: event.target.value
+								: LIMIT.max
 						)
 					}
 				></input>
@@ -196,94 +275,105 @@ function DataModifierSection(props) {
 				</span>
 				<span className="date-modifier-sections action-btn">
 					<span>
-						<button
-							className="my-button dev data-handler-button"
+						<HandleDataActionButtons
 							onClick={fetchClicked}
-						>
-							Fetch
-						</button>
+							name={"Fetch"}
+							tickId={"fetch-tick"}
+						/>
 						{mode?.name === "dev" ? (
-							<button className="my-button dev data-handler-button dia">
-								Migrate
-							</button>
+							<HandleDataActionButtons
+								className={"dia"}
+								onClick={onMigrateClicked}
+								name={"Migrate"}
+								tickId={"migrate-tick"}
+								selectedCount={selectedCount}
+							/>
 						) : (
 							<></>
 						)}
 					</span>
 					<span>
-						<button
-							className="my-button dev data-handler-button dia"
+						<HandleDataActionButtons
+							tickId="update-tick"
+							className="dia"
 							onClick={updatClicked}
-						>
-							Update
-						</button>
-						<button
-							className="my-button dev data-handler-button"
+							name={"Update"}
+							selectedCount={selectedCount}
+						/>
+
+						<HandleDataActionButtons
+							tickId={"delete-tick"}
 							onClick={deleteClicked}
-						>
-							Delete
-						</button>
+							name={"Delete"}
+							selectedCount={selectedCount}
+						/>
 					</span>
 				</span>
 			</div>
-			<div className="table-handle-data-holder">
-				<table className="table-handle-data">
-					<thead className="table-header-handle-data">
-						<tr>
-							<td>Date Time</td>
-							<td>Data Type</td>
-							<td>Value</td>
-							<td>Select</td>
-						</tr>
-					</thead>
-					<tbody className="table-body-handle-data">
-						{data.map((row, index) => {
-							if (row.isChecked === undefined) {
-								row.isChecked = false;
-							}
-							return (
+			{data.length > 0 ? (
+				<>
+					<div className="table-handle-data-holder">
+						<table className="table-handle-data">
+							<thead className="table-header-handle-data">
 								<tr>
-									<td>{row.date}</td>
-
-									<td>{row.data_type}</td>
-
-									<td>
-										<input
-											className="value-editor"
-											type={"number"}
-											value={data[index].value}
-											onChange={(event) => {
-												const newData = [...data];
-												newData[index].value = event.target.value;
-												newData[index].isChecked = true;
-												setData(newData);
-											}}
-										/>
-									</td>
-									<td>
-										<input
-											type={"checkbox"}
-											checked={row.isChecked}
-											onChange={(event) => {
-												const newData = [...data];
-												newData[index].isChecked = !row.isChecked;
-												setData(newData);
-											}}
-										/>
-									</td>
+									<td>Date Time</td>
+									<td>Data Type</td>
+									<td>Value</td>
+									<td>Select</td>
 								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-			</div>
-			<div>
-				<Pagination
-					pages={40}
-					activePage={currentPage}
-					onChange={paginationChange}
-				/>
-			</div>
+							</thead>
+							<tbody className="table-body-handle-data">
+								{data.map((row, index) => {
+									if (row.isChecked === undefined) {
+										row.isChecked = false;
+									}
+									return (
+										<tr>
+											<td>{row.date}</td>
+
+											<td>{row.data_type}</td>
+
+											<td>
+												<input
+													className="value-editor"
+													type={"number"}
+													value={data[index].value}
+													onChange={(event) => {
+														const newData = [...data];
+														newData[index].value = event.target.value;
+														newData[index].isChecked = true;
+														setData(newData);
+													}}
+												/>
+											</td>
+											<td>
+												<input
+													type={"checkbox"}
+													checked={row.isChecked}
+													onChange={(event) => {
+														const newData = [...data];
+														newData[index].isChecked = !row.isChecked;
+														setData(newData);
+													}}
+												/>
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
+					<div>
+						<Pagination
+							pages={noPages}
+							activePage={currentPage}
+							onChange={paginationChange}
+						/>
+					</div>
+				</>
+			) : (
+				<></>
+			)}
 			<span id="modifier-error-holder"></span>
 		</div>
 	);

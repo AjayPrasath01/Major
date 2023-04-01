@@ -11,6 +11,7 @@ import SensorIndividualContainer from "./SensorIndividualContainer.jsx";
 import extractSensorFromRaw from "./utils/extractSensorFromRaw";
 import DataModifierSection from "./sections/DataModifierSection.jsx";
 import ControlPanelSectionSelector from "./ControlPanelSectionSelector.jsx";
+import errorMessageDisplay from "./utils/errorMessageDisplay";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -54,7 +55,6 @@ function ControlPanel(props) {
 			element.style.display = "block";
 			element.style.color = "red";
 		} else if (newPassword === retypedPassword) {
-			console.log("Here " + username);
 			props.axios_instance
 				.patch("/api/login/changePassword", {
 					username,
@@ -98,14 +98,7 @@ function ControlPanel(props) {
 				getAllUsers(props, setAllUsers, organization);
 			})
 			.catch((err) => {
-				const element = document.getElementById("table_status");
-				element.style.display = "block";
-				element.style.color = "red";
-				element.innerText =
-					err.response.data.message !== undefined
-						? err.response.data.message
-						: "Oops Somthing went wrong";
-				console.log(err);
+				errorMessageDisplay("table_status", err);
 			});
 	}
 
@@ -129,10 +122,7 @@ function ControlPanel(props) {
 				getAllUsers(props, setAllUsers, organization);
 			})
 			.catch((err) => {
-				const element = document.getElementById("table_status");
-				element.style.display = "block";
-				element.style.color = "red";
-				element.innerText = err.response.data.message;
+				errorMessageDisplay("table_status", err);
 			});
 	}
 
@@ -207,11 +197,7 @@ function ControlPanel(props) {
 				fetchMachineNames(props.axios_instance, setDeviceList);
 			})
 			.catch((err) => {
-				console.log(err);
-				const element = document.getElementById("table_status3");
-				element.style.display = "block";
-				element.style.color = "red";
-				element.innerText = err.response.data.message;
+				errorMessageDisplay("table_status3", err);
 			});
 	}
 
@@ -338,7 +324,9 @@ function ControlPanel(props) {
 			<ControlPanelSectionSelector />
 			<div className="container">
 				<div className="cp">
-					<h1 id="change-password" className="subtitle">Change Password</h1>
+					<h1 id="change-password" className="subtitle">
+						Change Password
+					</h1>
 					<div>
 						<label>Current Password</label>
 						<input
@@ -384,7 +372,9 @@ function ControlPanel(props) {
 				<>
 					<div className="container">
 						<div className="nu">
-							<h1 id="all-users" className="subtitle">All Users</h1>
+							<h1 id="all-users" className="subtitle">
+								All Users
+							</h1>
 							{allUsers.length == 0 ? (
 								<h3 className="no_data">No new Requests found</h3>
 							) : (
@@ -433,10 +423,16 @@ function ControlPanel(props) {
 							<p id="table_status"></p>
 						</div>
 					</div>
-					<DataModifierSection machines={deviceList} axios_instance={props.axios_instance} organization={organization}/>
+					<DataModifierSection
+						machines={deviceList}
+						axios_instance={props.axios_instance}
+						organization={organization}
+					/>
 					<div className="container">
 						<div className="dl">
-							<h1 id="devices-available" className="subtitle">Devices Available</h1>
+							<h1 id="devices-available" className="subtitle">
+								Devices Available
+							</h1>
 							{deviceList.length == 0 ? (
 								<h3 className="no_data">No devices found</h3>
 							) : (
@@ -512,7 +508,9 @@ function ControlPanel(props) {
 
 					<div className="container last-container">
 						<div className="cg">
-							<h1 id="add-machine" className="subtitle">Add Machine</h1>
+							<h1 id="add-machine" className="subtitle">
+								Add Machine
+							</h1>
 							<div className="machinename">
 								<label className="add-device-label">Machine Name : </label>
 								<input
@@ -534,7 +532,6 @@ function ControlPanel(props) {
 									<span>
 										{addDeviceDetails.sensors.split(",").map((sensor) => {
 											if (sensor === "" || sensor === ".") {
-												// return <>Some thing</>;
 											} else {
 												return (
 													<>

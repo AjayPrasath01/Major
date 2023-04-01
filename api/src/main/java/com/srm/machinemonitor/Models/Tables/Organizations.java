@@ -29,7 +29,7 @@ public class Organizations {
     @Column(columnDefinition = "boolean default true")
     Boolean isActive;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     String message;
 
     @ToString.Exclude

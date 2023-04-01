@@ -204,15 +204,17 @@ public class DataSender {
             return new ResponseEntity(res, HttpStatus.NOT_FOUND);
         }
         List data = null;
+        BigInteger number_of_data = BigInteger.valueOf(0);
         if (mode.equals(Modes.DEV.toString())){
             data = devDataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
+            number_of_data = devDataDAO.countByMachineID(machine.getId());
         }else if ((mode.equals(Modes.PROD.toString()))){
             data = dataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machine.getId(), startDateTime, endDateTime, limit, offset);
+            number_of_data = dataDAO.countByMachineID(machine.getId());
         }
-        System.out.println(data);
         final Map clientRes = new HashMap();
         clientRes.put("data", data);
-        clientRes.put("pages", Math.ceilDivExact(data.size(), limit));
+        clientRes.put("pages", Math.ceilDivExact(number_of_data.longValueExact(), limit));
         System.out.println("clientRes");
         System.out.println(clientRes);
         return new ResponseEntity<>(clientRes, HttpStatus.OK);

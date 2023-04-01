@@ -369,9 +369,3 @@
     font-size: x-large;
     letter-spacing: 3px;
 }
-
-@keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }

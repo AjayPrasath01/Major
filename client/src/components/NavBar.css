@@ -16,14 +16,15 @@
   left: 0;
   z-index: 100;
   width: 100vw;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 2.0em;
-  padding-left: 5em;
   background-color: var(--background-color);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.185);
-  padding-right: 5em;
+  padding-right: 4em;
+  padding-left: 4em;
 }
 
 .logo{
@@ -69,7 +70,6 @@
 
 .user-icon{
   position: relative;
-  margin-right: 10vw;
   margin-left: 1vw;
 }
 
@@ -104,19 +104,32 @@
   text-align: start;
   color: #ffffff;
   border-radius: 5px;
-  
+  margin-left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-dot-inner{
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 200px;
+  background-color: red;
+  display: none;
+  animation: blink 1s infinite;
 }
 
 .dropdown-profile-icon{
   position: absolute;
   display: flex;
+  flex-direction: column-reverse;
   justify-content: center;
   align-items: center;
   bottom: 0;
   left: -75%;
   top: 220%;
   padding: 0.5rem;
-  height: 1.5ch;
+  height: 3ch;
   width: 100px;
   background-color: #DEBC8C;
   border-radius: 10px;
@@ -125,7 +138,7 @@
 .dropdown-profile-icon .triangle::before{
   content: "";
   position: absolute;
-  top: -110%; /* adjust this value to change the triangle position */
+  top: -90%; /* adjust this value to change the triangle position */
   left: calc(50% - 10px); /* adjust this value to change the triangle position */
   border-top: 20px solid transparent;
   border-left: 10px solid transparent;

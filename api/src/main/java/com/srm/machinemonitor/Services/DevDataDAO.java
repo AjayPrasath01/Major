@@ -13,8 +13,8 @@ import java.util.List;
 
 public interface DevDataDAO extends JpaRepository<DevData, BigInteger> {
 
-    @Query(value="SELECT COUNT(*) FROM DevData u WHERE u.machineId = ?1 AND u.data_type <> ?2", nativeQuery = true)
-    BigInteger countByMachineIDAndDatatype(BigInteger machineId, String dataType);
+    @Query(value="SELECT COUNT(*) FROM DevData u WHERE u.machineId = ?1", nativeQuery = true)
+    BigInteger countByMachineID(BigInteger machineId);
 
     List<BaseData> findAllByMachineId(BigInteger machineId);
 

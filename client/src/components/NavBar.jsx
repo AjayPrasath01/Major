@@ -2,14 +2,20 @@ import React, { useEffect, useState } from "react";
 import "./NavBar.css";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import offsetBody from "./utils/offsetBody";
+import NotificationPanel from "./NotificationPanel.jsx";
+import getMessages from "./utils/getMessages";
 
 function NavBar(props) {
 	const [username, setUsername] = useState("");
 	const [organization, setOrganization] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
 	const [isLogoutVisible, setLogoutVisible] = useState(false);
+	const [viewNotification, setViewNotification] = useState(false);
+	const [isNotificationButtonClicked, setIsNotificationButtonClicked] =
+		useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [messages, setMessages] = useState([]);
 	const getUsersCall = () => {
 		props.axios_instance
 			.get("/api/user")
@@ -29,7 +35,6 @@ function NavBar(props) {
 			"user-icon" !== event.srcElement.className &&
 			"userTitle" !== event.srcElement.className
 		) {
-			console.log("Here", isLogoutVisible);
 			setLogoutVisible((previous) => {
 				if (previous) {
 					return false;
@@ -62,7 +67,6 @@ function NavBar(props) {
 		}
 		console.log(window.location.hash);
 	}, [location.pathname]);
-
 	useEffect(() => {
 		offsetBody();
 	}, [isVisible]);
@@ -71,6 +75,13 @@ function NavBar(props) {
 		props.axios_instance.get("/api/logout").then((result) => {
 			navigate("/");
 		});
+	};
+
+	const onNotificationClicked = () => {
+		setViewNotification((previous) => {
+			return !previous;
+		});
+		setIsNotificationButtonClicked(true);
 	};
 	return (
 		<>
@@ -95,12 +106,13 @@ function NavBar(props) {
 						>
 							Control Panel
 						</NavLink>
-
-						{/* <span className='theme_toggle'>Light Mode</span> */}
 						<span
 							className="user-icon"
 							id="userIcon"
-							onClick={() => setLogoutVisible(!isLogoutVisible)}
+							onClick={() => {
+								getMessages(props.axios_instance, organization, setMessages);
+								setLogoutVisible(!isLogoutVisible);
+							}}
 						>
 							<h1 className="userTitle">
 								{username?.slice(0, 2).toUpperCase()}
@@ -111,6 +123,14 @@ function NavBar(props) {
 									<button className="logout-button" onClick={onLogoutlicked}>
 										Logout
 									</button>
+
+									<button
+										className="logout-button"
+										onClick={onNotificationClicked}
+									>
+										Notification
+										<span id="notification-dot" className="notification-dot-inner"></span>
+									</button>
 								</span>
 							) : (
 								<></>
@@ -119,6 +139,16 @@ function NavBar(props) {
 					</span>
 				</span>
 			</div>
+			<NotificationPanel
+				organization={organization}
+				setMessages={setMessages}
+				axios_instance={props.axios_instance}
+				viewNotification={viewNotification}
+				isNotificationButtonClicked={isNotificationButtonClicked}
+				setViewNotification={setViewNotification}
+				setIsNotificationButtonClicked={setIsNotificationButtonClicked}
+				messages={messages}
+			/>
 		</>
 	);
 }

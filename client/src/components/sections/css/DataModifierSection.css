@@ -11,6 +11,7 @@
     flex-direction: row;
     justify-content: space-around;
     margin-top: 3rem;
+    margin-bottom: 3rem;
 }
 
 .mode-picker-control-panel{
@@ -30,13 +31,36 @@
     flex-direction: inherit !important;
 }
 
+.tick-notifier{
+    background-color: green !important;
+    color: white;
+    transition: 0.5s;
+    opacity: 0;
+}
+
 .data-handler-button{
+    position: relative;
     padding: 20px;
     color: white;
     font-size: larger;
     font-weight: bolder;
     margin-bottom: 0;
     margin: 0.5em;
+}
+
+.count-selected-data-handler-holder{
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ea0505;
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+}
+
+.count-selected-data-handler{
+    font-weight: bolder;
+    font-size: 15px;
 }
 
 .limit-holder{
