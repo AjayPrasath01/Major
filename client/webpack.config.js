@@ -7,8 +7,8 @@ module.exports = {
 	entry: "./src/index.js",
 	output: {
 		// ../api/src/main/resources/static
-		
-		publicPath: "/",   
+
+		publicPath: "/",
 		path: path.resolve(__dirname, OUTPATH),
 		filename: "bundle.js",
 	},
@@ -31,6 +31,39 @@ module.exports = {
 			{
 				test: /\.css$/,
 				use: ["style-loader", "css-loader"],
+			},
+
+			{
+				test: /\.png$/,
+				use: [
+					{
+						loader: "url-loader",
+						options: {
+							limit: 8192,
+						},
+					},
+					{
+						loader: "image-webpack-loader",
+						options: {
+							mozjpeg: {
+								quality: 75,
+							},
+							optipng: {
+								enabled: false,
+							},
+							pngquant: {
+								quality: [0.65, 0.90],
+								speed: 4,
+							},
+							gifsicle: {
+								interlaced: false,
+							},
+							webp: {
+								quality: 75,
+							},
+						},
+					},
+				],
 			},
 		],
 	},

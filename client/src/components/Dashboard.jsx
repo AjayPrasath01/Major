@@ -22,6 +22,7 @@ import socketSend from "./utils/socketSend";
 import NoData from "./NoData.jsx";
 import DataPointCounter from "./DataPointCounter.jsx";
 import ChartLimit from "./ChartLimit.jsx";
+import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
@@ -37,6 +38,7 @@ function Dashboard(props) {
 	const sock = useRef(null);
 	const [chartLimit, setChartLimit] = useState(10);
 	const [organization, setOrganization] = useState("");
+	const [orientation, setOrientation] = useState(window.orientation);
 	const navigate = useNavigate();
 	const [socketDetails, setSocketDetails] = useState({
 		isSocketConnected: false,
@@ -51,6 +53,18 @@ function Dashboard(props) {
 		{ value: "dev", label: "DEV" },
 		{ value: "prod", label: "PROD" },
 	];
+
+	const orientationListener = (event) => {
+		console.log(orientation);
+		setOrientation(window.orientation);
+	};
+
+	useEffect(() => {
+		window.addEventListener("orientationchange", orientationListener);
+		return () => {
+			window.removeEventListener("orientationchange", orientationListener);
+		};
+	});
 
 	const dataCountCall = () => {
 		// getDataCounts(
@@ -485,6 +499,7 @@ function Dashboard(props) {
 								</span>
 							) : data.length > 0 ? (
 								<div className="chart_container">
+									<ScreenSizeNotifier />
 									<ChartLimit
 										chartLimit={chartLimit}
 										setChartLimit={setChartLimit}

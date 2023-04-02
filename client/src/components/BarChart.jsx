@@ -9,23 +9,26 @@ const BarChart = (props) => {
 	const [X, setX] = useState([]);
 	const [Y, setY] = useState([]);
 	const [Y_Axis_Name, setYAxisName] = useState("Y-axis");
+	const [offset, setOffset] = useState(0);
 	useEffect(() => {
-		const chartData = props.data;
-		const tempX = [];
-		const tempY = [];
-		chartData.forEach((element, index) => {
-			tempX.push(element.date);
-			tempY.push(element.value);
-		});
-		if (
-			JSON.stringify(X) !== JSON.stringify(tempX) ||
-			JSON.stringify(Y) !== JSON.stringify(tempY)
-		) {
-			setX(tempX);
-			setY(tempY);
+		if (offset === 0) {
+			const chartData = props.data;
+			const tempX = [];
+			const tempY = [];
+			chartData.forEach((element, index) => {
+				tempX.push(element.date);
+				tempY.push(element.value);
+			});
+			if (
+				JSON.stringify(X) !== JSON.stringify(tempX) ||
+				JSON.stringify(Y) !== JSON.stringify(tempY)
+			) {
+				setX(tempX);
+				setY(tempY);
+			}
+			setYAxisName(chartData[0]?.data_type);
 		}
-		setYAxisName(chartData[0]?.data_type);
-	}, [props.data]);
+	}, [props.data, offset]);
 
 	var data = {
 		labels: X,
@@ -52,6 +55,9 @@ const BarChart = (props) => {
 			},
 		],
 	};
+	const resetButtonClicked = () => {
+		setOffset(0);
+	};
 	const [options, setOptions] = useState({
 		responsive: true,
 		legend: { display: false },
@@ -62,8 +68,11 @@ const BarChart = (props) => {
 					text: "DateTime",
 				},
 				grace: "5%",
-				min: X.length - props.chartLimit > 0 ? X.length - props.chartLimit : 0,
-				max: X.length,
+				min:
+					X.length - props.chartLimit > 0
+						? X.length - props.chartLimit
+						: 0 + offset,
+				max: X.length - 1 + offset,
 			},
 
 			y: {
@@ -76,10 +85,47 @@ const BarChart = (props) => {
 			},
 		},
 	});
-	const leftButtonClicked = () => {};
+	const leftButtonClicked = () => {
+		setOffset((previous) => {
+			if (X.length - offset > props.chartLimit) {
+				previous++;
+			}
+			return previous;
+		});
+	};
 
-	const rightButtonClicked = () => {};
+	const rightButtonClicked = () => {
+		setOffset((previous) => {
+			if (previous > 0) {
+				previous--;
+			}
+			return previous;
+		});
+	};
 	useEffect(() => {
+		setOptions((previous) => {
+			if (previous) {
+				const newData = {
+					...previous,
+					scales: {
+						...previous.scales,
+						x: {
+							...previous.scales.x,
+							min:
+								(X.length - props.chartLimit > 0
+									? X.length - props.chartLimit
+									: 0) - offset,
+							max: X.length - 1 - offset,
+						},
+					},
+				};
+				return newData;
+			}
+		});
+	}, [X, offset]);
+
+	useEffect(() => {
+		setOffset(0);
 		setOptions((previous) => {
 			if (previous) {
 				const newData = {
@@ -92,25 +138,26 @@ const BarChart = (props) => {
 								X.length - props.chartLimit > 0
 									? X.length - props.chartLimit
 									: 0,
-							max: X.length,
+							max: X.length - 1,
 						},
 					},
 				};
 				return newData;
 			}
 		});
-	}, [X, props.chartLimit]);
+	}, [props.chartLimit]);
 	return (
 		<div className="chart">
 			<h3 className="chartTitle">Bar Chart</h3>
 			<ChartLeftRightControls
+				offset={offset}
+				resetButtonClicked={resetButtonClicked}
 				leftButtonClicked={leftButtonClicked}
 				rightButtonClicked={rightButtonClicked}
 			/>
 			<Bar data={data} options={options} className="chart-data-viewer" />
 		</div>
 	);
-	// return <></>
 };
 
 export default BarChart;
