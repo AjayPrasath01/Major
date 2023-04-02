@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
+@Table(indexes = { @Index(name="organization_idx_name", columnList = "name", unique = true) })
 public class Organizations {
 
     @Id

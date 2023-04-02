@@ -1,21 +1,31 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Chart as ChartJS, registerables } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import ChartLeftRightControls from "./ChartLeftRightControls.jsx";
 
 ChartJS.register(...registerables);
 
 const BarChart = (props) => {
-	const chartData = props.data;
-	const X = [];
-	const Y = [];
-	chartData.forEach((element) => {
-		X.push(element.date);
-		Y.push(element.value);
-	});
-	console.log({ X, Y });
-	const upMove = useRef(0);
-	const downMove = useRef(0);
-	const Y_Axis_Name = chartData[0]?.data_type;
+	const [X, setX] = useState([]);
+	const [Y, setY] = useState([]);
+	const [Y_Axis_Name, setYAxisName] = useState("Y-axis");
+	useEffect(() => {
+		const chartData = props.data;
+		const tempX = [];
+		const tempY = [];
+		chartData.forEach((element, index) => {
+			tempX.push(element.date);
+			tempY.push(element.value);
+		});
+		if (
+			JSON.stringify(X) !== JSON.stringify(tempX) ||
+			JSON.stringify(Y) !== JSON.stringify(tempY)
+		) {
+			setX(tempX);
+			setY(tempY);
+		}
+		setYAxisName(chartData[0]?.data_type);
+	}, [props.data]);
 
 	var data = {
 		labels: X,
@@ -52,6 +62,8 @@ const BarChart = (props) => {
 					text: "DateTime",
 				},
 				grace: "5%",
+				min: X.length - props.chartLimit > 0 ? X.length - props.chartLimit : 0,
+				max: X.length,
 			},
 
 			y: {
@@ -64,53 +76,37 @@ const BarChart = (props) => {
 			},
 		},
 	});
+	const leftButtonClicked = () => {};
+
+	const rightButtonClicked = () => {};
 	useEffect(() => {
-		const chart = document.getElementsByClassName("chart-data-viewer")[0];
-		// Scroll effect
-
-		// chart.addEventListener("wheel", (event) => {
-		//     event.preventDefault();
-		//     if (event.deltaY > 0){
-		//         upMove.current += 1
-		//     }
-		//     if (event.deltaY < 0){
-		//         downMove.current += 1
-		//     }
-		// 	if (event.deltaY > 0 && upMove.current % 200 === 0) {
-		//         // upMove.current = 0;
-		//         // downMove.current = 0
-		// 		setOptions((previous) => {
-		// 			if (previous.scales.x.max >= X.length){
-		//                 previous.scales.x.min = X.length - 6
-		//                 previous.scales.x.max = X.length
-		//             }else {
-		//                 previous.scales.x.min = previous.scales.x.min + 1;
-		//                 previous.scales.x.max = previous.scales.x.max + 1;
-		//             }
-		// 			return { ...previous };
-		// 		});
-		// 	}
-		//     else
-		//     if (event.deltaY < 0 && downMove.current % 200 === 0) {
-		//         // downMove.current = 0;
-		//         // upMove.current = 0;
-		// 		setOptions((previous) => {
-		//             if (previous.scales.x.min <= 0){
-		//                 previous.scales.x.min = 0
-		//                 previous.scales.x.max = 6
-		//             }else{
-		//                 previous.scales.x.min = previous.scales.x.min - 1;
-		//                 previous.scales.x.max = previous.scales.x.max - 1;
-		//             }
-		// 			return { ...previous };
-		// 		});
-		// 	}
-
-		// });
-	}, []);
+		setOptions((previous) => {
+			if (previous) {
+				const newData = {
+					...previous,
+					scales: {
+						...previous.scales,
+						x: {
+							...previous.scales.x,
+							min:
+								X.length - props.chartLimit > 0
+									? X.length - props.chartLimit
+									: 0,
+							max: X.length,
+						},
+					},
+				};
+				return newData;
+			}
+		});
+	}, [X, props.chartLimit]);
 	return (
 		<div className="chart">
 			<h3 className="chartTitle">Bar Chart</h3>
+			<ChartLeftRightControls
+				leftButtonClicked={leftButtonClicked}
+				rightButtonClicked={rightButtonClicked}
+			/>
 			<Bar data={data} options={options} className="chart-data-viewer" />
 		</div>
 	);

@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = { @Index(name="log_idx_org", columnList = "organizationId"), @Index(name="log_idx_multi", columnList = "organizationId,machineName") })
 public class Log {
 
     @Id

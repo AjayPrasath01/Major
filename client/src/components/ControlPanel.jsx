@@ -321,7 +321,6 @@ function ControlPanel(props) {
 
 	return (
 		<div id="control-panel-body">
-			<ControlPanelSectionSelector />
 			<div className="container">
 				<div className="cp">
 					<h1 id="change-password" className="subtitle">
@@ -370,6 +369,7 @@ function ControlPanel(props) {
 				<></>
 			) : (
 				<>
+					<ControlPanelSectionSelector />
 					<div className="container">
 						<div className="nu">
 							<h1 id="all-users" className="subtitle">

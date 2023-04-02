@@ -11,6 +11,7 @@ function NavBar(props) {
 	const [isVisible, setIsVisible] = useState(false);
 	const [isLogoutVisible, setLogoutVisible] = useState(false);
 	const [viewNotification, setViewNotification] = useState(false);
+	const [role, setRole] = useState("visitor");
 	const [isNotificationButtonClicked, setIsNotificationButtonClicked] =
 		useState(false);
 	const navigate = useNavigate();
@@ -23,6 +24,7 @@ function NavBar(props) {
 				console.log(data);
 				setUsername(data.username);
 				setOrganization(data.organization);
+				setRole(data.role);
 			})
 			.catch((error) => {
 				// Do nothing
@@ -140,6 +142,7 @@ function NavBar(props) {
 				</span>
 			</div>
 			<NotificationPanel
+				role={role}
 				organization={organization}
 				setMessages={setMessages}
 				axios_instance={props.axios_instance}

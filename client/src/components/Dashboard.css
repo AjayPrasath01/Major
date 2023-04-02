@@ -248,6 +248,7 @@
 .chart_container{
     margin-top: 3em;
     margin-bottom: 3em;
+    position: relative;
 }
 
 .data_sheet{
@@ -347,6 +348,7 @@
 
 .chart-data-viewer{
     /* height: 30% !important; */
+    position: relative;
 }
 
 .fnuvss{

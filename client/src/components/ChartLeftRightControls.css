@@ -1,0 +1,22 @@
+.chart-button{
+    border-radius: 100px;
+    border: 1px solid black;
+    margin-left: 0;
+}
+
+.chart-button.left{
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translateY(50%);
+    transform: scale(1.5);
+}
+
+
+.chart-button.right{
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(50%);
+    transform: scale(1.5);
+}

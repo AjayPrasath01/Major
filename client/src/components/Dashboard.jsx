@@ -21,11 +21,13 @@ import socketMessageHandler from "./utils/socketMessageHandler";
 import socketSend from "./utils/socketSend";
 import NoData from "./NoData.jsx";
 import DataPointCounter from "./DataPointCounter.jsx";
+import ChartLimit from "./ChartLimit.jsx";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
 	const [selectedMachine, setSelectedMachine] = useState({});
 	const [data, setData] = useState([]);
+	const [role, setRole] = useState("visitor");
 	const [lineFill, setLineFill] = useState(false);
 	const [dataCount, setDataCount] = useState(0);
 	const [beginAtZero, setBeginAtZero] = useState(true);
@@ -33,6 +35,7 @@ function Dashboard(props) {
 	const [logs, setLogs] = useState([]);
 	const csvLink = useRef();
 	const sock = useRef(null);
+	const [chartLimit, setChartLimit] = useState(10);
 	const [organization, setOrganization] = useState("");
 	const navigate = useNavigate();
 	const [socketDetails, setSocketDetails] = useState({
@@ -50,7 +53,12 @@ function Dashboard(props) {
 	];
 
 	const dataCountCall = () => {
-		getDataCounts(props.axios_instance, selectedMachine, setDataCount, organization);
+		// getDataCounts(
+		// 	props.axios_instance,
+		// 	selectedMachine,
+		// 	setDataCount,
+		// 	organization
+		// );
 	};
 
 	useEffect(() => {
@@ -81,6 +89,7 @@ function Dashboard(props) {
 	useEffect(() => {
 		loginStausChecker(props.axios_instance, navigate, {
 			setOrganization,
+			setRole,
 		});
 
 		props.axios_instance.get(`api/fetch/machineNames`).then((res) => {
@@ -426,7 +435,14 @@ function Dashboard(props) {
 									<h1>Logs</h1>
 									<h2>{selectedMachine.machineName}</h2>
 									<div className="console-command-holder">
-										<div className="console-panel">
+										<div
+											className="console-panel"
+											style={
+												role === "visitor"
+													? { borderRadius: "10px" }
+													: undefined
+											}
+										>
 											<p className="log-container">
 												Logs of {selectedMachine.machineName}
 											</p>
@@ -453,38 +469,46 @@ function Dashboard(props) {
 												);
 											})}
 										</div>
-										<span className="command-input">
-											<p className="command-arrow">&gt;</p>
-											<input
-												className="command-input-field"
-												placeholder="Enter Command"
-												onKeyDown={commandKeyDown}
-											/>
-										</span>
+										{role === "visitor" ? (
+											<></>
+										) : (
+											<span className="command-input">
+												<p className="command-arrow">&gt;</p>
+												<input
+													className="command-input-field"
+													placeholder="Enter Command"
+													onKeyDown={commandKeyDown}
+												/>
+											</span>
+										)}
 									</div>
 								</span>
 							) : data.length > 0 ? (
-								<>
-									{chartDetails.chartType == "line" ? (
-										<>
-											<div className="chart_container">
+								<div className="chart_container">
+									<ChartLimit
+										chartLimit={chartLimit}
+										setChartLimit={setChartLimit}
+									/>
+									<>
+										{chartDetails.chartType == "line" ? (
+											<>
 												<LineChart
+													chartLimit={chartLimit}
 													data={data}
 													beginAtZero={beginAtZero}
 													fill={lineFill}
 												/>
-											</div>
-										</>
-									) : (
-										<div className="chart_container">
+											</>
+										) : (
 											<BarChart
+												chartLimit={chartLimit}
 												data={data}
 												beginAtZero={beginAtZero}
 												fill={lineFill}
 											/>
-										</div>
-									)}
-								</>
+										)}
+									</>
+								</div>
 							) : (
 								<NoData
 									title={`No data in ${selectedMachine.machineName} at ${

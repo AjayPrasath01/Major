@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Table(indexes = { @Index(name="data_idx_machineId", columnList = "machineId") })
 public class DevData extends BaseData {
 
     @Id

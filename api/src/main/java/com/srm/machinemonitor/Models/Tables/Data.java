@@ -15,6 +15,7 @@ import java.util.TimeZone;
 @Entity
 @Getter
 @Setter
+@Table(indexes = { @Index(name="data_idx_machineId", columnList = "machineId") })
 public class Data extends BaseData {
 
     @Id

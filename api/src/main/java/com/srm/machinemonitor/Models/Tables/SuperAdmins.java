@@ -13,6 +13,7 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @Data
+@Table(indexes = { @Index(name="superadmin_idx_usernamename", columnList = "username", unique = true) })
 public class SuperAdmins {
 
     @Id

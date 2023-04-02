@@ -66,12 +66,18 @@ function NotificationPanel(props) {
 				{props.messages.filter((value) => value !== "").length <= 0 ? (
 					<span>No Notifications</span>
 				) : (
-					<button
-						className="clear-notification-button"
-						onClick={onClearButtonClicked}
-					>
-						Clear
-					</button>
+					<>
+						{props.role == "visitor" ? (
+							<></>
+						) : (
+							<button
+								className="clear-notification-button"
+								onClick={onClearButtonClicked}
+							>
+								Clear
+							</button>
+						)}
+					</>
 				)}
 			</span>
 		</span>

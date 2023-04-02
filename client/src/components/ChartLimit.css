@@ -1,0 +1,28 @@
+.chart-limit{
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    align-items: center;
+    margin: 0.5em;
+}
+
+.chart-limit > h1, input{
+    display: inline;
+}
+
+.chart-limit > input{
+    padding: 1em;
+    height: 2em;
+    border: none;
+    border-radius: 5px;
+}
+
+.chart-limit > h1{
+    margin-right: 1em;
+}
+
+.chart-limit > input:hover{
+    border: none;
+    outline: none;
+}

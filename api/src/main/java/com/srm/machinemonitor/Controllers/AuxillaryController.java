@@ -123,6 +123,7 @@ public class AuxillaryController {
         res.put("message", principal.getName());
         res.put("username", principal.getName());
         res.put("organization", organization.getName());
+        res.put("role", ((CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getRole());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

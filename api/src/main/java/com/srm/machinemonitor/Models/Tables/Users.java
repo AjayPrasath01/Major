@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
+@Table(indexes = { @Index(name="users_idx_org", columnList = "organizationId"), @Index(name="users_idx_multi", columnList = "organizationId,username") })
 public class Users {
 
     @Id
