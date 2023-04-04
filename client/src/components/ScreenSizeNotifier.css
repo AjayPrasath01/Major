@@ -1,0 +1,29 @@
+.screen-size-notifier-holder{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(123, 123, 123);
+    z-index: 150;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* display: none; */
+}
+
+.rotate-image{
+    width: 3em;
+    height: 3em;
+    align-self: center;
+    margin-bottom: 0.75em;
+}
+
+.rotate-message{
+    display: block;
+}
+
+.screen-size-notifier-content{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

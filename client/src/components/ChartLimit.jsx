@@ -15,6 +15,7 @@ function ChartLimit({ chartLimit, setChartLimit }) {
 	};
 	return (
 		<div className="chart-limit">
+
 			<h1>Limit</h1>
 			<input type={"number"} min={CHARTLIMIT.min} max={CHARTLIMIT.max} onChange={onLimitChange} value={chartLimit}></input>
 		</div>

@@ -146,3 +146,211 @@
   border-bottom: 20px solid #DEBC8C;
   z-index: -5;
 }
+
+.mobile-menu-bar{
+  display: none;
+}
+
+.mobile-menu-holder{
+  display: none;
+  position: absolute;
+  height: 100vh;
+  width: 45vw;
+  z-index: 110;
+  right: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.249);
+  padding: 1em;
+  backdrop-filter: blur( 4px );
+ -webkit-backdrop-filter: blur( 4px );
+ transform: translateX(100%);
+ overflow-x: hidden;
+}
+
+.mobile-menu-title-holder{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.745);
+  margin-bottom: 2em;
+}
+
+.menu-inner-btn{
+  color: black;
+  font-weight: bolder;
+  border-radius: 5px;
+}
+
+.mobile-menu-holder > button{
+  width: 100%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  margin-bottom: 0.5em;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-menu-title-holder > button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  font-size: 28px;
+}
+
+
+.mobile-menu-title-holder > h1{
+  color: rgba(0, 0, 0, 0.407);
+  margin-bottom: 0.5em;
+}
+
+@media (max-width: 1000px) {
+  .links{
+    display: none !important;
+  }
+
+  .mobile-menu-bar{
+    display: inline;
+  }
+
+  .user-icon{
+    display: none;
+  }
+
+  .navbar{
+    padding-top: 0.50em;
+    padding-bottom: 0.50em;
+  }
+
+  .mobile-menu-holder{
+    display: block;
+  }
+}
+
+@media (max-width: 800px) {
+
+  .user-icon{
+    display: none;
+  }
+
+  .links{
+    display: none;
+  }
+
+  .navbar{
+    padding: 1.75em;
+  }
+
+  .logo{
+    margin-left: 1em !important;
+  }
+
+  .sensor_tab{
+    border-radius: 10px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 80vw !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sensorList{
+  margin-left: 1em;
+}
+
+  .date-timepicker-holder{
+    display: block !important;
+    width: 80vw !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dateTimepicker, .change-live{
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    max-width: none !important;
+    margin-left: 0 !important;
+  }
+
+  .change-live{
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+  .chart-switcher-holder{
+    flex-direction: column !important;
+  }
+
+  .chart-control-container{
+    padding-bottom: 5em !important;
+  }
+
+  .title{
+    font-size: 18px !important;
+  }
+
+  .download-control-holder{
+    flex-direction: column !important;
+  }
+
+  .download-content-holder{
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+
+  .download_csv{
+    margin-top: 0.75em !important;
+  }
+
+  .chart-feature-control{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .chart{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 1em !important;
+    padding-bottom: 1em !important;
+    margin-bottom: 1em !important;
+  }
+
+  .chart-limit > h1{
+    font-size: large !important;
+  }
+
+  .chartTitle{
+    margin-top: 0 !important;
+  }
+
+  .notification-panel{
+    width: 50vw !important;
+    height: 100vh !important;
+  }
+
+  .notification-panel-title{
+    font-size: 22px;
+  }
+
+  .notification-close-button.reload-btn{
+    font-size: 28px;
+  }
+
+  .live-date-text{
+    margin-right: 1em;
+  }
+
+}
+

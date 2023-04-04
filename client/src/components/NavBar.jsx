@@ -4,6 +4,8 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import offsetBody from "./utils/offsetBody";
 import NotificationPanel from "./NotificationPanel.jsx";
 import getMessages from "./utils/getMessages";
+import MenuImg from "../assets/menu.png";
+import MobileMenuPanel from "./MobileMenuPanel.jsx";
 
 function NavBar(props) {
 	const [username, setUsername] = useState("");
@@ -17,6 +19,8 @@ function NavBar(props) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [messages, setMessages] = useState([]);
+	const [isMenuButtonClicked, setIsMenuButtonClicked] = useState(false);
+	const [viewMobileMenu, setViewMobileMenu] = useState(false);
 	const getUsersCall = () => {
 		props.axios_instance
 			.get("/api/user")
@@ -131,7 +135,10 @@ function NavBar(props) {
 										onClick={onNotificationClicked}
 									>
 										Notification
-										<span id="notification-dot" className="notification-dot-inner"></span>
+										<span
+											id="notification-dot"
+											className="notification-dot-inner"
+										></span>
 									</button>
 								</span>
 							) : (
@@ -140,6 +147,29 @@ function NavBar(props) {
 						</span>
 					</span>
 				</span>
+				<span className="mobile-menu-bar">
+					<img
+						src={MenuImg}
+						width={"25px"}
+						height={"25px"}
+						onClick={() => {
+							getMessages(props.axios_instance, organization, setMessages);
+							setViewMobileMenu(!viewMobileMenu);
+							setIsMenuButtonClicked(!isMenuButtonClicked);
+						}}
+					/>
+				</span>
+				<MobileMenuPanel
+					isMenuClicked={isMenuButtonClicked}
+					viewMobileMenu={viewMobileMenu}
+					setViewMobileMenu={setViewMobileMenu}
+					setIsMenuButtonClicked={setIsMenuButtonClicked}
+					onLogoutlicked={onLogoutlicked}
+					viewNotification={viewNotification}
+					isNotificationButtonClicked={isNotificationButtonClicked}
+					setViewNotification={setViewNotification}
+					setIsNotificationButtonClicked={setIsNotificationButtonClicked}
+				/>
 			</div>
 			<NotificationPanel
 				role={role}

@@ -1,6 +1,6 @@
 import React from "react";
 import "./ControlPanel.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import fileDownload from "js-file-download";
 import loginStausChecker from "./utils/loginStausChecker";
@@ -12,6 +12,7 @@ import extractSensorFromRaw from "./utils/extractSensorFromRaw";
 import DataModifierSection from "./sections/DataModifierSection.jsx";
 import ControlPanelSectionSelector from "./ControlPanelSectionSelector.jsx";
 import errorMessageDisplay from "./utils/errorMessageDisplay";
+import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -28,6 +29,29 @@ function ControlPanel(props) {
 		wifi: true,
 		sensors: "",
 	});
+	const isMobile = useRef(
+		/iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent)
+	);
+	const [orientation, setOrientation] = useState(window.orientation);
+
+	useEffect(() => {
+		const orientationListener = (event) => {
+			console.log(orientation);
+			setOrientation(window.orientation);
+		};
+
+		setTimeout(() => {
+			const viewportMeta = document.querySelector('meta[name="viewport"]');
+			viewportMeta.setAttribute(
+				"content",
+				"width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=0"
+			);
+		}, 1000);
+		window.addEventListener("orientationchange", orientationListener);
+		return () => {
+			window.removeEventListener("orientationchange", orientationListener);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (organization && organization !== "") {
@@ -320,298 +344,322 @@ function ControlPanel(props) {
 	}
 
 	return (
-		<div id="control-panel-body">
-			<div className="container">
-				<div className="cp">
-					<h1 id="change-password" className="subtitle">
-						Change Password
-					</h1>
-					<div>
-						<label>Current Password</label>
-						<input
-							className="input-change-password"
-							value={currentPassword}
-							onChange={(event) => setCurrentPassword(event.target.value)}
-							type="password"
-						></input>
-					</div>
-
-					<div>
-						<label>New Password</label>
-						<input
-							className="input-change-password"
-							value={newPassword}
-							onChange={(event) => setNewPassword(event.target.value)}
-							type="password"
-						></input>
-					</div>
-
-					<div>
-						<label>Retype Password</label>
-						<input
-							className="input-change-password"
-							value={retypedPassword}
-							onChange={(event) => setRetypedPassword(event.target.value)}
-							type="password"
-						></input>
-					</div>
-
-					<button
-						onClick={change_password}
-						className="my-button change_password"
-					>
-						Change
-					</button>
-					<p id="cp_message">Changed Successfully !!</p>
-				</div>
-			</div>
-			{role !== "admin" ? (
-				<></>
-			) : (
+		<>
+			{(orientation === 90 && isMobile.current) || !isMobile.current ? (
 				<>
-					<ControlPanelSectionSelector />
-					<div className="container">
-						<div className="nu">
-							<h1 id="all-users" className="subtitle">
-								All Users
-							</h1>
-							{allUsers.length == 0 ? (
-								<h3 className="no_data">No new Requests found</h3>
-							) : (
-								<>
-									<table className="table">
-										<thead>
-											<tr>
-												<td>Username</td>
-												<td>Role</td>
-												<td>Actions</td>
-											</tr>
-										</thead>
-										<tbody>
-											{allUsers.map((data) => {
-												return (
-													<tr>
-														<td>{data.username}</td>
-														<td>{data.role}</td>
-														<td>
-															{data.isActive ? (
-																<button
-																	data={JSON.stringify(data)}
-																	className="table_button my-button"
-																	onClick={blockUser}
-																	disabled={username === data.username}
-																>
-																	🚫
-																</button>
-															) : (
-																<button
-																	data={JSON.stringify(data)}
-																	className="table_button my-button"
-																	onClick={unBlockUser}
-																>
-																	&#10004;
-																</button>
-															)}
-														</td>
-													</tr>
-												);
-											})}
-										</tbody>
-									</table>
-								</>
-							)}
-							<p id="table_status"></p>
-						</div>
-					</div>
-					<DataModifierSection
-						machines={deviceList}
-						axios_instance={props.axios_instance}
-						organization={organization}
-					/>
-					<div className="container">
-						<div className="dl">
-							<h1 id="devices-available" className="subtitle">
-								Devices Available
-							</h1>
-							{deviceList.length == 0 ? (
-								<h3 className="no_data">No devices found</h3>
-							) : (
-								<>
-									<table className="table">
-										<thead>
-											<tr>
-												<td>Username</td>
-												<td>Sensors</td>
-												<td>Actions</td>
-											</tr>
-										</thead>
-										<tbody>
-											{deviceList.map((data) => {
-												return (
-													<tr className="tablerow">
-														<td style={{ fontWeight: 900 }}>
-															{data["machineName"]}
-														</td>
-														{/* <td>{data["sensorType"]}</td> */}
-														<td className="middle-column">
-															<span className="sensors-column">
-																{data.sensorType.split(",").map((sensor) => {
-																	return (
-																		<SensorIndividualContainer
-																			sensor={sensor}
-																			removeSensorClicked={removeSensorClicked}
-																			data={data}
-																			mode={data.mode}
-																			setDeviceList={setDeviceList}
-																			axios_instance={props.axios_instance}
-																			organization={organization}
-																		/>
-																	);
-																})}
-															</span>
-															<span className="add-sensor-holder">
-																<input
-																	className="sensor-input"
-																	placeholder="Add Sensor"
-																	onKeyDown={addSensorClicked}
-																	data={JSON.stringify(data)}
-																></input>
-																<button
-																	className="sensor-input"
-																	data={JSON.stringify(data)}
-																	onClick={addSensorClicked}
-																>
-																	✔
-																</button>
-															</span>
-														</td>
-														<td className="action-column">
-															<button
-																data={data["machineName"]}
-																disabled={data.username === "admin"}
-																className="table_button my-button"
-																onClick={(event) => removeDevice(event)}
-															>
-																&#10060;
-															</button>
-														</td>
-													</tr>
-												);
-											})}
-										</tbody>
-									</table>
-								</>
-							)}
-							<p id="table_status3"></p>
-						</div>
-					</div>
-
-					<div className="container last-container">
-						<div className="cg">
-							<h1 id="add-machine" className="subtitle">
-								Add Machine
-							</h1>
-							<div className="machinename">
-								<label className="add-device-label">Machine Name : </label>
-								<input
-									type="text"
-									className="input-change-password input-add-device"
-									placeholder="Enter Machine name"
-									value={addDeviceDetails.machineName}
-									onChange={(event) =>
-										setAddDeviceDetails((previous) => {
-											console.log(event.target.value);
-											return { ...previous, machineName: event.target.value };
-										})
-									}
-								></input>
-							</div>
-							<div className="wifitype">
-								<label className="add-device-label">Sensors : </label>
-								<div className="sensor-input add-device-sensor-area">
-									<span>
-										{addDeviceDetails.sensors.split(",").map((sensor) => {
-											if (sensor === "" || sensor === ".") {
-											} else {
-												return (
-													<>
-														<span className="sensor-individual-holder add-device-individual-holder">
-															<p className="sensor-name-holder">
-																{sensor?.replaceAll(".", "")}
-															</p>
-															<button
-																className="remove-sensor-button"
-																data={sensor}
-																onClick={addDeviceRemoveSensor}
-															>
-																⛔️
-															</button>
-														</span>
-													</>
-												);
-											}
-										})}
-										<input
-											placeholder="Add sensor"
-											className="sensor-input"
-											onKeyDown={addDeviceSensorAdder}
-										></input>
-										<button
-											className="sensor-input add-device-sensor-button"
-											onClick={addDeviceSensorAdder}
-										>
-											✔
-										</button>
-									</span>
+					<div id="control-panel-body">
+						<div className="container">
+							<div className="cp">
+								<h1 id="change-password" className="subtitle">
+									Change Password
+								</h1>
+								<div>
+									<label>Current Password</label>
+									<input
+										className="input-change-password"
+										value={currentPassword}
+										onChange={(event) => setCurrentPassword(event.target.value)}
+										type="password"
+									></input>
 								</div>
-							</div>
 
-							<div>
-								<span className="input-add-device-wifi">
-									<div className="ssid_c">
-										<label className="wifi-labels">SSID -&gt; </label>
-										<input
-											type="text"
-											className="input-change-password input-add-device"
-											placeholder="Enter SSID"
-											onChange={(event) =>
-												setAddDeviceDetails((previous) => {
-													return { ...previous, ssid: event.target.value };
-												})
-											}
-										></input>
-									</div>
-									<div className="pass_c password-wifi">
-										<label className="wifi-labels">Password -&gt; </label>
-										<input
-											type="password"
-											className="input-change-password input-add-device"
-											placeholder="Enter Wifi Password"
-											onChange={(event) =>
-												setAddDeviceDetails((previous) => {
-													return {
-														...previous,
-														password: event.target.value,
-													};
-												})
-											}
-										></input>
-									</div>
-								</span>
-							</div>
+								<div>
+									<label>New Password</label>
+									<input
+										className="input-change-password"
+										value={newPassword}
+										onChange={(event) => setNewPassword(event.target.value)}
+										type="password"
+									></input>
+								</div>
 
-							<button
-								className="generate_button my-button"
-								onClick={generatecodeClicked}
-							>
-								Generate
-							</button>
-							<p id="gen_error"></p>
+								<div>
+									<label>Retype Password</label>
+									<input
+										className="input-change-password"
+										value={retypedPassword}
+										onChange={(event) => setRetypedPassword(event.target.value)}
+										type="password"
+									></input>
+								</div>
+
+								<button
+									onClick={change_password}
+									className="my-button change_password"
+								>
+									Change
+								</button>
+								<p id="cp_message">Changed Successfully !!</p>
+							</div>
 						</div>
+						{role !== "admin" ? (
+							<></>
+						) : (
+							<>
+								<ControlPanelSectionSelector />
+								<div className="container">
+									<div className="nu">
+										<h1 id="all-users" className="subtitle">
+											All Users
+										</h1>
+										{allUsers.length == 0 ? (
+											<h3 className="no_data">No new Requests found</h3>
+										) : (
+											<>
+												<table className="table">
+													<thead>
+														<tr>
+															<td>Username</td>
+															<td>Role</td>
+															<td>Actions</td>
+														</tr>
+													</thead>
+													<tbody>
+														{allUsers.map((data) => {
+															return (
+																<tr>
+																	<td>{data.username}</td>
+																	<td>{data.role}</td>
+																	<td>
+																		{data.isActive ? (
+																			<button
+																				data={JSON.stringify(data)}
+																				className="table_button my-button"
+																				onClick={blockUser}
+																				disabled={username === data.username}
+																			>
+																				🚫
+																			</button>
+																		) : (
+																			<button
+																				data={JSON.stringify(data)}
+																				className="table_button my-button"
+																				onClick={unBlockUser}
+																			>
+																				&#10004;
+																			</button>
+																		)}
+																	</td>
+																</tr>
+															);
+														})}
+													</tbody>
+												</table>
+											</>
+										)}
+										<p id="table_status"></p>
+									</div>
+								</div>
+								<DataModifierSection
+									machines={deviceList}
+									axios_instance={props.axios_instance}
+									organization={organization}
+								/>
+								<div className="container">
+									<div className="dl">
+										<h1 id="devices-available" className="subtitle">
+											Devices Available
+										</h1>
+										{deviceList.length == 0 ? (
+											<h3 className="no_data">No devices found</h3>
+										) : (
+											<>
+												<table className="table">
+													<thead>
+														<tr>
+															<td>Username</td>
+															<td>Sensors</td>
+															<td>Actions</td>
+														</tr>
+													</thead>
+													<tbody>
+														{deviceList.map((data) => {
+															return (
+																<tr className="tablerow">
+																	<td style={{ fontWeight: 900 }}>
+																		{data["machineName"]}
+																	</td>
+																	{/* <td>{data["sensorType"]}</td> */}
+																	<td className="middle-column">
+																		<span className="sensors-column">
+																			{data.sensorType
+																				.split(",")
+																				.map((sensor) => {
+																					return (
+																						<SensorIndividualContainer
+																							sensor={sensor}
+																							removeSensorClicked={
+																								removeSensorClicked
+																							}
+																							data={data}
+																							mode={data.mode}
+																							setDeviceList={setDeviceList}
+																							axios_instance={
+																								props.axios_instance
+																							}
+																							organization={organization}
+																						/>
+																					);
+																				})}
+																		</span>
+																		<span className="add-sensor-holder">
+																			<input
+																				className="sensor-input"
+																				placeholder="Add Sensor"
+																				onKeyDown={addSensorClicked}
+																				data={JSON.stringify(data)}
+																			></input>
+																			<button
+																				className="sensor-input"
+																				data={JSON.stringify(data)}
+																				onClick={addSensorClicked}
+																			>
+																				✔
+																			</button>
+																		</span>
+																	</td>
+																	<td className="action-column">
+																		<button
+																			data={data["machineName"]}
+																			disabled={data.username === "admin"}
+																			className="table_button my-button"
+																			onClick={(event) => removeDevice(event)}
+																		>
+																			&#10060;
+																		</button>
+																	</td>
+																</tr>
+															);
+														})}
+													</tbody>
+												</table>
+											</>
+										)}
+										<p id="table_status3"></p>
+									</div>
+								</div>
+
+								<div className="container last-container">
+									<div className="cg">
+										<h1 id="add-machine" className="subtitle">
+											Add Machine
+										</h1>
+										<div className="machinename">
+											<label className="add-device-label">
+												Machine Name :{" "}
+											</label>
+											<input
+												type="text"
+												className="input-change-password input-add-device"
+												placeholder="Enter Machine name"
+												value={addDeviceDetails.machineName}
+												onChange={(event) =>
+													setAddDeviceDetails((previous) => {
+														console.log(event.target.value);
+														return {
+															...previous,
+															machineName: event.target.value,
+														};
+													})
+												}
+											></input>
+										</div>
+										<div className="wifitype">
+											<label className="add-device-label">Sensors : </label>
+											<div className="sensor-input add-device-sensor-area">
+												<span>
+													{addDeviceDetails.sensors.split(",").map((sensor) => {
+														if (sensor === "" || sensor === ".") {
+														} else {
+															return (
+																<>
+																	<span className="sensor-individual-holder add-device-individual-holder">
+																		<p className="sensor-name-holder">
+																			{sensor?.replaceAll(".", "")}
+																		</p>
+																		<button
+																			className="remove-sensor-button"
+																			data={sensor}
+																			onClick={addDeviceRemoveSensor}
+																		>
+																			⛔️
+																		</button>
+																	</span>
+																</>
+															);
+														}
+													})}
+													<input
+														placeholder="Add sensor"
+														className="sensor-input"
+														onKeyDown={addDeviceSensorAdder}
+													></input>
+													<button
+														className="sensor-input add-device-sensor-button"
+														onClick={addDeviceSensorAdder}
+													>
+														✔
+													</button>
+												</span>
+											</div>
+										</div>
+
+										<div>
+											<span className="input-add-device-wifi">
+												<div className="ssid_c">
+													<label className="wifi-labels">SSID -&gt; </label>
+													<input
+														type="text"
+														className="input-change-password input-add-device"
+														placeholder="Enter SSID"
+														onChange={(event) =>
+															setAddDeviceDetails((previous) => {
+																return {
+																	...previous,
+																	ssid: event.target.value,
+																};
+															})
+														}
+													></input>
+												</div>
+												<div className="pass_c password-wifi">
+													<label className="wifi-labels">Password -&gt; </label>
+													<input
+														type="password"
+														className="input-change-password input-add-device"
+														placeholder="Enter Wifi Password"
+														onChange={(event) =>
+															setAddDeviceDetails((previous) => {
+																return {
+																	...previous,
+																	password: event.target.value,
+																};
+															})
+														}
+													></input>
+												</div>
+											</span>
+										</div>
+
+										<button
+											className="generate_button my-button"
+											onClick={generatecodeClicked}
+										>
+											Generate
+										</button>
+										<p id="gen_error"></p>
+									</div>
+								</div>
+							</>
+						)}
 					</div>
 				</>
+			) : (
+				<div className="control-panel-screen-notifier-holder">
+					<ScreenSizeNotifier />
+				</div>
 			)}
-		</div>
+		</>
 	);
 }
 

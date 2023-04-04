@@ -53,8 +53,7 @@
     border-radius: 15px;
     height: 100%;
     padding: 1.75em;
-    padding-top: auto;
-    padding-bottom: auto;
+    margin: 0.75em;
 }
 
 .chart-switcher{
@@ -246,7 +245,6 @@
 }
 
 .chart_container{
-    margin-top: 3em;
     margin-bottom: 3em;
     position: relative;
 }
@@ -370,4 +368,11 @@
     text-align: center;
     font-size: x-large;
     letter-spacing: 3px;
+}
+
+
+@media(max-width: 1100px) {
+    .control-container{
+        flex-direction: column;
+    }
 }

@@ -22,10 +22,14 @@ import socketSend from "./utils/socketSend";
 import NoData from "./NoData.jsx";
 import DataPointCounter from "./DataPointCounter.jsx";
 import ChartLimit from "./ChartLimit.jsx";
+import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
 	const [selectedMachine, setSelectedMachine] = useState({});
+	const isMobile = useRef(
+		/iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent)
+	);
 	const [data, setData] = useState([]);
 	const [role, setRole] = useState("visitor");
 	const [lineFill, setLineFill] = useState(false);
@@ -37,6 +41,7 @@ function Dashboard(props) {
 	const sock = useRef(null);
 	const [chartLimit, setChartLimit] = useState(10);
 	const [organization, setOrganization] = useState("");
+	const [orientation, setOrientation] = useState(window.orientation);
 	const navigate = useNavigate();
 	const [socketDetails, setSocketDetails] = useState({
 		isSocketConnected: false,
@@ -51,6 +56,24 @@ function Dashboard(props) {
 		{ value: "dev", label: "DEV" },
 		{ value: "prod", label: "PROD" },
 	];
+	useEffect(() => {
+		const orientationListener = (event) => {
+			console.log(orientation);
+			setOrientation(window.orientation);
+		};
+
+		setTimeout(() => {
+			const viewportMeta = document.querySelector('meta[name="viewport"]');
+			viewportMeta.setAttribute(
+				"content",
+				"width=device-width, initial-scale=0.8, maximum-scale=1, user-scalable=0"
+			);
+		}, 1000);
+		window.addEventListener("orientationchange", orientationListener);
+		return () => {
+			window.removeEventListener("orientationchange", orientationListener);
+		};
+	}, []);
 
 	const dataCountCall = () => {
 		// getDataCounts(
@@ -477,6 +500,7 @@ function Dashboard(props) {
 												<input
 													className="command-input-field"
 													placeholder="Enter Command"
+													autofocus={!isMobile}
 													onKeyDown={commandKeyDown}
 												/>
 											</span>
@@ -485,6 +509,7 @@ function Dashboard(props) {
 								</span>
 							) : data.length > 0 ? (
 								<div className="chart_container">
+									<ScreenSizeNotifier />
 									<ChartLimit
 										chartLimit={chartLimit}
 										setChartLimit={setChartLimit}

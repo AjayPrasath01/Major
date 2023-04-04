@@ -313,3 +313,20 @@ thead{
     margin-top: auto;
     margin-bottom: auto;
 }
+
+.control-panel-screen-notifier-holder{
+    position: relative;
+    padding: 10px;
+    width: 90vw;
+    height: 100vh;
+}
+
+@media (max-width: 1000px) {
+    .limit-text{
+        font-size: 20px !important;
+    }
+
+    .limit-input{
+        font-size: 20px !important;
+    }
+}

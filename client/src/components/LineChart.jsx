@@ -1,27 +1,45 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Chart as ChartJS, registerables } from "chart.js";
 import { Line } from "react-chartjs-2";
+import ChartLeftRightControls from "./ChartLeftRightControls.jsx";
 
 ChartJS.register(...registerables);
 
 const LineChart = (props) => {
-	const chartData = props.data;
-	const X = [];
-	const Y = [];
-	chartData.forEach((element) => {
-		X.push(element.date);
-		Y.push(element.value);
-	});
-    const upMove = useRef(0);
-    const downMove = useRef(0);
-	const Y_Axis_Name = chartData[0]?.data_type;
+	const [X, setX] = useState([]);
+	const [Y, setY] = useState([]);
+	const [Y_Axis_Name, setYAxisName] = useState("Y-axis");
+	const [offset, setOffset] = useState(0);
+	useEffect(() => {
+		if (offset === 0) {
+			const chartData = props.data;
+			const tempX = [];
+			const tempY = [];
+			chartData.forEach((element, index) => {
+				tempX.push(element.date);
+				tempY.push(element.value);
+			});
+			if (
+				JSON.stringify(X) !== JSON.stringify(tempX) ||
+				JSON.stringify(Y) !== JSON.stringify(tempY)
+			) {
+				setX(tempX);
+				setY(tempY);
+				console.log({ tempX });
+			}
+			setYAxisName(chartData[0]?.data_type);
+		}
+	}, [props.data, offset]);
+
+	useEffect(() => {
+		console.log(ChartJS);
+	}, []);
 
 	var data = {
 		labels: X,
 		datasets: [
 			{
 				data: Y,
-                fill: props.fill,
 				backgroundColor: [
 					"rgba(255, 99, 132, 0.2)",
 					"rgba(54, 162, 235, 0.2)",
@@ -42,18 +60,43 @@ const LineChart = (props) => {
 			},
 		],
 	};
+	const resetButtonClicked = () => {
+		setOffset(0);
+	};
 	const [options, setOptions] = useState({
 		responsive: true,
 		legend: { display: false },
+		layout: {
+			padding: {
+				right: 50, // set the amount of extra space here
+			},
+		},
 		scales: {
 			x: {
+				// type: "time",
+				time: {
+					unit: "second",
+					displayFormats: {
+						hour: "YYYY-MM-DD HH:mm:ss",
+					},
+				},
 				title: {
 					display: true,
 					text: "DateTime",
 				},
+				ticks: {
+					// callback: function (value, index, values) {
+					// 	// return an empty string for every other label
+					// 	console.log({ values, value, index, set: X });
+					// 	return index % 2 === 0 ? X[index] : "";
+					// },
+				},
 				grace: "5%",
-				// min: 0,
-				// max: X.length,
+				min:
+					X.length - props.chartLimit > 0
+						? X.length - props.chartLimit
+						: 0 + offset,
+				max: X.length - 1 + offset,
 			},
 
 			y: {
@@ -66,57 +109,79 @@ const LineChart = (props) => {
 			},
 		},
 	});
-	useEffect(() => {
-		const chart = document.getElementsByClassName("chart-data-viewer")[0];
-        // Scroll effect 
+	const leftButtonClicked = () => {
+		setOffset((previous) => {
+			if (X.length - offset > props.chartLimit) {
+				previous++;
+			}
+			return previous;
+		});
+	};
 
-		// chart.addEventListener("wheel", (event) => {
-        //     event.preventDefault();
-        //     if (event.deltaY > 0){
-        //         upMove.current += 1
-        //     }
-        //     if (event.deltaY < 0){
-        //         downMove.current += 1
-        //     }
-		// 	if (event.deltaY > 0 && upMove.current % 200 === 0) {
-        //         // upMove.current = 0;
-        //         // downMove.current = 0
-		// 		setOptions((previous) => {
-		// 			if (previous.scales.x.max >= X.length){
-        //                 previous.scales.x.min = X.length - 6
-        //                 previous.scales.x.max = X.length
-        //             }else {
-        //                 previous.scales.x.min = previous.scales.x.min + 1;
-        //                 previous.scales.x.max = previous.scales.x.max + 1;
-        //             }
-		// 			return { ...previous };
-		// 		});
-		// 	}
-        //     else 
-        //     if (event.deltaY < 0 && downMove.current % 200 === 0) {
-        //         // downMove.current = 0;
-        //         // upMove.current = 0;
-		// 		setOptions((previous) => {
-        //             if (previous.scales.x.min <= 0){
-        //                 previous.scales.x.min = 0
-        //                 previous.scales.x.max = 6
-        //             }else{
-        //                 previous.scales.x.min = previous.scales.x.min - 1;
-        //                 previous.scales.x.max = previous.scales.x.max - 1;
-        //             }
-		// 			return { ...previous };
-		// 		});
-		// 	}
-			
-		// });
-	}, []);
+	const rightButtonClicked = () => {
+		setOffset((previous) => {
+			if (previous > 0) {
+				previous--;
+			}
+			return previous;
+		});
+	};
+	useEffect(() => {
+		setOptions((previous) => {
+			if (previous) {
+				const newData = {
+					...previous,
+					scales: {
+						...previous.scales,
+						x: {
+							...previous.scales.x,
+							min:
+								(X.length - props.chartLimit > 0
+									? X.length - props.chartLimit
+									: 0) - offset,
+							max: X.length - 1 - offset,
+						},
+					},
+				};
+				return newData;
+			}
+		});
+	}, [X, offset]);
+
+	useEffect(() => {
+		setOffset(0);
+		setOptions((previous) => {
+			if (previous) {
+				const newData = {
+					...previous,
+					scales: {
+						...previous.scales,
+						x: {
+							...previous.scales.x,
+							min:
+								X.length - props.chartLimit > 0
+									? X.length - props.chartLimit
+									: 0,
+							max: X.length - 1,
+						},
+					},
+				};
+				return newData;
+			}
+		});
+	}, [props.chartLimit]);
 	return (
 		<div className="chart">
 			<h3 className="chartTitle">Bar Chart</h3>
+			<ChartLeftRightControls
+				offset={offset}
+				resetButtonClicked={resetButtonClicked}
+				leftButtonClicked={leftButtonClicked}
+				rightButtonClicked={rightButtonClicked}
+			/>
 			<Line data={data} options={options} className="chart-data-viewer" />
 		</div>
 	);
-	// return <></>
 };
 
 export default LineChart;

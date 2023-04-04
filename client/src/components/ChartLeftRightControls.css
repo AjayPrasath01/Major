@@ -2,6 +2,8 @@
     border-radius: 100px;
     border: 1px solid black;
     margin-left: 0;
+    z-index: 100;
+    background-color: transparent;
 }
 
 .chart-button.left{
@@ -19,4 +21,28 @@
     top: 50%;
     transform: translateY(50%);
     transform: scale(1.5);
+}
+
+.reset-button-chart{
+    float: right;
+    font-size: 3ch;
+    font-weight: bolder;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    z-index: 100;
+    padding: 0.5em;
+}
+
+@media (max-width: 600px) {
+    .chart-button{
+        transform: scale(1.2) !important;
+    }
+}
+
+@media (max-width: 800px) {
+    .reset-button-chart{
+        font-size: 2ch;
+        border-radius: 7px;
+      }
 }
