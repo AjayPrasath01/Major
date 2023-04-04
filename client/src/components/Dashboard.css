@@ -53,8 +53,7 @@
     border-radius: 15px;
     height: 100%;
     padding: 1.75em;
-    padding-top: auto;
-    padding-bottom: auto;
+    margin: 0.75em;
 }
 
 .chart-switcher{

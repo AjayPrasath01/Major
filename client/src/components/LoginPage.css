@@ -219,14 +219,40 @@ button:disabled{
         top: 50%;
         left: 50%;
         transform: translateX(-50%) translateY(-50%);
-        background-color: rgba(0, 0, 0, 0.126);
-        padding-left: 3em;
-        padding-right: 3em;
-        padding-bottom: 9em;
+        background-color: rgb(255 255 255 / 0%);
+        padding-left: 1.5em;
+        padding-right: 1.5em;
+        padding-bottom: 6em;
         padding-top: 3em;
         border-radius: 30px;
         margin-bottom: auto;
-    
+        margin-left: auto;
+        margin-right: auto;
+        width: 75vw;
+    }
+
+    .loginPage > .card > .title {
+        font-size: 28px !important;
+    }
+
+    .section-container-create-account{
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .password-holder{
+        width: 95%;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .input-field-login{
+        width: 90%;
+        margin-left: 0;
+        margin-right: 0;
+        margin-left: auto !important;
+        margin-right: auto;
     }
 
     .logo{
@@ -234,4 +260,62 @@ button:disabled{
         margin-top: 0.3em;
         font-size: 24px;
     }
+
+    .create-account-input{
+        width: 90%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .center1{
+        bottom: 3%;
+    }
+
+    .center2{
+        display: none;
+    }
+
+    .center3{
+        bottom: 10%;
+        left: 80%;
+    }
+
+    .right_bottom {
+        top: 7%;
+        left: -11%;
+    }
+
+    .password-eye{
+        z-index: 0;
+        height: 3.5em;
+    }
+
+    .password-eye:hover{
+        background-color: rgba(255, 255, 255, 0);
+    }
+
+    .role-button{
+        width: 100%;
+    }
+
+    .role-holder{
+        display: flex;
+        gap: 1em;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 1em;
+    }
+
+    .my-button{
+        color: black;
+    }
+
+    .thank-you{
+        font-size: 12ch !important;
+    }
+
+    .thank-you-link{
+        font-size: 18px !important;
+    }
+
 }

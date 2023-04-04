@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart as ChartJS, registerables, TimeScale } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import ChartLeftRightControls from "./ChartLeftRightControls.jsx";
+import moment from "moment";
+import "chartjs-adapter-date-fns";
 
-ChartJS.register(...registerables);
+ChartJS.register(...registerables, TimeScale);
 
 const BarChart = (props) => {
 	const [X, setX] = useState([]);
@@ -25,10 +27,15 @@ const BarChart = (props) => {
 			) {
 				setX(tempX);
 				setY(tempY);
+				console.log({ tempX });
 			}
 			setYAxisName(chartData[0]?.data_type);
 		}
 	}, [props.data, offset]);
+
+	useEffect(() => {
+		console.log(ChartJS);
+	}, []);
 
 	var data = {
 		labels: X,
@@ -61,11 +68,30 @@ const BarChart = (props) => {
 	const [options, setOptions] = useState({
 		responsive: true,
 		legend: { display: false },
+		layout: {
+			padding: {
+				right: 50, // set the amount of extra space here
+			},
+		},
 		scales: {
 			x: {
+				// type: "time",
+				// time: {
+				// 	unit: "second",
+				// 	displayFormats: {
+				// 		hour: "YYYY-MM-DD HH:mm:ss",
+				// 	},
+				// },
 				title: {
 					display: true,
 					text: "DateTime",
+				},
+				ticks: {
+					// callback: function (value, index, values) {
+					// 	// return an empty string for every other label
+					// 	console.log({ values, value, index, set: X });
+					// 	return index % 2 === 0 ? X[index] : "";
+					// },
 				},
 				grace: "5%",
 				min:
