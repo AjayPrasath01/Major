@@ -15,7 +15,6 @@ import noDataAnim from "../assets/noDataAnim.json";
 import socketErrorHandler from "./utils/socketErrorHandler";
 import socketConnectionOpenHandler from "./utils/socketConnectionOpenHandler";
 import socketConnectionClosedHandler from "./utils/socketConnectionClosedHandler";
-import getDataCounts from "./utils/getDataCounts";
 import "react-resizable/css/styles.css";
 import socketMessageHandler from "./utils/socketMessageHandler";
 import socketSend from "./utils/socketSend";
@@ -23,6 +22,7 @@ import NoData from "./NoData.jsx";
 import DataPointCounter from "./DataPointCounter.jsx";
 import ChartLimit from "./ChartLimit.jsx";
 import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
+import SummaryValueView from "./SummaryValueView.jsx";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
@@ -43,6 +43,16 @@ function Dashboard(props) {
 	const [organization, setOrganization] = useState("");
 	const [orientation, setOrientation] = useState(window.orientation);
 	const navigate = useNavigate();
+	const [summaryDetails, setSummaryDetails] = useState({
+		high: "N/A",
+		low: "N/A",
+		average: "N/A",
+		median: "N/A",
+		q1: "N/A",
+		q3: "N/A",
+		iqr: "N/A",
+		Range: "N/A",
+	});
 	const [socketDetails, setSocketDetails] = useState({
 		isSocketConnected: false,
 	});
@@ -144,6 +154,97 @@ function Dashboard(props) {
 			};
 		}
 	}, [organization]);
+
+	useEffect(() => {
+		function calculateIQR(data) {
+			// First, sort the data array in ascending order
+			data.sort((a, b) => a - b);
+
+			// Find the median (Q2) of the dataset
+			let median;
+			if (data.length % 2 === 0) {
+				median = (data[data.length / 2 - 1] + data[data.length / 2]) / 2;
+			} else {
+				median = data[Math.floor(data.length / 2)];
+			}
+
+			// Find the lower quartile (Q1)
+			let q1;
+			if (data.length % 4 === 1) {
+				q1 = data[(data.length + 1) / 4 - 1];
+			} else {
+				q1 = (data[data.length / 4 - 1] + data[data.length / 4]) / 2;
+			}
+
+			// Find the upper quartile (Q3)
+			let q3;
+			if (data.length % 4 === 1) {
+				q3 = data[(3 * (data.length + 1)) / 4 - 1];
+			} else {
+				q3 =
+					(data[(3 * data.length) / 4 - 1] + data[(3 * data.length) / 4]) / 2;
+			}
+
+			// Calculate the IQR
+			let iqr = q3 - q1;
+			iqr = iqr.toFixed(2);
+			q3 = q3.toFixed(2);
+			q1 = q1.toFixed(2);
+			median = median.toFixed(2);
+
+			return {
+				q1,
+				median,
+				q3,
+				iqr,
+			};
+		}
+
+		if (data.length > 0) {
+			const Y = data.map((value) => parseFloat(value.value));
+			let high = Math.max(...Y);
+
+			high = high.toFixed(2);
+
+			// To find the lowest number
+			let low = Math.min(...Y);
+
+			low = low.toFixed(2);
+
+			// To find the average
+			const sum = Y.reduce((acc, val) => acc + val, 0);
+			let average = sum / Y.length;
+
+			if (average % 1 === 0) {
+				average = average.toFixed(2) + "0";
+			} else {
+				average = average.toFixed(2);
+			}
+
+			let Variance =
+				Y.reduce((sum, val) => sum + (val - average) ** 2, 0) / Y.length;
+			let stdDev = Math.sqrt(Variance);
+
+			Variance.toFixed(2);
+			stdDev.toFixed(2);
+
+			Range = high - low;
+			Range = Range.toFixed(2);
+
+			setSummaryDetails({ high, low, average, ...calculateIQR(Y), Range });
+		} else {
+			setSummaryDetails({
+				high: "N/A",
+				low: "N/A",
+				average: "N/A",
+				median: "N/A",
+				q1: "N/A",
+				q3: "N/A",
+				iqr: "N/A",
+				Range: "N/A",
+			});
+		}
+	}, [data]);
 
 	function commandKeyDown(event) {
 		if (event.key === "Enter" && event.target.value !== "") {
@@ -451,6 +552,25 @@ function Dashboard(props) {
 									</span>
 								</span>
 							</span>
+						</div>
+						<div className="container dashboard">
+							<h1>Summary</h1>
+							<div className="summary-details-holder">
+								<SummaryValueView value={summaryDetails.high} name={"High"} />
+								<SummaryValueView value={summaryDetails.low} name={"Low"} />
+								<SummaryValueView value={summaryDetails.Range} name={"Range"} />
+								<SummaryValueView
+									value={summaryDetails.average}
+									name={"Average"}
+								/>
+								<SummaryValueView
+									value={summaryDetails.median}
+									name={"Median"}
+								/>
+								<SummaryValueView value={summaryDetails.q1} name={"Q1"} />
+								<SummaryValueView value={summaryDetails.q3} name={"Q3"} />
+								<SummaryValueView value={summaryDetails.iqr} name={"IQR"} />
+							</div>
 						</div>
 						<>
 							{viewLog ? (

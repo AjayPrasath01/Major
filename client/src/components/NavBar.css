@@ -270,6 +270,14 @@
     margin-right: auto !important;
   }
 
+  .summary-details-holder{
+    flex-direction: column;
+  }
+
+  .summary-value-view{
+    margin-bottom: 0.75em !important;
+  }
+
   .dateTimepicker, .change-live{
     width: 100%;
     padding-left: 0 !important;

@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Collections;
+
 
 @SpringBootApplication
 @EnableScheduling
@@ -12,7 +14,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class MachinemonitorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MachinemonitorApplication.class, args);
+		SpringApplication app = new SpringApplication(MachinemonitorApplication.class);
+		if (args.length > 0) {
+			app.setDefaultProperties(Collections.singletonMap("spring.datasource.url", args[0]));
+			app.setDefaultProperties(Collections.singletonMap("spring.datasource.username", args[1]));
+			app.setDefaultProperties(Collections.singletonMap("spring.datasource.password", args[2]));
+		}
+		app.run(args);
 	}
 
 }

@@ -56,6 +56,36 @@
     margin: 0.75em;
 }
 
+.summary-value-view{
+    flex: 0 0 calc(10% - 10px); /* 10% width with 10px spacing */
+    margin: 5px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5em;
+    padding: 1em;
+    background-color: rgba(0, 0, 0, 0.064);
+    border-radius: 5px;
+}
+
+.container.dashboard > h1{
+    padding: 1em;
+}
+
+.summary-details-holder{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.container.dashboard{
+    margin-top: 1em;
+    background-color: white;
+    border-radius: 20px;
+    margin-bottom: 2em;
+}
+
 .chart-switcher{
     box-shadow: none;
     margin-left: 20px !important;
