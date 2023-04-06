@@ -32,7 +32,7 @@
     "watch": "watch 'npm run build' ",
     "build": "react-scripts build && cp -r build/* ../api/src/main/resources/static",
     "webpack:dev": "webpack --mode development --watch",
-    "webpack:production": "webpack --mode production",
+    "webpack:production": "rm -rf ../api/src/main/resources/static && webpack --mode production",
     "build:start": "react-scripts build && cp -r build/* ../api/src/main/resources/static && mvn -f ../api spring-boot:run",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
