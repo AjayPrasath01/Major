@@ -47,6 +47,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         AuthFilter authFilter = new AuthFilter();
         authFilter.setAuthenticationManager(authenticationManager());
         authFilter.setAuthenticationSuccessHandler(new CustomSuccessAuthHandlers());
+        http.requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure();
         http
                 .cors()
                 .and()

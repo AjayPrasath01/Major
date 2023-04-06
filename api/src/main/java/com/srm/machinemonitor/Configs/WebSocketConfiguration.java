@@ -13,16 +13,13 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-    @Value("${clientDomainName}")
-    String clientDomain;
-
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandlers(), "/ws").setAllowedOriginPatterns(clientDomain);
-        registry.addHandler(new WebSocketHandlers(), "/ws").setAllowedOriginPatterns(clientDomain).withSockJS();
+        registry.addHandler(new WebSocketHandlers(), "/ws");
+        registry.addHandler(new WebSocketHandlers(), "/ws").withSockJS();
 
 //        registry.addHandler(new ArduinoWebSocketHandlers(), "/arduino/ws").setAllowedOriginPatterns(clientDomain).withSockJS();
-        registry.addHandler(new ArduinoWebSocketHandlers(), "/arduino/ws").setAllowedOriginPatterns(clientDomain);
+//        registry.addHandler(new ArduinoWebSocketHandlers(), "/arduino/ws").setAllowedOriginPatterns(clientDomain);
     }
 
 }

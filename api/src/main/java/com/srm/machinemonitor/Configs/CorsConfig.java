@@ -15,14 +15,10 @@ import java.util.Collections;
 @Configuration
 public class CorsConfig {
 
-    @Value("${clientDomainName}")
-    String clientDomain;
-
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList(clientDomain)); // Provide list of origins if you want multiple origins
         config.setAllowedHeaders(Arrays.asList("Content-Type",
                 "X-Requested-With",
                 "accept",
@@ -38,7 +34,6 @@ public class CorsConfig {
         source.registerCorsConfiguration("/**", config);
 
         config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList(clientDomain)); // Provide list of origins if you want multiple origins
         config.setAllowedHeaders(Arrays.asList("Content-Type",
                 "X-Requested-With",
                 "accept",
