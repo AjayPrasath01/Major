@@ -92,6 +92,10 @@
     font-size: 20px;
 }
 
+.nu{
+    margin-top: 5em;
+}
+
 .new_list{
     display: flex;
     flex-direction: row;
@@ -165,11 +169,16 @@ thead{
 }
 
 .cg{
-    margin-top: 2em;
+    margin-top: 5em;
 }
 
 .cg > .subtitle{
     margin-left: 0;
+}
+
+.dl{
+
+    margin-top: 5em;
 }
 
 .cg > * > label{

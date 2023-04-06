@@ -3,6 +3,7 @@ import "./ControlPanel.css";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import fileDownload from "js-file-download";
+import JSZip from "jszip";
 import loginStausChecker from "./utils/loginStausChecker";
 import fetchMachineNames from "./utils/fetchMachineNames";
 import addSensor from "./utils/addSensor";
@@ -227,7 +228,7 @@ function ControlPanel(props) {
 
 	function addDeviceRemoveSensor(event) {
 		const toBeRemoced = event.target.getAttribute("data");
-		console.log({ toBeRemoced });
+		console.log({ toBeRemoced, look: "here" });
 		setAddDeviceDetails((previous) => {
 			const beforeLength = previous.sensors.length;
 			previous.sensors = previous.sensors.replace("," + toBeRemoced + ",", ",");
@@ -299,9 +300,14 @@ function ControlPanel(props) {
 					organization,
 					sensors: addDeviceDetails.sensors.replaceAll(".", ""),
 				})
-				.then((res) => {
+				.then(async (res) => {
 					if (res.status == 200) {
-						fileDownload(res.data, "ArduinoSD.ino");
+						const currentDate = new Date().getTime();
+						const zip = new JSZip();
+						const folder = zip.folder(`ArduinoSD_${currentDate}`);
+						folder.file(`ArduinoSD_${currentDate}.ino`, res.data);
+						const content = await zip.generateAsync({ type: "blob" });
+						fileDownload(content, `ArduinoSD_${currentDate}.zip`);
 						element.style.display = "none";
 					}
 					fetchMachineNames(props.axios_instance, setDeviceList);

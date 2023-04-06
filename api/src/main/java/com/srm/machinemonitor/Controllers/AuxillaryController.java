@@ -57,8 +57,8 @@ public class AuxillaryController {
 
     Map<String, String> res;
 
-    @Value("${clientDomainName}")
-    String clientDomain;
+    @Value("${DomainName}")
+    String Domain;
 
     @Autowired
     LogDAO logDAO;
@@ -467,7 +467,7 @@ public class AuxillaryController {
         fileContent  = fileContent.replace("<TOKEN>", secert);
         fileContent  = fileContent.replace("<ORGANIZATIONNAME>", addDeviceRequest.getOrganization());
         fileContent  = fileContent.replace("<MACHINENAME>", addDeviceRequest.getMachineName());
-        fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", "http:" + clientDomain.split(":")[1] + ":9009");
+        fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", "https://" + Domain);
         if (addDeviceRequest.getSsid() != null && addDeviceRequest.getPassword() != null){
             fileContent  = fileContent.replace("<SSIDPASSWORD>", addDeviceRequest.getPassword());
             fileContent  = fileContent.replace("<SSIDNAME>", addDeviceRequest.getSsid());
@@ -514,6 +514,12 @@ public class AuxillaryController {
             return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
         }
         String[] sensors = modifyDeviceRequest.getSensors().split(",");
+        if (sensors.length == 1){
+            if (Objects.equals(sensors[0], "")){
+                res.put("message", "Deleting all sensor is not possible");
+                return new ResponseEntity<>(res, HttpStatus.NOT_ACCEPTABLE);
+            }
+        } else
         if (Utils.hasDuplicates(sensors)){
             res.put("message", "Duplicate sensors names are not allowed");
             return new ResponseEntity<>(res, HttpStatus.CONFLICT);
@@ -537,6 +543,7 @@ public class AuxillaryController {
                         .filter(s -> !Objects.equals(s, sensor.getSensors()))
                         .toArray(String[]::new);
             }
+
             // To create new sensor
             for (int i=0; i<filteredSensor.length; i++){
                 if (Objects.equals(sensors[i], "")){

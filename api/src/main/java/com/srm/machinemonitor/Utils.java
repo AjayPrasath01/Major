@@ -47,6 +47,7 @@ public class Utils {
 
     public static int findDeletionOrUpdation(List<Machines> available, String[] sensors){
         Arrays.sort(sensors);
+        sensors = Arrays.stream(sensors).filter(sensor -> !sensor.equals("")).toArray(String[]::new);
         int foundCount = 0;
         for (Machines sensor : available){
             int found = Arrays.binarySearch(sensors, sensor.getSensors());
