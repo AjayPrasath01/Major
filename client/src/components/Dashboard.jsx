@@ -382,9 +382,11 @@ function Dashboard(props) {
 										})}
 									</div>
 									<span className="download-button-holder">
+										{console.log({ length: data.length })}
 										<button
 											className="download_csv my-button"
 											onClick={downloadCSV}
+											style={data.length <= 0 ? { display: "none" } : undefined}
 										>
 											<h4 className="download-content-holder">
 												Download data of{" "}
