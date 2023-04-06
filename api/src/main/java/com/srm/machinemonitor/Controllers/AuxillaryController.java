@@ -453,8 +453,7 @@ public class AuxillaryController {
             machinesDAO.save(machines);
         }
 
-        String fileName = "ArduinoSD.ino";
-        InputStream inputStream = new FileInputStream(fileName);
+        InputStream inputStream = getClass().getResourceAsStream("/ArduinoSD.ino");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
