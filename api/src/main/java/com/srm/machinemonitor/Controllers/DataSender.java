@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
+import java.lang.Math;
 import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletResponse;
@@ -214,7 +215,7 @@ public class DataSender {
         }
         final Map clientRes = new HashMap();
         clientRes.put("data", data);
-        clientRes.put("pages", Math.ceilDivExact(number_of_data.longValueExact(), limit));
+        clientRes.put("pages",  (int) Math.ceil((double) number_of_data.longValueExact() / limit));
         System.out.println("clientRes");
         System.out.println(clientRes);
         return new ResponseEntity<>(clientRes, HttpStatus.OK);

@@ -20,7 +20,7 @@ module.exports = {
 				use: {
 					loader: "babel-loader",
 					options: {
-						presets: ["@babel/preset-env", "@babel/preset-react"],
+						presets: ["@babel/preset-env"],
 					},
 				},
 			},
@@ -52,7 +52,7 @@ module.exports = {
 								enabled: false,
 							},
 							pngquant: {
-								quality: [0.65, 0.90],
+								quality: [0.65, 0.9],
 								speed: 4,
 							},
 							gifsicle: {
