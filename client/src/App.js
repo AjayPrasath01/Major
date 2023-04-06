@@ -1,16 +1,12 @@
 import "./App.css";
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import NavBar from "./components/NavBar.jsx";
 import {
-	BrowserRouter,
-	matchPath,
 	Route,
 	Routes,
 	HashRouter,
 } from "react-router-dom";
 import LoginPage from "./components/LoginPage.jsx";
-import { useEffect } from "react";
-import Cookies from "universal-cookie";
 import { instance, SERVER } from "./components/axios";
 import LoadingPage from "./components/LoadingPage.jsx";
 
@@ -22,9 +18,7 @@ const LazyCreateAccountPage = lazy(() =>
 const LazyThankYouPage = lazy(() => import("./components/ThanksYouPage.jsx"));
 
 function App() {
-	const cookie = new Cookies();
 	useEffect(() => {
-		const header = {};
 		instance.get("/api");
 	}, [instance]);
 	return (
@@ -38,7 +32,6 @@ function App() {
 							path="/"
 							element={
 								<LoginPage
-									xsrf={cookie.get("XSRF-TOKEN")}
 									axios_instance={instance}
 									server={SERVER}
 								/>
@@ -53,7 +46,6 @@ function App() {
 									text={["Control Panel", "Dashboard"]}
 									axios_instance={instance}
 									server={SERVER}
-									xsrf={cookie.get("XSRF-TOKEN")}
 								/>
 							}
 						/>

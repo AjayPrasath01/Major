@@ -15,7 +15,6 @@ import noDataAnim from "../assets/noDataAnim.json";
 import socketErrorHandler from "./utils/socketErrorHandler";
 import socketConnectionOpenHandler from "./utils/socketConnectionOpenHandler";
 import socketConnectionClosedHandler from "./utils/socketConnectionClosedHandler";
-import "react-resizable/css/styles.css";
 import socketMessageHandler from "./utils/socketMessageHandler";
 import socketSend from "./utils/socketSend";
 import NoData from "./NoData.jsx";

@@ -1,4 +1,9 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const path = require("path");
 
 OUTPATH = "../api/src/main/resources/static";
@@ -11,6 +16,17 @@ module.exports = {
 		publicPath: "/",
 		path: path.resolve(__dirname, OUTPATH),
 		filename: "bundle.js",
+	},
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new UglifyJsPlugin({
+				test: /\.js(\?.*)?$/i,
+			}),
+			new TerserPlugin(),
+			new OptimizeCSSAssetsPlugin(),
+			new CssMinimizerPlugin(),
+		],
 	},
 	module: {
 		rules: [
@@ -68,6 +84,10 @@ module.exports = {
 		],
 	},
 	plugins: [
+		new CompressionPlugin({
+			algorithm: "gzip",
+			test: /\.js(\?.*)?$/i,
+		}),
 		new HtmlWebPackPlugin({
 			template: "./public/index.html",
 			filename: "./index.html",
