@@ -80,6 +80,7 @@
 #modifier-error-holder{
     position: absolute;
     bottom: 1em;
+    font-weight: bolder;
 }
 
 .with-side-element{

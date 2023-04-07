@@ -157,54 +157,62 @@ function Dashboard(props) {
 	useEffect(() => {
 		function calculateIQR(data) {
 			// First, sort the data array in ascending order
-			console.log({ data, check: "here" });
-			data.sort((a, b) => a - b);
+			if (data.length > 1) {
+				data.sort((a, b) => a - b);
 
-			// Find the median (Q2) of the dataset
-			let median;
-			if (data.length % 2 === 0) {
-				median =
-					(data[Math.round(data.length / 2 - 1)] +
-						data[Math.round(data.length / 2)]) /
-					2;
+				// Find the median (Q2) of the dataset
+				let median;
+				if (data.length % 2 === 0) {
+					median =
+						(data[Math.round(data.length / 2 - 1)] +
+							data[Math.round(data.length / 2)]) /
+						2;
+				} else {
+					median = data[Math.floor(Math.round(data.length / 2))];
+				}
+
+				// Find the lower quartile (Q1)
+				let q1;
+				if (data.length % 4 === 1) {
+					q1 = data[Math.round((data.length + 1) / 4 - 1)];
+				} else {
+					q1 =
+						(data[Math.round((data.length + 1) / 4 - 1)] +
+							data[Math.round(data.length / 4)]) /
+						2;
+				}
+
+				// Find the upper quartile (Q3)
+				let q3;
+				if (data.length % 4 === 1) {
+					q3 = data[Math.round((3 * (data.length + 1)) / 4 - 1)];
+				} else {
+					q3 =
+						(data[Math.round((3 * data.length) / 4 - 1)] +
+							data[Math.round((3 * data.length) / 4)]) /
+						2;
+				}
+				// Calculate the IQR
+				let iqr = q3 - q1;
+				iqr = iqr.toFixed(2);
+				q3 = q3.toFixed(2);
+				q1 = q1.toFixed(2);
+				median = median.toFixed(2);
+
+				return {
+					q1,
+					median,
+					q3,
+					iqr,
+				};
 			} else {
-				median = data[Math.floor(Math.round(data.length / 2))];
+				return {
+					q1: "N/A",
+					median: "N/A",
+					q3: "N/A",
+					iqr: "N/A",
+				};
 			}
-
-			// Find the lower quartile (Q1)
-			let q1;
-			if (data.length % 4 === 1) {
-				q1 = data[Math.round((data.length + 1) / 4 - 1)];
-			} else {
-				q1 =
-					(data[Math.round((data.length + 1) / 4 - 1)] +
-						data[Math.round(data.length / 4)]) /
-					2;
-			}
-
-			// Find the upper quartile (Q3)
-			let q3;
-			if (data.length % 4 === 1) {
-				q3 = data[Math.round((3 * (data.length + 1)) / 4 - 1)];
-			} else {
-				q3 =
-					(data[Math.round((3 * data.length) / 4 - 1)] +
-						data[Math.round((3 * data.length) / 4)]) /
-					2;
-			}
-			// Calculate the IQR
-			let iqr = q3 - q1;
-			iqr = iqr.toFixed(2);
-			q3 = q3.toFixed(2);
-			q1 = q1.toFixed(2);
-			median = median.toFixed(2);
-
-			return {
-				q1,
-				median,
-				q3,
-				iqr,
-			};
 		}
 
 		if (data.length > 0) {
