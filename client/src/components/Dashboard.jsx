@@ -157,33 +157,41 @@ function Dashboard(props) {
 	useEffect(() => {
 		function calculateIQR(data) {
 			// First, sort the data array in ascending order
+			console.log({ data, check: "here" });
 			data.sort((a, b) => a - b);
 
 			// Find the median (Q2) of the dataset
 			let median;
 			if (data.length % 2 === 0) {
-				median = (data[data.length / 2 - 1] + data[data.length / 2]) / 2;
+				median =
+					(data[Math.round(data.length / 2 - 1)] +
+						data[Math.round(data.length / 2)]) /
+					2;
 			} else {
-				median = data[Math.floor(data.length / 2)];
+				median = data[Math.floor(Math.round(data.length / 2))];
 			}
 
 			// Find the lower quartile (Q1)
 			let q1;
 			if (data.length % 4 === 1) {
-				q1 = data[(data.length + 1) / 4 - 1];
+				q1 = data[Math.round((data.length + 1) / 4 - 1)];
 			} else {
-				q1 = (data[data.length / 4 - 1] + data[data.length / 4]) / 2;
+				q1 =
+					(data[Math.round((data.length + 1) / 4 - 1)] +
+						data[Math.round(data.length / 4)]) /
+					2;
 			}
 
 			// Find the upper quartile (Q3)
 			let q3;
 			if (data.length % 4 === 1) {
-				q3 = data[(3 * (data.length + 1)) / 4 - 1];
+				q3 = data[Math.round((3 * (data.length + 1)) / 4 - 1)];
 			} else {
 				q3 =
-					(data[(3 * data.length) / 4 - 1] + data[(3 * data.length) / 4]) / 2;
+					(data[Math.round((3 * data.length) / 4 - 1)] +
+						data[Math.round((3 * data.length) / 4)]) /
+					2;
 			}
-
 			// Calculate the IQR
 			let iqr = q3 - q1;
 			iqr = iqr.toFixed(2);
@@ -202,7 +210,6 @@ function Dashboard(props) {
 		if (data.length > 0) {
 			const Y = data.map((value) => parseFloat(value.value));
 			let high = Math.max(...Y);
-
 			high = high.toFixed(2);
 
 			// To find the lowest number
@@ -227,7 +234,7 @@ function Dashboard(props) {
 			Variance.toFixed(2);
 			stdDev.toFixed(2);
 
-			Range = high - low;
+			Range = parseFloat(high) - parseFloat(low);
 			Range = Range.toFixed(2);
 
 			setSummaryDetails({ high, low, average, ...calculateIQR(Y), Range });

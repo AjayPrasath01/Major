@@ -1,8 +1,5 @@
 package com.srm.machinemonitor.Controllers;
 
-import com.srm.machinemonitor.Constants;
-import com.srm.machinemonitor.Models.Other.BaseData;
-import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Tables.Data;
 import com.srm.machinemonitor.Models.Tables.DevData;
 import com.srm.machinemonitor.Models.Tables.Machines;
@@ -26,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import com.srm.machinemonitor.Constants;
 
 @RestController
 @RequestMapping("/api/setter")
