@@ -60,6 +60,9 @@ public class AuxillaryController {
     @Value("${DomainName}")
     String Domain;
 
+    @Value("${FingerPrint}")
+    String FingerPrint;
+
     @Autowired
     LogDAO logDAO;
 
@@ -467,6 +470,7 @@ public class AuxillaryController {
         fileContent  = fileContent.replace("<TOKEN>", secert);
         fileContent  = fileContent.replace("<ORGANIZATIONNAME>", addDeviceRequest.getOrganization());
         fileContent  = fileContent.replace("<MACHINENAME>", addDeviceRequest.getMachineName());
+        fileContent  = fileContent.replace("<FINGERPRINT>", FingerPrint);
         fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", "https://" + Domain);
         if (addDeviceRequest.getSsid() != null && addDeviceRequest.getPassword() != null){
             fileContent  = fileContent.replace("<SSIDPASSWORD>", addDeviceRequest.getPassword());

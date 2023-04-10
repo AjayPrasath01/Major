@@ -66,7 +66,7 @@ public class DataReceiver {
 
         Machines machine = machinesDAO.findByMachineNameAndSensorsAndOrganizationId(machineName.toLowerCase(), sensorName, organizationId);
         if (machine == null){
-            res.put("message", "Machine not found");
+            res.put("message", "Machine name or sensor name can't match with the record");
             return new ResponseEntity(res, HttpStatus.NOT_FOUND);
         }
         if (!Objects.equals(token, machine.getSecert())){
@@ -89,8 +89,7 @@ public class DataReceiver {
             data.setValue(dataValue);
             dataDAO.save(data);
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity("Recieved the data", HttpStatus.OK);
     }
 
 }
