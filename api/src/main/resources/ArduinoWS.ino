@@ -32,8 +32,8 @@ WebSocketsClient webSocket;
 ╰╮╭╮╭╋┫┣┫┃╱╱╭┫┣╮╭╯╰╯┃╰━━╮╱┃┃╱┃╭━╮┣┫┣┫╰━╯┃╰━╯┃
 ╱╰╯╰╯╰━━┻╯╱╱╰━━╯╰━━━┻━━━╯╱╰╯╱╰╯╱╰┻━━┻━━━┻━━━╯
 */
-const char* SSID = "Peaky Blinders";
-const char* PASSWORD = "Boomer@101";
+const char* SSID = "<SSIDNAME>";
+const char* PASSWORD = "<SSIDPASSWORD>";
 /*
 ╭━━━╮╱╱╱╱╱╱╱╱╭╮╱╭━━━┳━━━┳━━━┳━━━━╮
 ┃╭━╮┃╱╱╱╱╱╱╱╱┃┃╱┃╭━╮┃╭━╮┃╭━╮┃╭╮╭╮┃
@@ -264,7 +264,9 @@ void baseMessageHandler(unsigned char* messagePayload){
     return;
   }
   if (doc["statusCode"] == 400){
-    print("Bab request got");
+    print("Bab request got ");
+    String message = doc["message"];
+    println(message);
   }else{
     onMessageHandler(doc);
   }

@@ -79,29 +79,33 @@ public class ArduinoWebSocketHandlers extends TextWebSocketHandler implements We
                     case "data" -> {
                         String key = details.get(Constants.MACHINETOKEN) + "/" + details.get(payload.getString(Constants.SENSOR_NAME));
                         if (rateLimiter.allow(key)) {
-                            BigInteger mchineId = (BigInteger) details.get(payload.getString(Constants.SENSOR_NAME));
-                            Machines machine = machinesDAO.findById(mchineId).orElse(null);
-                            if (machine == null) {
-                                Map<String, String> response = new HashMap<>();
-                                response.put("message", "Machine or sensor removed by owner");
-                                sendMessage(session, response);
-                            } else {
-                                LocalDateTime date = LocalDateTime.now();
-                                if (machine.getMode().equals(Constants.DEV)) {
-                                    DevData data = new DevData();
-                                    data.setDate(date);
-                                    data.setData_type(payload.getString(Constants.DATATYPE_PAYLOAD));
-                                    data.setMachineId(machine.getId());
-                                    data.setValue(String.valueOf(payload.get("value")));
-                                    devDataDAO.save(data);
+                            BigInteger machineId = (BigInteger) details.get(payload.getString(Constants.SENSOR_NAME));
+                            if (machineId != null){
+                                Machines machine = machinesDAO.findById(machineId).orElse(null);
+                                if (machine == null) {
+                                    Map<String, String> response = new HashMap<>();
+                                    response.put("message", "Machine or sensor removed by owner");
+                                    sendMessage(session, response);
                                 } else {
-                                    Data data = new Data();
-                                    data.setDate(date);
-                                    data.setData_type(payload.getString(Constants.DATATYPE_PAYLOAD));
-                                    data.setMachineId(machine.getId());
-                                    data.setValue(String.valueOf(payload.get("value")));
-                                    dataDAO.save(data);
+                                    LocalDateTime date = LocalDateTime.now();
+                                    if (machine.getMode().equals(Constants.DEV)) {
+                                        DevData data = new DevData();
+                                        data.setDate(date);
+                                        data.setData_type(payload.getString(Constants.DATATYPE_PAYLOAD));
+                                        data.setMachineId(machine.getId());
+                                        data.setValue(String.valueOf(payload.get("value")));
+                                        devDataDAO.save(data);
+                                    } else {
+                                        Data data = new Data();
+                                        data.setDate(date);
+                                        data.setData_type(payload.getString(Constants.DATATYPE_PAYLOAD));
+                                        data.setMachineId(machine.getId());
+                                        data.setValue(String.valueOf(payload.get("value")));
+                                        dataDAO.save(data);
+                                    }
                                 }
+                            }else{
+                                sendBadRequest(session, "Wrong sensor name ir sensor not registered");
                             }
                         } else {
                             Map<String, String> responseMessage = new HashMap<>();
