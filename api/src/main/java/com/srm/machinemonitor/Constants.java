@@ -31,5 +31,10 @@ public class Constants {
     public static String COMPLETED = "COMPLETED";
     public static String MACHINETOKEN = "MACHINE_TOEKN";
     public static String DATATYPE_PAYLOAD = "dataType";
-
+    public static String ORGANIZATION_NAME = "organization";
+    public static String IsArduinoCommand = "isArduinoCommand";
+    public static String COMMAND = "command";
+    public static String TYPE = "type";
+    public static String LOGTYPE = "logType";
+    public static String LOGDATA = "logData";
 }

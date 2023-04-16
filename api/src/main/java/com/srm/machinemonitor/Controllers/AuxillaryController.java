@@ -455,8 +455,11 @@ public class AuxillaryController {
             machines.setOrganizationId(organization_id);
             machinesDAO.save(machines);
         }
-
-        InputStream inputStream = getClass().getResourceAsStream("/ArduinoSD.ino");
+        String fileName = "/ArduinoHTTPS.ino";
+        if (Objects.equals(addDeviceRequest.getConnectionTypeForArduino(), "websockets")){
+            fileName = "/ArduinoWS.ino";
+        }
+        InputStream inputStream = getClass().getResourceAsStream(fileName);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;

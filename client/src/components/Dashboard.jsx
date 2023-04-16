@@ -294,6 +294,13 @@ function Dashboard(props) {
 					});
 			} else if (command === "clear") {
 				setLogs([]);
+			} else {
+				socketSend(sock, {
+					command,
+					isArduinoCommand: true,
+					organization,
+					machineName: selectedMachine.machineName,
+				});
 			}
 		}
 	}
@@ -636,7 +643,6 @@ function Dashboard(props) {
 												<input
 													className="command-input-field"
 													placeholder="Enter Command"
-													autofocus={!isMobile}
 													onKeyDown={commandKeyDown}
 												/>
 											</span>

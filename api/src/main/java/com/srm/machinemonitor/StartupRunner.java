@@ -105,6 +105,15 @@ public class StartupRunner implements CommandLineRunner {
         }
         System.out.println("Default user details : UserName : " + users.getUsername() + " Password : " + users.getPassword() + " Organization : " + organizations.getName());
         System.out.println("Default user details : UserName : " + users.getUsername() + " Password : " + users.getPassword());
+        System.out.println("""
+                
+                ░██████╗████████╗░█████╗░██████╗░████████╗███████╗██████╗░
+                ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██╔══██╗
+                ╚█████╗░░░░██║░░░███████║██████╔╝░░░██║░░░█████╗░░██║░░██║
+                ░╚═══██╗░░░██║░░░██╔══██║██╔══██╗░░░██║░░░██╔══╝░░██║░░██║
+                ██████╔╝░░░██║░░░██║░░██║██║░░██║░░░██║░░░███████╗██████╔╝
+                ╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚══════╝╚═════╝░
+                """);
     }
 
     @Cacheable(sync = true)

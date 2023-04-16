@@ -7,10 +7,40 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface WebSocketCommon extends WebSocketMessageBrokerConfigurer {
+
+    Map<BigInteger, JSONObject> sharedCommands = new ConcurrentHashMap<>();
+    Map<BigInteger, JSONObject> sharedResult = new ConcurrentHashMap<>();
+
+    default void setSharedCommands(BigInteger organization_id, JSONObject object){
+        sharedCommands.put(organization_id, object);
+    }
+
+    default Map<BigInteger, JSONObject> getAllSharedCommands(){
+        return sharedCommands;
+    }
+
+    default JSONObject getSharedCommands(BigInteger organization_id){
+        JSONObject response = sharedCommands.getOrDefault(organization_id, new JSONObject());
+        sharedCommands.remove(organization_id);
+        return response;
+    }
+
+    default void setSharedResult(BigInteger organization_id, JSONObject object){
+        sharedResult.put(organization_id, object);
+    }
+
+    default JSONObject getSharedResult(BigInteger organization_id){
+        JSONObject response = sharedResult.getOrDefault(organization_id, new JSONObject());
+        sharedResult.remove(organization_id);
+        return response;
+    }
+
     default void sendMessage(WebSocketSession session, Map response) throws IOException {
         session.sendMessage(new TextMessage(new JSONObject(response).toString()));
     }

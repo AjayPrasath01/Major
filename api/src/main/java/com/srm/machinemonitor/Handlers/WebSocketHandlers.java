@@ -95,7 +95,6 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
         try {
             final JSONObject payload = convertMessage(message);
             final Map response = new HashMap();
-            System.out.println("Message : " + payload);
             Map clientDetails = clientsMap.get(session.getId());
             if(checkForKey(Constants.LOGSUBSCRIBED, payload)){
                 if (payload.getBoolean(Constants.LOGSUBSCRIBED)){
@@ -141,6 +140,11 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
                 }else{
                     clientDataSubscribe.remove(session.getId());
                 }
+            } else if (checkForKey(new String[]{Constants.IsArduinoCommand, Constants.MACHINENAME, Constants.ORGANIZATION_NAME}, payload)){
+                JSONObject command = new JSONObject();
+                command.put(Constants.MACHINENAME, payload.get(Constants.MACHINENAME));
+                command.put(Constants.COMMAND, payload.get(Constants.COMMAND));
+                setSharedCommands((BigInteger) clientDetails.get(Constants.ORGANIZATION_ID), command);
             }
             else {
                 sendBadRequest(session);

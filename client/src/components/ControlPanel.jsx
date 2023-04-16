@@ -29,6 +29,7 @@ function ControlPanel(props) {
 		machineName: "",
 		wifi: true,
 		sensors: "",
+		connectionTypeForArduino: "",
 	});
 	const isMobile = useRef(
 		/iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent)
@@ -290,9 +291,38 @@ function ControlPanel(props) {
 		}
 	}
 
+	function onConnectionLabelClicked(value) {
+		const color = "#76b4ff";
+		if ("https" === value) {
+			let element = document.getElementById("https-checkbox");
+			element.style.backgroundColor = color;
+			element = document.getElementById("websockets-checkbox");
+			element.style.backgroundColor = "#00000000";
+			setAddDeviceDetails((previous) => {
+				const newData = previous;
+				newData.connectionTypeForArduino = "https";
+				return newData;
+			});
+		} else if ("websockets" === value) {
+			let element = document.getElementById("websockets-checkbox");
+			element.style.backgroundColor = color;
+			element = document.getElementById("https-checkbox");
+			element.style.backgroundColor = "#00000000";
+			setAddDeviceDetails((previous) => {
+				const newData = previous;
+				newData.connectionTypeForArduino = "websockets";
+				return newData;
+			});
+		}
+	}
+
 	function generatecodeClicked() {
 		console.log({ addDeviceDetails });
-		if (addDeviceDetails.machineName != "" && addDeviceDetails.sensors != "") {
+		if (
+			addDeviceDetails.machineName != "" &&
+			addDeviceDetails.sensors != "" &&
+			addDeviceDetails.connectionTypeForArduino != ""
+		) {
 			const element = document.getElementById("gen_error");
 			props.axios_instance
 				.post("/api/addDevice", {
@@ -345,7 +375,7 @@ function ControlPanel(props) {
 			const element = document.getElementById("gen_error");
 			element.style.display = "block";
 			element.style.color = "red";
-			element.innerText = "Please enter a valid machine name and sensor";
+			element.innerText = "Please enter a valid machine name, sensor and connection type";
 		}
 	}
 
@@ -645,6 +675,51 @@ function ControlPanel(props) {
 													></input>
 												</div>
 											</span>
+											<div>
+												<h1 className="connection-type">Connection Type</h1>
+												<span className="connection-type-holder">
+													<span className="connection-type-first connection-type-inner">
+														<div
+															onClick={() => onConnectionLabelClicked("https")}
+															id="https-checkbox"
+															className="input-connection-box"
+														></div>
+														<label
+															onClick={() => onConnectionLabelClicked("https")}
+															htmlFor="https-radio"
+															className="connection-type-label"
+														>
+															HTTPS
+														</label>
+													</span>
+													<span className="connection-type-inner">
+														<div
+															id="websockets-checkbox"
+															className="input-connection-box"
+															onClick={() =>
+																onConnectionLabelClicked("websockets")
+															}
+														></div>
+														<label
+															htmlFor="websockets-radio"
+															className="connection-type-label"
+															onClick={() =>
+																onConnectionLabelClicked("websockets")
+															}
+														>
+															WebSockets
+															<p
+																className="highlight-yellow"
+																onClick={() =>
+																	onConnectionLabelClicked("websockets")
+																}
+															>
+																Recommended
+															</p>
+														</label>
+													</span>
+												</span>
+											</div>
 										</div>
 
 										<button

@@ -140,7 +140,7 @@ module.exports = {
 			favicon: "./public/favicon.png",
 			manifest: "./public/manifest.json",
 		}),
-		new BundleAnalyzerPlugin(),
+		// new BundleAnalyzerPlugin(),
 	],
 	devServer: {
 		contentBase: path.join(__dirname, "dist"),
