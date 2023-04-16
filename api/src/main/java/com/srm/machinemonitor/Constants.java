@@ -3,6 +3,7 @@ package com.srm.machinemonitor;
 public class Constants {
     public static String MACHINE_NAME = "machineName";
     public static String SENSORS = "sensors";
+    public static String SENSOR_NAME = "sensorName";
     public static String ORGANIZATION_ID = "organizationId";
     public static String SESSION = "session";
     public static String USERNAME = "username";
@@ -28,5 +29,12 @@ public class Constants {
     public static String MODE = "mode";
     public static String STATUS = "STATUS";
     public static String COMPLETED = "COMPLETED";
-
+    public static String MACHINETOKEN = "MACHINE_TOEKN";
+    public static String DATATYPE_PAYLOAD = "dataType";
+    public static String ORGANIZATION_NAME = "organization";
+    public static String IsArduinoCommand = "isArduinoCommand";
+    public static String COMMAND = "command";
+    public static String TYPE = "type";
+    public static String LOGTYPE = "logType";
+    public static String LOGDATA = "logData";
 }

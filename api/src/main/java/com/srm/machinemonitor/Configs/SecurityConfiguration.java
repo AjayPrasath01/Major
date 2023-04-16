@@ -58,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .antMatchers("/", "/data/", "/login", "/addUsers", "/api/register/new/user")
+                .antMatchers("/", "/data/", "/login", "/addUsers", "/api/register/new/user", "/arduino/ws")
                 .permitAll()
                 .antMatchers("/api/fetch/**",
                         "/login/changePassword",
