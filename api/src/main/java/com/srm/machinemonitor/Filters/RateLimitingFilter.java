@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class RateLimitingFilter implements Filter {
 
-    private final RateLimiter rateLimiter = new RateLimiter(1, 500);
+    private final RateLimiter rateLimiter = new RateLimiter(1, 1000);
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -51,7 +51,7 @@ public class RateLimitingFilter implements Filter {
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             Map<String, String> data = new HashMap<>();
-            data.put("message", "A sensor is allowed to send 1 request per 500 millisecond");
+            data.put("message", "A sensor is allowed to send 1 request per 1000 millisecond");
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(data);
             httpResponse.getWriter().write(json);

@@ -61,6 +61,54 @@
     z-index: 0;
 }
 
+.input-connection-box{
+    display: inline-block;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.input-connection{
+    display: none;
+    margin: 0;
+}
+
+.connection-type-inner{
+    display: flex;
+    margin-bottom: 1em;
+}
+
+.highlight-yellow {
+    display: inline;
+    margin-left: 5px;
+    padding: 5px;
+    border-radius: 1em 0 1em 0;
+    background-image: linear-gradient(
+      -100deg,
+      rgba(255, 224, 0, 0.2),
+      rgba(255, 224, 0, 0.7) 95%,
+      rgba(255, 224, 0, 0.1)
+    );
+  }
+
+  .connection-type-first{
+    margin-right: 2em;
+  }
+
+.connection-type-holder{
+    margin-left: 2em;
+}
+
+.connection-type{
+    margin-top: 2em;
+    font-size: larger;
+}
+
+.connection-type-label{
+    margin-left: 0;
+}
+
 .connection-check-box{
     border-color: transparent;
     border: none;

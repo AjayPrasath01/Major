@@ -27,4 +27,6 @@ public class AddDeviceRequest {
     @NotNull(message="organization_id can't be blank")
     String organization;
 
+    @NotNull(message="connectionTypeForArduino can't be blank")
+    String connectionTypeForArduino;
 }

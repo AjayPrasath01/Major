@@ -32,8 +32,8 @@ WebSocketsClient webSocket;
 ╰╮╭╮╭╋┫┣┫┃╱╱╭┫┣╮╭╯╰╯┃╰━━╮╱┃┃╱┃╭━╮┣┫┣┫╰━╯┃╰━╯┃
 ╱╰╯╰╯╰━━┻╯╱╱╰━━╯╰━━━┻━━━╯╱╰╯╱╰╯╱╰┻━━┻━━━┻━━━╯
 */
-const char* SSID = "<SSIDNAME>";
-const char* PASSWORD = "<SSIDPASSWORD>";
+const char* SSID = "Peaky Blinders";
+const char* PASSWORD = "Boomer@101";
 /*
 ╭━━━╮╱╱╱╱╱╱╱╱╭╮╱╭━━━┳━━━┳━━━┳━━━━╮
 ┃╭━╮┃╱╱╱╱╱╱╱╱┃┃╱┃╭━╮┃╭━╮┃╭━╮┃╭╮╭╮┃

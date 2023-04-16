@@ -60,6 +60,9 @@ public class AuxillaryController {
     @Value("${DomainName}")
     String Domain;
 
+    @Value("${FingerPrint}")
+    String FingerPrint;
+
     @Autowired
     LogDAO logDAO;
 
@@ -452,8 +455,11 @@ public class AuxillaryController {
             machines.setOrganizationId(organization_id);
             machinesDAO.save(machines);
         }
-
-        InputStream inputStream = getClass().getResourceAsStream("/ArduinoSD.ino");
+        String fileName = "/ArduinoHTTPS.ino";
+        if (Objects.equals(addDeviceRequest.getConnectionTypeForArduino(), "websockets")){
+            fileName = "/ArduinoWS.ino";
+        }
+        InputStream inputStream = getClass().getResourceAsStream(fileName);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
@@ -467,6 +473,7 @@ public class AuxillaryController {
         fileContent  = fileContent.replace("<TOKEN>", secert);
         fileContent  = fileContent.replace("<ORGANIZATIONNAME>", addDeviceRequest.getOrganization());
         fileContent  = fileContent.replace("<MACHINENAME>", addDeviceRequest.getMachineName());
+        fileContent  = fileContent.replace("<FINGERPRINT>", FingerPrint);
         fileContent  = fileContent.replace("<DOMAIN_ADDRESS>", "https://" + Domain);
         if (addDeviceRequest.getSsid() != null && addDeviceRequest.getPassword() != null){
             fileContent  = fileContent.replace("<SSIDPASSWORD>", addDeviceRequest.getPassword());

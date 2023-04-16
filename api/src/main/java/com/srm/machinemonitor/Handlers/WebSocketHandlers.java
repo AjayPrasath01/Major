@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,7 +43,7 @@ import org.json.JSONException;
 
 
 @Component
-public class WebSocketHandlers extends TextWebSocketHandler {
+public class WebSocketHandlers extends TextWebSocketHandler implements WebSocketCommon {
 
     @Autowired(required = true)
     DataDAO dataDAO;
@@ -54,6 +56,22 @@ public class WebSocketHandlers extends TextWebSocketHandler {
 
     @Autowired
     DevDataDAO devDataDAO;
+
+    @Value("${defaultThreadCountWebpageWebsocket}")
+    int defaultThreadCountWebpageWebsocket;
+
+    @Value("${maxPoolSizeWebpageWebsocket}")
+    int maxPoolSizeWebpageWebsocket;
+
+    @Value("${keepAliveSecondsWebpageWebsocket}")
+    int keepAliveSecondsWebpageWebsocket;
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.taskExecutor().corePoolSize(defaultThreadCountWebpageWebsocket);
+        registration.taskExecutor().maxPoolSize(maxPoolSizeWebpageWebsocket);
+        registration.taskExecutor().keepAliveSeconds(keepAliveSecondsWebpageWebsocket);
+    }
 
 
     final static List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
@@ -77,7 +95,6 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         try {
             final JSONObject payload = convertMessage(message);
             final Map response = new HashMap();
-            System.out.println("Message : " + payload);
             Map clientDetails = clientsMap.get(session.getId());
             if(checkForKey(Constants.LOGSUBSCRIBED, payload)){
                 if (payload.getBoolean(Constants.LOGSUBSCRIBED)){
@@ -123,6 +140,11 @@ public class WebSocketHandlers extends TextWebSocketHandler {
                 }else{
                     clientDataSubscribe.remove(session.getId());
                 }
+            } else if (checkForKey(new String[]{Constants.IsArduinoCommand, Constants.MACHINENAME, Constants.ORGANIZATION_NAME}, payload)){
+                JSONObject command = new JSONObject();
+                command.put(Constants.MACHINENAME, payload.get(Constants.MACHINENAME));
+                command.put(Constants.COMMAND, payload.get(Constants.COMMAND));
+                setSharedCommands((BigInteger) clientDetails.get(Constants.ORGANIZATION_ID), command);
             }
             else {
                 sendBadRequest(session);
@@ -259,44 +281,11 @@ public class WebSocketHandlers extends TextWebSocketHandler {
         sendMessage((WebSocketSession) clientDetails.get(Constants.SESSION), response);
     }
 
-    private void sendBadRequest(WebSocketSession session) throws IOException {
-        final Map response = new HashMap();
-        response.put("message", "Invalid request");
-        response.put("statusCode", 400);
-        sendMessage(session, response);
-    }
-
-    private JSONObject convertMessage(TextMessage message){
-        try{
-            return new JSONObject(message.getPayload());
-        }catch(JSONException e){
-            return new JSONObject();
-        }
-    }
-
-    private boolean checkForKey(String key, JSONObject payload){
-        return payload.has(key);
-    }
-
-    private boolean checkForKey(String[] keys, JSONObject payload){
-        short validKey = 0;
-        for (short i=0; i<keys.length; i++){
-            if (payload.has(keys[i])){
-                validKey++;
-            }
-        }
-        return validKey == keys.length;
-    }
-
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         Map response = new HashMap();
         response.put("message", "transporterror");
         sendMessage(session,response);
-    }
-
-    private void sendMessage(WebSocketSession session, Map response) throws IOException {
-        session.sendMessage(new TextMessage(new JSONObject(response).toString()));
     }
 
     private void updateLastDataValue(ConcurrentHashMap clientDetails, List datas){
