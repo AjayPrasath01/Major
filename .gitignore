@@ -8,5 +8,7 @@ api/.idea/
 .vscode
 /.vscode
 
+/env/
+
 
 api/src/main/resources/static/
