@@ -349,7 +349,7 @@ function Dashboard(props) {
 
 	function downloadCSV() {
 		props.axios_instance
-			.get("/fetch/csv", { params: { machinename: selectedMachine } })
+			.get("/fetch/csv", { params: { machinename: selectedMachine.machineName } })
 			.then((res) => {
 				console.log(res.data);
 				setData(res.data);

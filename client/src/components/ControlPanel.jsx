@@ -14,6 +14,7 @@ import DataModifierSection from "./sections/DataModifierSection.jsx";
 import ControlPanelSectionSelector from "./ControlPanelSectionSelector.jsx";
 import errorMessageDisplay from "./utils/errorMessageDisplay";
 import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
+import MachineLearningSection from "./MachineLearningSection.jsx";
 function ControlPanel(props) {
 	const navigate = useNavigate();
 	const [currentPassword, setCurrentPassword] = useState("");
@@ -375,7 +376,8 @@ function ControlPanel(props) {
 			const element = document.getElementById("gen_error");
 			element.style.display = "block";
 			element.style.color = "red";
-			element.innerText = "Please enter a valid machine name, sensor and connection type";
+			element.innerText =
+				"Please enter a valid machine name, sensor and connection type";
 		}
 	}
 
@@ -491,6 +493,8 @@ function ControlPanel(props) {
 									axios_instance={props.axios_instance}
 									organization={organization}
 								/>
+
+								<MachineLearningSection machines={deviceList}/>
 								<div className="container">
 									<div className="dl">
 										<h1 id="devices-available" className="subtitle">

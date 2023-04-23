@@ -53,4 +53,13 @@ public class Organizations {
         this.name = name;
         this.isActive = isActive;
     }
+
+    public void addMessage(String message){
+        String currentMessages = this.getMessage();
+        if (currentMessages.isBlank()){
+            this.setMessage(message);
+        } else {
+            this.setMessage(this.getMessage() + "," + message);
+        }
+    }
 }

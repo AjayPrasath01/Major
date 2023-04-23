@@ -44,4 +44,8 @@ public class Machines {
     @JoinColumn(name="machineId", referencedColumnName = "id")
     List<Data> data;
 
+    @OneToMany(targetEntity = WrongData.class, cascade = CascadeType.ALL)
+    @JoinColumn(name="machineId", referencedColumnName = "id")
+    List<WrongData> wrongData;
+
 }

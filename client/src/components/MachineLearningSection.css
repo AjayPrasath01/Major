@@ -1,0 +1,91 @@
+.ml-margin-right{
+    margin-right: 2em;
+}
+
+.ml-margin-left{
+    margin-left: 0.75em;
+}
+
+.ml-label-font-size{
+    font-size: 2.5ch;
+}
+
+.ml-label-font-weight{
+    font-weight: 900;
+}
+
+.ml-margin{
+    margin: 2em;
+}
+
+.ml-padding-right{
+    padding-right: 0.5em;
+}
+
+.ml-padding-left{
+    padding-left: 0.5em;
+}
+
+.ml-top{
+    top: -15px;
+}
+
+.medium-box{
+    width: 8vw;
+    height: 14vh;
+}
+
+.dash-border{
+    border: 2px dashed rgba(0, 0, 0, 0.428);
+    border-spacing: 8px 10px; 
+    border-width: 5px 5px;
+}
+
+.margin-center{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ml-left{
+    left: 0px;
+}
+
+.ml-border{
+    border: 2px solid black
+}
+
+.padding{
+    padding: 1.5em;
+}
+
+.normal-border-radius{
+    border-radius: 10px;
+}
+
+.ml-same-background{
+    background-color: #EEEEEE;
+}
+
+.sensor-pallet-padding{
+    padding: 2em;
+}
+
+.space-between{
+    justify-content: space-between;
+}
+
+.no-border{
+    border: none
+}
+
+.plus-big{
+    font-size: 45px;
+    color: #76B4FF;
+    transition: 0.3s;
+}
+
+.plus-big:hover{
+    background-color: rgba(255, 255, 255, 0);
+    cursor: pointer;
+    transform: scale(1.1);
+}
