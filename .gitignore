@@ -9,6 +9,7 @@ api/.idea/
 /.vscode
 
 **/env/
+**/__pycache__/
 
 
 api/src/main/resources/static/
