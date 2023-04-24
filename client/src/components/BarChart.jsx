@@ -10,7 +10,6 @@ ChartJS.register(...registerables, TimeScale);
 const BarChart = (props) => {
 	const [X, setX] = useState([]);
 	const [Y, setY] = useState([]);
-	const [Y_Axis_Name, setYAxisName] = useState("Y-axis");
 	const [offset, setOffset] = useState(0);
 	useEffect(() => {
 		if (offset === 0) {
@@ -27,9 +26,22 @@ const BarChart = (props) => {
 			) {
 				setX(tempX);
 				setY(tempY);
-				console.log({ tempX });
 			}
-			setYAxisName(chartData[0]?.data_type);
+			setOptions((previous) => {
+				return {
+					...previous,
+					scales: {
+						...previous.scales,
+						y: {
+							...previous.scales.y,
+							title: {
+								...previous.scales.y.title,
+								text: chartData[0]?.data_type,
+							},
+						},
+					},
+				};
+			});
 		}
 	}, [props.data, offset]);
 
@@ -67,7 +79,9 @@ const BarChart = (props) => {
 	};
 	const [options, setOptions] = useState({
 		responsive: true,
-		legend: { display: false },
+		plugins: {
+			legend: { display: false },
+		},
 		layout: {
 			padding: {
 				right: 50, // set the amount of extra space here
@@ -104,7 +118,7 @@ const BarChart = (props) => {
 			y: {
 				title: {
 					display: true,
-					text: Y_Axis_Name,
+					text: "Y-Axis",
 				},
 				beginAtZero: !props.beginAtZero,
 				grace: "5%",
