@@ -63,8 +63,6 @@ def iniziate_training(request):
             target_file = 'svm'
         elif machineAlgo == 'knn':
             target_file = 'knn'
-        elif machineAlgo == 'knn':
-            target_file = "tea_top"
         else:
             return HttpResponse("machineAlgo not matched")
         try:
@@ -75,3 +73,8 @@ def iniziate_training(request):
     else:
         return HttpResponse("Method not allowed")
     return HttpResponse("Data Preprocessing Completed")
+
+def predict(request):
+    return HttpResponse("Predected value will be sent")
+
+

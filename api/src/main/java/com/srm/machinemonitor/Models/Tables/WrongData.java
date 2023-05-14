@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table
+@Table(name="WrongData")
 public class WrongData {
 
     @Id

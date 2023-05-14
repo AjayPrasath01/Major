@@ -1,4 +1,6 @@
 from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from django.db import connection
@@ -21,7 +23,47 @@ def ml_randomforest_training(model_key, machineIds, machineName, organizationId,
         best_model = grid_search.best_estimator_
         saveModel(best_model=best_model, X_test=X_test, y_test=y_test,
                   model_key=model_key, organization_id=organizationId)
-        print('Traing done')
+        print('Traing done with randomforest')
+    except Exception as e:
+        print(e)
+
+
+def ml_svm_training(model_key, machineIds, machineName, organizationId, dataframe):
+    try:
+        X_train, X_test, y_train, y_test = dataPrefrocessing(
+            dataframe=dataframe)
+        clf = svm.SVC(kernel='linear')
+        clf.fit(X_train, y_train)
+        
+        saveModel(best_model=clf, X_test=X_test, y_test=y_test,
+                  model_key=model_key, organization_id=organizationId)
+        print('Traing done with svm')
+    except Exception as e:
+        print(e)
+
+def ml_knn_training(model_key, machineIds, machineName, organizationId, dataframe):
+    try:
+        X_train, X_test, y_train, y_test = dataPrefrocessing(
+            dataframe=dataframe)
+        knn = KNeighborsClassifier(n_neighbors=3)
+        knn.fit(X_train, y_train)
+        
+        saveModel(best_model=knn, X_test=X_test, y_test=y_test,
+                  model_key=model_key, organization_id=organizationId)
+        print('Traing done with knn')
+    except Exception as e:
+        print(e)
+
+def ml_knn_training(model_key, machineIds, machineName, organizationId, dataframe):
+    try:
+        X_train, X_test, y_train, y_test = dataPrefrocessing(
+            dataframe=dataframe)
+        knn = KNeighborsClassifier(n_neighbors=3)
+        knn.fit(X_train, y_train)
+        
+        saveModel(best_model=knn, X_test=X_test, y_test=y_test,
+                  model_key=model_key, organization_id=organizationId)
+        print('Traing done with knn')
     except Exception as e:
         print(e)
 

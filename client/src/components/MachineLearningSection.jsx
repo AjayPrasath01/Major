@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./MachineLearningSection.css";
 import { RadioButtonGroup } from "react-rainbow-components";
-import { every } from "sockjs-client/lib/transport-list";
+import FileUploadElement from "./FileUploadElement.jsx";
+import startTraining from "./utils/startTraining";
 
 function MachineLearningSection(props) {
 	const modelAlgos = [
@@ -21,11 +22,12 @@ function MachineLearningSection(props) {
 		{ value: "prod", label: "Prod" },
 	];
 
-	const [sensorPlatteCount, setSensorPlatteCount] = useState(1);
 	const [mode, setMode] = useState("dev");
 	const [algo, setAlgo] = useState(modelAlgos[0].value);
 	const [selectedMachine, setSelectedMachine] = useState(machines[0]?.value);
 	const [sensors, setSensors] = useState([]);
+	const [modelName, setModelName] = useState("");
+	const [trainDataSize, setTrainDataSize] = useState(10);
 
 	useEffect(() => {
 		const machinesLst = props.machines;
@@ -37,7 +39,6 @@ function MachineLearningSection(props) {
 					for (const sensor of unProcessedSensor) {
 						new_sensors.push(sensor.split(":")[0]);
 					}
-					console.log({ new_sensors });
 					return new_sensors;
 				});
 			}
@@ -55,6 +56,50 @@ function MachineLearningSection(props) {
 	const onMachineChange = (event) => {
 		setSelectedMachine(event.target.defaultValue);
 	};
+
+	const startLearning = () => {
+		const element = document.getElementById("error-text-ml");
+		element.style.display = "inline";
+		element.style.paddingLeft = "1em";
+		element.innerText = "";
+		element.style.color = "red";
+		if (!trainDataSize > 95 || !trainDataSize < 1) {
+			console.log(selectedMachine);
+			if (selectedMachine) {
+				if (modelName) {
+					console.log({
+						organization: props.organization,
+						modelName,
+						modelAlgo: algo,
+						sensors: sensors.join(","),
+						machineName: selectedMachine,
+						mode,
+						trainDataSize,
+					});
+					startTraining(
+						props.organization,
+						modelName,
+						algo,
+						sensors.join(","),
+						selectedMachine,
+						mode,
+						trainDataSize / 100,
+						element
+					);
+				} else {
+					element.innerText = "Model Name must not be blank";
+				}
+			} else {
+				element.innerText = "Machine is not selected";
+			}
+		} else {
+			element.innerText = "Train data size should be between 1 and 95";
+		}
+		setTimeout(() => {
+			element.style.display = "none";
+		}, 1000);
+	};
+
 	return (
 		<div className="container" style={{ paddingTop: "5em" }}>
 			<span className="subtitle with-side-element">
@@ -96,23 +141,68 @@ function MachineLearningSection(props) {
 				/>
 			</span>
 
+			<span className="block ml-margin">
+				<span className="ml-margin-right ml-label-font-size ml-label-font-weight">
+					Model Name
+				</span>
+				<input
+					type="text"
+					className="common-padding no-border normal-border-radius"
+					placeholder="Model Name"
+					value={modelName}
+					onChange={(event) => setModelName(event.target.value)}
+				/>
+			</span>
+
+			<span className="block ml-margin">
+				<span className="ml-margin-right ml-label-font-size ml-label-font-weight">
+					Train Data Size
+				</span>
+				<input
+					type="number"
+					className="common-padding no-border normal-border-radius"
+					placeholder="Percentage"
+					value={trainDataSize}
+					onChange={(event) => setTrainDataSize(event.target.value)}
+					min={1}
+					max={95}
+				/>
+			</span>
+
 			<span className="block ml-margin position-relative ml-border padding normal-border-radius">
 				<span className="ml-margin-right ml-label-font-size ml-label-font-weight position-absolute ml-top ml-left ml-margin-left ml-same-background">
 					Sensors
 				</span>
 				<div className="flex-row">
-					{sensors.map((element) => {
-						return (
-							<span className="medium-box dash-border normal-border-radius ml-margin-left flex-column sensor-pallet-padding space-between">
-								<div className="margin-center ml-label-font-weight">
-									{element}
-								</div>
-								<button className="no-border plus-big">+</button>
-							</span>
-						);
-					})}
+					{sensors.length > 0 ? (
+						<>
+							{sensors.map((element, index) => {
+								return (
+									<FileUploadElement
+										key={index}
+										sensorName={element}
+										axios_instance={props.axios_instance}
+										organization={props.organization}
+										machineName={selectedMachine}
+										algo={algo}
+									/>
+								);
+							})}
+						</>
+					) : (
+						<h2 className="margin-left-auto margin-right-auto">
+							No sensor Present in the selected machine
+						</h2>
+					)}
 				</div>
 			</span>
+			<button
+				className="no-border common-padding background-green color-white text-bold normal-border-radius"
+				onClick={startLearning}
+			>
+				Start Training
+			</button>
+			<span id="error-text-ml"></span>
 		</div>
 	);
 }

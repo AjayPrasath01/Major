@@ -494,7 +494,11 @@ function ControlPanel(props) {
 									organization={organization}
 								/>
 
-								<MachineLearningSection machines={deviceList}/>
+								<MachineLearningSection
+									machines={deviceList}
+									axios_instance={props.axios_instance}
+									organization={organization}
+								/>
 								<div className="container">
 									<div className="dl">
 										<h1 id="devices-available" className="subtitle">
@@ -524,9 +528,10 @@ function ControlPanel(props) {
 																		<span className="sensors-column">
 																			{data.sensorType
 																				.split(",")
-																				.map((sensor) => {
+																				.map((sensor, index) => {
 																					return (
 																						<SensorIndividualContainer
+																							key={index}
 																							sensor={sensor}
 																							removeSensorClicked={
 																								removeSensorClicked

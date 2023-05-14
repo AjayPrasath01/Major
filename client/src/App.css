@@ -17,6 +17,14 @@ body * {
   animation: slide-out 1s forwards;
 }
 
+.margin-left-auto{
+  margin-left: auto;
+}
+
+.margin-right-auto{
+  margin-right: auto;
+}
+
 .position-relative{
   position: relative;
 }

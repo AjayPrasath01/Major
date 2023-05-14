@@ -14,6 +14,18 @@
     font-weight: 900;
 }
 
+.common-padding{
+    padding: 1em;
+}
+
+.background-blue{
+    background-color: #76B4FF;
+}
+
+.color-white{
+    color: white
+}
+
 .ml-margin{
     margin: 2em;
 }
@@ -54,12 +66,24 @@
     border: 2px solid black
 }
 
+.text-align-center{
+    text-align: center;
+}
+
 .padding{
     padding: 1.5em;
 }
 
+.text-bold{
+    font-weight: bolder;
+}
+
 .normal-border-radius{
     border-radius: 10px;
+}
+
+.background-green{
+    background-color: green;
 }
 
 .ml-same-background{
@@ -89,3 +113,4 @@
     cursor: pointer;
     transform: scale(1.1);
 }
+

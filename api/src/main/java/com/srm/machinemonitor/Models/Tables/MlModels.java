@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Table(name="MlModels")
 public class MlModels {
 
     @Id
@@ -34,4 +34,9 @@ public class MlModels {
 
     @Column
     private Float accuracy;
+
+    @Override
+    public int hashCode() {
+        return this.modelKey.hashCode();
+    }
 }

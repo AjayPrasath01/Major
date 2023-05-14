@@ -168,6 +168,7 @@ public class MachineLearning {
             res.put("message", "Updated the your recored");
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (IOException | CsvException e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -230,18 +231,37 @@ public class MachineLearning {
             System.out.println(result);
             res.put("message", result.getBody());
         }catch(Exception e){
-            res.put("message", "Some thing went wrong");
+            res.put("message", "Training server is down ⛔️");
             System.out.println(e);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.BANDWIDTH_LIMIT_EXCEEDED);
         }
 
         organizationModel.addMessage("ML Training for the machine " + machineName + " withSensors " + sensors + " has been queued");
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @GetMapping("/ml/models")
+    public ResponseEntity modelsAvailable(Principal principal, HttpServletResponse response, @RequestParam("organization") String organization, @RequestParam("machineName") String machineName) throws IOException {
+        Map verify = Utils.verifyAdminAndOrganizationIDOR(response, principal, organization, organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        List<Machines> machines = machinesDAO.findByMachineNamesAndOrganizationId(machineName, organizationId);
+        Set<MlModels> mlModels = new HashSet<>();
+        List<MlModels> temp = new ArrayList<>();
+        for (Machines m : machines){
+            temp.addAll(mlModelDAO.findAllByMchineIdsLike("%" + m.getId().toString() + "%"));
+            mlModels.addAll(mlModelDAO.findAllByMchineIdsLike("%" + m.getId().toString() + "%"));
+        }
+        System.out.println(temp);
+        System.out.println(mlModels);
+        return new ResponseEntity<>(mlModels, HttpStatus.OK);
+    }
+
     private ResponseEntity requestMLServer(Map<String, Object> queryParams){
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8080/learner/learn");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8000/learner/start");
         for (String key : queryParams.keySet()) {
             builder.queryParam(key, queryParams.get(key));
         }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Table(name="MlTrainingStatus")
 public class MlTrainingStatus {
 
     @Id
