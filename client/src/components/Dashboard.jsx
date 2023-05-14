@@ -39,6 +39,7 @@ function Dashboard(props) {
 	const csvLink = useRef();
 	const sock = useRef(null);
 	const [chartLimit, setChartLimit] = useState(10);
+	const [chartOffset, setChartOffset] = useState(0);
 	const [organization, setOrganization] = useState("");
 	const [orientation, setOrientation] = useState(window.orientation);
 	const navigate = useNavigate();
@@ -58,7 +59,13 @@ function Dashboard(props) {
 	const [chartDetails, setChartDetails] = useState((previous) => {
 		const startDate = new Date();
 		startDate.setHours(startDate.getHours() - 24);
-		return { startDate, endDate: new Date(), chartType: "bar", isLive: true };
+		console.log("End datee : " + startDate.toLocaleString());
+		return {
+			startDate: startDate,
+			endDate: new Date(),
+			chartType: "bar",
+			isLive: true,
+		};
 	});
 
 	const modeOptions = [
@@ -95,6 +102,7 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		dataCountCall();
+		console.log("Sending");
 		const sensorMode = selectedMachine.selectedSensor?.split(":");
 		if (sensorMode) {
 			const socketRequest = {
@@ -105,8 +113,11 @@ function Dashboard(props) {
 				startDate: chartDetails.startDate,
 				endDate: chartDetails.endDate,
 				mode: sensorMode[1],
+				limit: chartLimit,
+				offset: chartOffset,
 			};
 			if (sock.current?.readyState === 1) {
+				console.log("Sending");
 				socketSend(sock, socketRequest);
 			}
 		}
@@ -116,6 +127,8 @@ function Dashboard(props) {
 		chartDetails.startDate,
 		chartDetails.endDate,
 		chartDetails.isLive,
+		chartLimit,
+		chartOffset,
 	]);
 
 	useEffect(() => {
@@ -349,7 +362,9 @@ function Dashboard(props) {
 
 	function downloadCSV() {
 		props.axios_instance
-			.get("/fetch/csv", { params: { machinename: selectedMachine.machineName } })
+			.get("/fetch/csv", {
+				params: { machinename: selectedMachine.machineName },
+			})
 			.then((res) => {
 				console.log(res.data);
 				setData(res.data);
@@ -664,6 +679,7 @@ function Dashboard(props) {
 													data={data}
 													beginAtZero={beginAtZero}
 													fill={lineFill}
+													setChartOffset={setChartOffset}
 												/>
 											</>
 										) : (
@@ -672,6 +688,8 @@ function Dashboard(props) {
 												data={data}
 												beginAtZero={beginAtZero}
 												fill={lineFill}
+												chartOffset={chartOffset}
+												setChartOffset={setChartOffset}
 											/>
 										)}
 									</>

@@ -26,7 +26,8 @@ public interface DataDAO extends JpaRepository<Data, BigInteger> {
     @Query(value="SELECT * FROM data u WHERE u.date >= ?2 AND u.date <= ?3 AND u.machineId = ?1 ORDER BY u.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
     List<Data> getDataBetweenTimeWithMachineIdWithLimitAndOffset(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate, int limit, long offset);
 
-    List<Data> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date);
+    @Query(value="SELECT * FROM Data WHERE Data.date >= ?2 AND Data.date <= ?3 AND Data.machineId = ?1 ORDER BY Data.date DESC LIMIT ?3", nativeQuery = true)
+    List<Data> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date, int limit);
 
     List<BaseData> findAllByMachineId(BigInteger machineId);
 

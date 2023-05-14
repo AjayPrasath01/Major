@@ -18,7 +18,7 @@ public interface DevDataDAO extends JpaRepository<DevData, BigInteger> {
 
     List<BaseData> findAllByMachineId(BigInteger machineId);
 
-    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC LIMIT ?4 OFFSET ?5", nativeQuery = true)
+    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date DESC LIMIT ?4 OFFSET ?5", nativeQuery = true)
     List<DevData> getDataBetweenTimeWithMachineIdWithLimitAndOffset(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate, int limit, long offset);
 
     @Modifying
@@ -29,9 +29,10 @@ public interface DevDataDAO extends JpaRepository<DevData, BigInteger> {
     @Query(value="DELETE FROM DevData u where u.id = ?1", nativeQuery = true)
     void deleteDataById(BigInteger id);
 
-    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date ASC", nativeQuery = true)
+    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date DESC", nativeQuery = true)
     List<DevData> getDataBetweenTimeWithMachineId(BigInteger machineId, LocalDateTime startDate, LocalDateTime endDate);
 
-    List<DevData> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date);
+    @Query(value="SELECT * FROM DevData WHERE DevData.date >= ?2 AND DevData.date <= ?3 AND DevData.machineId = ?1 ORDER BY DevData.date DESC LIMIT ?3", nativeQuery = true)
+    List<DevData> findAllByMachineIdAndDateGreaterThanOrderByDateAsc(BigInteger machineId, LocalDateTime date, int limit);
 
 }

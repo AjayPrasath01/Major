@@ -93,7 +93,9 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
         JsonObject should have values like lastDataTime, machineName, sensorName
          */
         try {
+            System.out.println(message);
             final JSONObject payload = convertMessage(message);
+            System.out.println(payload);
             final Map response = new HashMap();
             Map clientDetails = clientsMap.get(session.getId());
             if(checkForKey(Constants.LOGSUBSCRIBED, payload)){
@@ -119,22 +121,29 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
                 }
             }else if(checkForKey(Constants.DATASUBSCRIBED, payload)){
                 if (payload.getBoolean(Constants.DATASUBSCRIBED)){
-                    if (checkForKey(new String[]{Constants.MACHINENAME, Constants.SENSOR, Constants.STARTDATE, Constants.ENDDATE, Constants.ISALIVE, Constants.MODE}, payload)){
+                    if (checkForKey(new String[]{Constants.MACHINENAME, Constants.SENSOR, Constants.STARTDATE, Constants.ENDDATE, Constants.ISALIVE, Constants.MODE, Constants.LIMIT, Constants.OFFSET}, payload)){
                         clientDetails.put(Constants.MACHINENAME, payload.get(Constants.MACHINENAME));
                         clientDetails.put(Constants.SENSOR, payload.get(Constants.SENSOR));
                         clientDetails.put(Constants.STARTDATE, payload.get(Constants.STARTDATE));
                         clientDetails.put(Constants.ENDDATE, payload.get(Constants.ENDDATE));
                         clientDetails.put(Constants.ISALIVE, payload.get(Constants.ISALIVE));
                         clientDetails.put(Constants.ISHANDLED, false);
+                        clientDetails.put(Constants.LIMIT, payload.get(Constants.LIMIT));
+                        clientDetails.put(Constants.OFFSET, Math.absExact((int) payload.get(Constants.OFFSET)));
                         clientDetails.put(Constants.MODE, payload.get(Constants.MODE));
-                        clientDetails.put(Constants.DATASUBSCRIBED, payload.getBoolean(Constants.DATASUBSCRIBED));
+
 //                    Machines machine = machinesDAO.getIdByMachineNameAndSensorsAndOrganizationId((String) payload.get(Constants.MACHINENAME), (String) payload.get(Constants.SENSOR), (int) clientDetails.get(Constants.ORGANIZATION_ID));
                         if (payload.getBoolean(Constants.ISALIVE)){
                             clientDataSubscribe.put(session.getId(), (ConcurrentHashMap) clientDetails);
                         }else{
                             clientDataSubscribe.remove(session.getId());
                         }
+
+                        if ((int) payload.get(Constants.OFFSET) != 0){
+                            clientDataSubscribe.remove(session.getId());
+                        }
                     }else{
+                        System.out.println(payload);
                         sendBadRequest(session);
                     }
                 }else{
@@ -187,11 +196,15 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
                     }else{
                         endDate = parseLocalDateTime((String) clientDetails.get(Constants.ENDDATE));
                     }
+                    System.out.println((int) clientDetails.get(Constants.LIMIT));
+                    System.out.println((int) clientDetails.get(Constants.OFFSET));
+                    System.out.println(startDate);
+                    System.out.println(endDate);
                     List datas = null;
                     if (Objects.equals((String) clientDetails.get(Constants.MODE), String.valueOf(Modes.DEV).toLowerCase())){
-                        datas = devDataDAO.getDataBetweenTimeWithMachineId(machines.getId(), startDate, endDate);
+                        datas = devDataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machines.getId(), startDate, endDate, (int) clientDetails.get(Constants.LIMIT), ((Integer) clientDetails.get(Constants.OFFSET)).longValue());
                     }else{
-                        datas = dataDAO.getDataBetweenTimeWithMachineId(machines.getId(), startDate, endDate);
+                        datas = dataDAO.getDataBetweenTimeWithMachineIdWithLimitAndOffset(machines.getId(), startDate, endDate, (int) clientDetails.get(Constants.LIMIT), ((Integer) clientDetails.get(Constants.OFFSET)).longValue());
                     }
                     if ((boolean)clientDetails.get(Constants.ISALIVE)){
                         if (datas.size() > 0){
@@ -222,9 +235,9 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
             if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && clientDetails.containsKey(Constants.MODE) && (boolean)clientDetails.get(Constants.ISHANDLED)){
                 List datas = null;
                 if (Objects.equals((String) clientDetails.get(Constants.MODE), String.valueOf(Modes.DEV).toLowerCase())){
-                    datas = devDataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
+                    datas = devDataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME), (int) clientDetails.get(Constants.LIMIT));
                 }else{
-                    datas = dataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
+                    datas = dataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME), (int) clientDetails.get(Constants.LIMIT));
                 }
                 if (datas.size() > 0){
                     updateLastDataValue(clientDetails, datas);
