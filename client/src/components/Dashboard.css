@@ -79,11 +79,36 @@
     flex-wrap: wrap;
 }
 
+.condition-img-container{
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    margin: 1em;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #DEBC8C;
+    border-radius: 10px;
+    padding: 0.75em;
+}
+
+.condition-label{
+    margin: 0.25em;
+}
+
+.condition-img{
+    display: inline;
+    width: 3em;
+    padding: 0.25em;
+}
+
 .container.dashboard{
     margin-top: 1em;
     background-color: white;
     border-radius: 20px;
     margin-bottom: 2em;
+    position: relative;
 }
 
 .chart-switcher{

@@ -90,6 +90,10 @@
     background-color: #EEEEEE;
 }
 
+.no-background{
+    background-color: #eeeeee00;
+}
+
 .sensor-pallet-padding{
     padding: 2em;
 }
@@ -114,3 +118,6 @@
     transform: scale(1.1);
 }
 
+#error-text-ml{
+    margin-top: 2em;
+}

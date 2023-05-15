@@ -21,6 +21,10 @@ body * {
   margin-left: auto;
 }
 
+.justify-content-space-between{
+  justify-content: space-between;
+}
+
 .margin-right-auto{
   margin-right: auto;
 }

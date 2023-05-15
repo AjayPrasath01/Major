@@ -12,6 +12,7 @@ import com.srm.machinemonitor.Modes;
 import com.srm.machinemonitor.Services.*;
 import com.srm.machinemonitor.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,9 @@ public class MachineLearning {
 
     @Autowired
     MlTrainingStatusDAO mlTrainingStatusDAO;
+
+    @Value("${MlServer}")
+    String MlServer;
 
     @GetMapping(path="/params")
     public ResponseEntity<Map> learnParamsSetter(@RequestParam(value="trainDataSize") float trainDataSize,
@@ -104,7 +108,7 @@ public class MachineLearning {
         }
         BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8080/learner/learn")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(MlServer + "/learner/learn")
                 .queryParam("organizationId", organizationId.toString())
                 .queryParam("sensors", sensors)
                 .queryParam("machineName", machineName);
@@ -173,6 +177,19 @@ public class MachineLearning {
         }
     }
 
+    @DeleteMapping("/model")
+    public ResponseEntity deleteModel(Principal principal,
+                                      HttpServletResponse response, @RequestParam(value="organization") String organization,
+                                      @RequestParam(value="modelKey") String modelKey) throws IOException {
+        Map verify = Utils.verifyAdminAndOrganizationIDOR(response, principal, organization, organizationDAO);
+        if (verify == null){
+            return null;
+        }
+        BigInteger organizationId = (BigInteger) verify.get(Constants.ORGANIZATION_ID);
+        mlModelDAO.deleteById(modelKey);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/start")
     public ResponseEntity startTraining(Principal principal,
                                         HttpServletResponse response,
@@ -208,6 +225,12 @@ public class MachineLearning {
                 machineIds.append("," + String.valueOf(machine.getId()));
             }
         }
+        Map res = new HashMap();
+        List<MlModels> models = mlModelDAO.findAllByMchineIdsLike(String.valueOf(machineIds));
+        if (models.size() > 0){
+            res.put("message", "Already a model exists for the machine");
+            return new ResponseEntity<>(res, HttpStatus.TOO_MANY_REQUESTS);
+        }
 
         MlModels mlModel = new MlModels();
 
@@ -216,7 +239,7 @@ public class MachineLearning {
         mlModel.setName(modelName);
         mlModelDAO.save(mlModel);
 
-        Map res = new HashMap();
+
         try{
             ResponseEntity result = requestMLServer(
                     Map.of(Constants.ORGANIZATION_ID, organizationId.toString(),
@@ -229,7 +252,10 @@ public class MachineLearning {
                     )
             );
             System.out.println(result);
-            res.put("message", result.getBody());
+            if (result.getStatusCodeValue() <= 500 && result.getStatusCodeValue() >= 400){
+                res.put("message", result.getBody());
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         }catch(Exception e){
             res.put("message", "Training server is down ⛔️");
             System.out.println(e);
@@ -254,14 +280,12 @@ public class MachineLearning {
             temp.addAll(mlModelDAO.findAllByMchineIdsLike("%" + m.getId().toString() + "%"));
             mlModels.addAll(mlModelDAO.findAllByMchineIdsLike("%" + m.getId().toString() + "%"));
         }
-        System.out.println(temp);
-        System.out.println(mlModels);
         return new ResponseEntity<>(mlModels, HttpStatus.OK);
     }
 
     private ResponseEntity requestMLServer(Map<String, Object> queryParams){
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8000/learner/start");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(MlServer + "/learner/start");
         for (String key : queryParams.keySet()) {
             builder.queryParam(key, queryParams.get(key));
         }

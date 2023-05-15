@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.math.BigInteger;
 import java.util.List;
 
-public interface MlModelDAO extends JpaRepository<MlModels, BigInteger> {
+public interface MlModelDAO extends JpaRepository<MlModels, String> {
 
     List<MlModels> findAllByMchineIdsLike(String mchineIds);
+
 }

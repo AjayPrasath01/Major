@@ -3,6 +3,10 @@ import "./MachineLearningSection.css";
 import { RadioButtonGroup } from "react-rainbow-components";
 import FileUploadElement from "./FileUploadElement.jsx";
 import startTraining from "./utils/startTraining";
+import getModels from "./utils/getModels";
+import { instance as axios } from "./axios";
+import deleteMlModel from "./utils/deleteMlModel";
+import { elements } from "chart.js";
 
 function MachineLearningSection(props) {
 	const modelAlgos = [
@@ -28,6 +32,7 @@ function MachineLearningSection(props) {
 	const [sensors, setSensors] = useState([]);
 	const [modelName, setModelName] = useState("");
 	const [trainDataSize, setTrainDataSize] = useState(10);
+	const [mlModels, setMlModels] = useState([]);
 
 	useEffect(() => {
 		const machinesLst = props.machines;
@@ -43,6 +48,7 @@ function MachineLearningSection(props) {
 				});
 			}
 		}
+		getModels(axios, props.organization, selectedMachine, setMlModels);
 	}, [selectedMachine]);
 
 	const onAlgoChange = (event) => {
@@ -59,7 +65,7 @@ function MachineLearningSection(props) {
 
 	const startLearning = () => {
 		const element = document.getElementById("error-text-ml");
-		element.style.display = "inline";
+		element.style.display = "block";
 		element.style.paddingLeft = "1em";
 		element.innerText = "";
 		element.style.color = "red";
@@ -67,15 +73,6 @@ function MachineLearningSection(props) {
 			console.log(selectedMachine);
 			if (selectedMachine) {
 				if (modelName) {
-					console.log({
-						organization: props.organization,
-						modelName,
-						modelAlgo: algo,
-						sensors: sensors.join(","),
-						machineName: selectedMachine,
-						mode,
-						trainDataSize,
-					});
 					startTraining(
 						props.organization,
 						modelName,
@@ -98,6 +95,16 @@ function MachineLearningSection(props) {
 		setTimeout(() => {
 			element.style.display = "none";
 		}, 1000);
+	};
+
+	const onDeleteModelClicked = (event) => {
+		deleteMlModel(
+			props.organization,
+			event.target.getAttribute("modelKey"),
+			selectedMachine,
+			setMlModels,
+			document.getElementById("error-text-ml")
+		);
 	};
 
 	return (
@@ -202,6 +209,37 @@ function MachineLearningSection(props) {
 			>
 				Start Training
 			</button>
+			<div>
+				<h1>Models Available</h1>
+				{mlModels.length === 0 ? (
+					<h2>No models available for the machine</h2>
+				) : (
+					<></>
+				)}
+				{mlModels.map((element, index) => {
+					console.log(element);
+					return (
+						<span
+							key={index}
+							className="common-padding background-blue normal-border-radius ml-margin flex-row justify-content-space-between"
+						>
+							{element["name"]}
+							<span style={{ color: "white", fontWeight: "bolder" }}>
+								{element["accuracy"] != null
+									? `  Accuracy: ${element["accuracy"] * 100}%`
+									: "Training"}
+							</span>
+							<button
+								modelKey={element["modelKey"]}
+								className="no-border no-background"
+								onClick={onDeleteModelClicked}
+							>
+								❌
+							</button>
+						</span>
+					);
+				})}
+			</div>
 			<span id="error-text-ml"></span>
 		</div>
 	);

@@ -11,6 +11,7 @@ export default (axios_instance, csv_file, params, element_id) => {
 			`/api/learn/upload?machineName=${params.machineName}&organization=${params.organization}&sensor=${params.sensor}`,
 			String(csv_file),
 			{
+				timeout: 1_000_000_000,
 				headers: {
 					"Content-Type": "text/plain",
 				},
