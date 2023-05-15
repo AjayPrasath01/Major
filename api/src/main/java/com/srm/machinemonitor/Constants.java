@@ -37,4 +37,13 @@ public class Constants {
     public static String TYPE = "type";
     public static String LOGTYPE = "logType";
     public static String LOGDATA = "logData";
+    public static String RANDOMFOREST = "RandomForest";
+    public static String KNEARESTNEIGHBOR = "K-NearestNeighbor";
+    public static String DECISIONTREE = "DecisionTree";
+    public static String SVM = "SupportVectorMachine";
+    public static String MODELKEY = "modelKey";
+    public static String ML = "ml";
+    public static String modelKeyGenerator(String organizationId, String modelName, String modelAlgo, String sensors, String machineName){
+        return organizationId + "/" + modelName + "/" + sensors + "/" + machineName + "/" + modelAlgo;
+    }
 }

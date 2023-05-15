@@ -514,7 +514,7 @@ public class AuxillaryController {
             return null;
         }
         modifyDeviceRequest.setSensors(modifyDeviceRequest.getSensors().toLowerCase());
-        BigInteger organizationId = (BigInteger) data.get("organizationId");
+        BigInteger organizationId = (BigInteger) data.get(Constants.ORGANIZATION_ID);
         List<Machines> allSensor = machinesDAO.findByMachineNamesAndOrganizationId(modifyDeviceRequest.getMachineName(), organizationId);
         if (allSensor == null || allSensor.size() == 0){
             res.put("message", "Given machine name can be found");

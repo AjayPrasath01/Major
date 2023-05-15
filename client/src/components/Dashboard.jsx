@@ -22,6 +22,8 @@ import DataPointCounter from "./DataPointCounter.jsx";
 import ChartLimit from "./ChartLimit.jsx";
 import ScreenSizeNotifier from "./ScreenSizeNotifier.jsx";
 import SummaryValueView from "./SummaryValueView.jsx";
+import Healthy from "../assets/healty_smily_1.png";
+import Unhealthy from "../assets/unhealthy_smily.png";
 
 function Dashboard(props) {
 	const [machineDetails, setMachineDetails] = useState([]);
@@ -42,6 +44,7 @@ function Dashboard(props) {
 	const [organization, setOrganization] = useState("");
 	const [orientation, setOrientation] = useState(window.orientation);
 	const navigate = useNavigate();
+	const [condition, setCondition] = useState(2);
 	const [summaryDetails, setSummaryDetails] = useState({
 		high: "N/A",
 		low: "N/A",
@@ -92,6 +95,10 @@ function Dashboard(props) {
 		// 	organization
 		// );
 	};
+
+	useEffect(() => {
+		setCondition(2);
+	}, [selectedMachine]);
 
 	useEffect(() => {
 		dataCountCall();
@@ -145,7 +152,7 @@ function Dashboard(props) {
 			});
 
 			socketErrorHandler(sock);
-			socketMessageHandler(sock, setLogs, setData, setDataCount);
+			socketMessageHandler(sock, setLogs, setData, setDataCount, setCondition);
 			socketConnectionOpenHandler(sock, setSocketDetails);
 			socketConnectionClosedHandler(sock, setSocketDetails);
 			return () => {
@@ -349,7 +356,9 @@ function Dashboard(props) {
 
 	function downloadCSV() {
 		props.axios_instance
-			.get("/fetch/csv", { params: { machinename: selectedMachine } })
+			.get("/fetch/csv", {
+				params: { machinename: selectedMachine.machineName },
+			})
 			.then((res) => {
 				console.log(res.data);
 				setData(res.data);
@@ -594,6 +603,24 @@ function Dashboard(props) {
 								<SummaryValueView value={summaryDetails.q3} name={"Q3"} />
 								<SummaryValueView value={summaryDetails.iqr} name={"IQR"} />
 							</div>
+							{condition === 2 ? (
+								<></>
+							) : (
+								<>
+									<span className="condition-img-container">
+										{condition === 1 ? (
+											<>
+												<img className="condition-img" src={Healthy} />
+											</>
+										) : (
+											<>
+												<img className="condition-img" src={Unhealthy} />
+											</>
+										)}
+										<h5 className="condition-label">Machine Condition</h5>
+									</span>
+								</>
+							)}
 						</div>
 						<>
 							{viewLog ? (

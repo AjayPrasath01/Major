@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(indexes = { @Index(name="machines_idx_org", columnList = "organizationId"), @Index(name="machines_idx_multi1", columnList = "organizationId,machineName"), @Index(name="machines_idx_multi2", columnList = "organizationId,machineName,sensors") })
+@Table(name="Machines", indexes = { @Index(name="machines_idx_org", columnList = "organizationId"), @Index(name="machines_idx_multi1", columnList = "organizationId,machineName"), @Index(name="machines_idx_multi2", columnList = "organizationId,machineName,sensors") })
 public class Machines {
 
     @Id
@@ -43,5 +43,9 @@ public class Machines {
     @OneToMany(targetEntity = Data.class, cascade = CascadeType.ALL)
     @JoinColumn(name="machineId", referencedColumnName = "id")
     List<Data> data;
+
+    @OneToMany(targetEntity = WrongData.class, cascade = CascadeType.ALL)
+    @JoinColumn(name="machineId", referencedColumnName = "id")
+    List<WrongData> wrongData;
 
 }

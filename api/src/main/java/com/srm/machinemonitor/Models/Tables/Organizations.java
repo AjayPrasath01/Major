@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
-@Table(indexes = { @Index(name="organization_idx_name", columnList = "name", unique = true) })
+@Table(name="Organizations", indexes = { @Index(name="organization_idx_name", columnList = "name", unique = true) })
 public class Organizations {
 
     @Id
@@ -52,5 +52,14 @@ public class Organizations {
         this.id = id;
         this.name = name;
         this.isActive = isActive;
+    }
+
+    public void addMessage(String message){
+        String currentMessages = this.getMessage();
+        if (currentMessages != null && currentMessages.isBlank()){
+            this.setMessage(message);
+        } else {
+            this.setMessage(this.getMessage() + "," + message);
+        }
     }
 }

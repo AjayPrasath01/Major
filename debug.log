@@ -1,0 +1,44 @@
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /learner/learn
+Traceback (most recent call last):
+  File "/Users/ajayprasath/.local/share/virtualenvs/ml-api-iGGST_Z3/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/ajayprasath/.local/share/virtualenvs/ml-api-iGGST_Z3/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py", line 15, in iniziate_training
+    if result.state == 'FAILURE':
+AttributeError: 'str' object has no attribute 'state'
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/learner/views.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/mlserver/settings.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/ajayprasath/Library/Mobile Documents/com~apple~CloudDocs/Documents/Major/ml-api/mlserver/settings.py changed, reloading.

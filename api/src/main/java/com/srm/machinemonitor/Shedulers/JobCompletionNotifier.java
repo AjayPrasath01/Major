@@ -43,8 +43,6 @@ public class JobCompletionNotifier {
                     jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_PARAMS WHERE JOB_EXECUTION_ID = '" + jobDetails.get("JOB_EXECUTION_ID") + "'");
                     jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION WHERE JOB_EXECUTION_ID = '" + jobDetails.get("JOB_EXECUTION_ID") + "'");
                     jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION WHERE JOB_EXECUTION_ID = '" + jobDetails.get("JOB_EXECUTION_ID") + "'");
-                    System.out.println(messages);
-                    System.out.println(jobDetails);
                 }
             }
         } catch(EmptyResultDataAccessException e){

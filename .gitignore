@@ -8,5 +8,8 @@ api/.idea/
 .vscode
 /.vscode
 
+**/env/
+**/__pycache__/
+
 
 api/src/main/resources/static/

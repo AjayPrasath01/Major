@@ -1,0 +1,32 @@
+.card-error-sesnor-error-shower{
+    top: 50%;
+    left: 50%;
+    background-color: green;
+    width: 100%;
+    height: 100%;
+    transform: translate3d(-50%, -50%, 0);
+    border-radius: 10px;
+    color: white;
+    font-weight: 300;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cross-to-close-error-shower{
+    right: 0px;
+    top: 0px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.15);
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.cross-to-close-error-shower:hover{
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.25);
+}

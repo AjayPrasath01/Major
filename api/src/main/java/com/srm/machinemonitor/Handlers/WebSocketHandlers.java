@@ -6,26 +6,26 @@ import com.srm.machinemonitor.Models.Other.CustomUserDetails;
 import com.srm.machinemonitor.Models.Tables.Data;
 import com.srm.machinemonitor.Models.Tables.Log;
 import com.srm.machinemonitor.Models.Tables.Machines;
+import com.srm.machinemonitor.Models.Tables.MlModels;
 import com.srm.machinemonitor.Modes;
-import com.srm.machinemonitor.Services.DevDataDAO;
-import com.srm.machinemonitor.Services.LogDAO;
+import com.srm.machinemonitor.Services.*;
 import lombok.AllArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import com.srm.machinemonitor.Services.DataDAO;
-import com.srm.machinemonitor.Services.MachinesDAO;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Component
@@ -56,6 +57,9 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
 
     @Autowired
     DevDataDAO devDataDAO;
+
+    @Autowired
+    MlModelDAO mlModelDAO;
 
     @Value("${defaultThreadCountWebpageWebsocket}")
     int defaultThreadCountWebpageWebsocket;
@@ -127,6 +131,7 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
                         clientDetails.put(Constants.ISALIVE, payload.get(Constants.ISALIVE));
                         clientDetails.put(Constants.ISHANDLED, false);
                         clientDetails.put(Constants.MODE, payload.get(Constants.MODE));
+                        clientDetails.remove(Constants.MODELKEY);
                         clientDetails.put(Constants.DATASUBSCRIBED, payload.getBoolean(Constants.DATASUBSCRIBED));
 //                    Machines machine = machinesDAO.getIdByMachineNameAndSensorsAndOrganizationId((String) payload.get(Constants.MACHINENAME), (String) payload.get(Constants.SENSOR), (int) clientDetails.get(Constants.ORGANIZATION_ID));
                         if (payload.getBoolean(Constants.ISALIVE)){
@@ -216,10 +221,45 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
         }
     }
 
+    @Scheduled(fixedRate = 1000)
+    public void PredictCondition() throws IOException {
+        for (ConcurrentHashMap clientDetails : clientDataSubscribe.values()){
+            if (clientDetails.containsKey(Constants.ISALIVE) && (boolean) clientDetails.get(Constants.ISALIVE) && !clientDetails.containsKey(Constants.MODELKEY)){
+                Machines machines = machinesDAO.findByMachineNameAndSensorsAndOrganizationId((String) clientDetails.get(Constants.MACHINENAME), (String) clientDetails.get(Constants.SENSOR), (BigInteger) clientDetails.get(Constants.ORGANIZATION_ID));
+                List<MlModels> mlModels = mlModelDAO.findAllByMchineIdsLike(String.valueOf(machines.getId()));
+                String modelKey = "";
+                if (mlModels.size() > 0){
+                    modelKey = mlModels.get(0).getModelKey();
+                }
+                if (!modelKey.isBlank()){
+                    clientDetails.put(Constants.MODELKEY, modelKey);
+                }
+            }else{
+                Machines machines = machinesDAO.findByMachineNameAndSensorsAndOrganizationId((String) clientDetails.get(Constants.MACHINENAME), (String) clientDetails.get(Constants.SENSOR), (BigInteger) clientDetails.get(Constants.ORGANIZATION_ID));
+                Map<String, Object> params = new HashMap<>();
+                params.put(Constants.MODELKEY, (String) clientDetails.get(Constants.MODELKEY));
+                params.put(Constants.MODE, (String) clientDetails.get(Constants.MODE));
+                params.put("machineIds", machines.getId());
+                try {
+                    ResponseEntity result = requestMLServerToPredict(params);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("prediction", result.getBody());
+                    sendToMl(data, clientDetails);
+                    System.out.println(result);
+                } catch (Exception e) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("prediction", 2);
+                    sendToMl(data, clientDetails);
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
     @Scheduled(fixedRate = 500)
     public void DataSheduledSender() throws IOException {
         for (ConcurrentHashMap clientDetails : clientDataSubscribe.values()){
-            if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && clientDetails.containsKey(Constants.MODE) && (boolean)clientDetails.get(Constants.ISHANDLED)){
+            if (clientDetails.containsKey(Constants.ISHANDLED) && clientDetails.containsKey(Constants.LASTDATATIME) && clientDetails.containsKey(Constants.MODE) && (boolean)clientDetails.get(Constants.ISHANDLED) && (boolean)clientDetails.get(Constants.ISALIVE)){
                 List datas = null;
                 if (Objects.equals((String) clientDetails.get(Constants.MODE), String.valueOf(Modes.DEV).toLowerCase())){
                     datas = devDataDAO.findAllByMachineIdAndDateGreaterThanOrderByDateAsc((BigInteger)clientDetails.get(Constants.MACHINEID), (LocalDateTime) clientDetails.get(Constants.LASTDATATIME));
@@ -258,6 +298,17 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
         }
     }
 
+    private ResponseEntity requestMLServerToPredict(Map<String, Object> queryParams){
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8000/learner/predict");
+        for (String key : queryParams.keySet()) {
+            builder.queryParam(key, queryParams.get(key));
+        }
+
+        String url = builder.toUriString();
+        return restTemplate.getForEntity(url, String.class);
+    }
+
     private LocalDateTime parseLocalDateTime(String dateTime){
         try{
             DateTimeFormatter formatter = new DateTimeFormatterBuilder()
@@ -278,6 +329,11 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
 
     private void sendToChart(Map response, Map clientDetails) throws IOException {
         response.put(Constants.TO, "charts");
+        sendMessage((WebSocketSession) clientDetails.get(Constants.SESSION), response);
+    }
+
+    private void sendToMl(Map response, Map clientDetails) throws IOException {
+        response.put(Constants.TO, Constants.ML);
         sendMessage((WebSocketSession) clientDetails.get(Constants.SESSION), response);
     }
 

@@ -1,4 +1,4 @@
-export default (socket, setLogs, setData, setDataCount) => {
+export default (socket, setLogs, setData, setDataCount, setCondition) => {
 	socket.current.onmessage = (message) => {
 		message = JSON.parse(message.data);
 		console.log("Incoming message : ");
@@ -21,6 +21,10 @@ export default (socket, setLogs, setData, setDataCount) => {
 				setDataCount(newData.length);
 				return newData;
 			});
+		}
+		if (message.to === "ml") {
+			console.log("got ml data");
+			setCondition(parseInt(message.prediction));
 		}
 	};
 };

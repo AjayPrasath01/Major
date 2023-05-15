@@ -1,5 +1,7 @@
 package com.srm.machinemonitor;
 
+import java.util.Objects;
+
 public enum Modes {
     PROD(Constants.PROD),
     DEV(Constants.DEV);
@@ -11,5 +13,9 @@ public enum Modes {
 
     public String toString() {
         return currentMode;
+    }
+
+    public boolean isEqualTo(String mode){
+        return Objects.equals(this.currentMode, mode.toUpperCase());
     }
 }
