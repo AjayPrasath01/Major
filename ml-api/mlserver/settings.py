@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import pymysql 
+import pymysql
 
 pymysql.install_as_MySQLdb()
 
@@ -95,10 +95,10 @@ WSGI_APPLICATION = 'mlserver.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'machine',
+        'NAME': 'MACHINE',
         'USER': 'root',
-        'PASSWORD': 'Snehaajay01@',
-        'HOST': 'localhost',
+        'PASSWORD': 'SRM2023major',
+        'HOST': '34.100.244.72',
         'PORT': '3306',
     }
 }
