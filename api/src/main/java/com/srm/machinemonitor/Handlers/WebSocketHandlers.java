@@ -70,6 +70,9 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
     @Value("${keepAliveSecondsWebpageWebsocket}")
     int keepAliveSecondsWebpageWebsocket;
 
+    @Value("${MlServer}")
+    String MlServer;
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.taskExecutor().corePoolSize(defaultThreadCountWebpageWebsocket);
@@ -302,7 +305,7 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
 
     private ResponseEntity requestMLServerToPredict(Map<String, Object> queryParams){
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://127.0.0.1:8000/learner/predict");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(MlServer + "/learner/predict");
         for (String key : queryParams.keySet()) {
             builder.queryParam(key, queryParams.get(key));
         }
