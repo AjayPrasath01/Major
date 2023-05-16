@@ -28,8 +28,9 @@ def iniziate_training(request):
                 cursor.execute(
                     "SELECT machineId, value FROM WrongData WHERE WrongData.machineId = %s ORDER BY WrongData.dateTime ASC", [machineId])
                 rows = cursor.fetchall()
-                datas[machineId] = [values[1] for values in rows]
-                datas['label'] = [0 for _ in rows]
+                if len(rows) > 1:
+                    datas[machineId] = [values[1] for values in rows]
+                    datas['label'] = [0 for _ in rows]
             with connection.cursor() as cursor:
                 if mode == 'dev':
                     cursor.execute(
@@ -44,8 +45,9 @@ def iniziate_training(request):
                     cursor.execute("SELECT machineId, value FROM Data WHERE Data.machineId = %s AND Data.value NOT IN (SELECT value FROM WrongData WHERE WrongData.machineId = %s) ORDER BY Data.date ASC LIMIT %s", [
                                    machineId, limit[0]])
                 rows = cursor.fetchall()
-                datas[machineId] += [values[1] for values in rows]
-                datas['label'] += [1 for _ in rows]
+                if machineId in datas:
+                    datas[machineId] += [values[1] for values in rows]
+                    datas['label'] += [1 for _ in rows]
         dataframe = pd.DataFrame(datas)
         value_counts = dataframe['label'].value_counts()
         try:
