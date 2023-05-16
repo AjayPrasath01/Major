@@ -224,9 +224,11 @@ public class WebSocketHandlers extends TextWebSocketHandler implements WebSocket
     @Scheduled(fixedRate = 1000)
     public void PredictCondition() throws IOException {
         for (ConcurrentHashMap clientDetails : clientDataSubscribe.values()){
+            System.out.println("Prediction");
             if (clientDetails.containsKey(Constants.ISALIVE) && (boolean) clientDetails.get(Constants.ISALIVE) && !clientDetails.containsKey(Constants.MODELKEY)){
+                System.out.println("Prediction 2");
                 Machines machines = machinesDAO.findByMachineNameAndSensorsAndOrganizationId((String) clientDetails.get(Constants.MACHINENAME), (String) clientDetails.get(Constants.SENSOR), (BigInteger) clientDetails.get(Constants.ORGANIZATION_ID));
-                List<MlModels> mlModels = mlModelDAO.findAllByMchineIdsLike(String.valueOf(machines.getId()));
+                List<MlModels> mlModels = mlModelDAO.findAllByMchineIdsLike("%" + String.valueOf(machines.getId()) + "%");
                 String modelKey = "";
                 if (mlModels.size() > 0){
                     modelKey = mlModels.get(0).getModelKey();
